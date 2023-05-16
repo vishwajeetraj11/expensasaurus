@@ -1,27 +1,43 @@
+@import url("https://fonts.googleapis.com/css2?family=DM+Sans:ital,wght@0,400;0,500;0,700;1,400;1,500;1,700&display=swap");
+
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
 
-:root {
-  --foreground-rgb: 0, 0, 0;
-  --background-start-rgb: 214, 219, 220;
-  --background-end-rgb: 255, 255, 255;
+
+body {
+  font-family: "DM Sans", sans-serif;
 }
 
-@media (prefers-color-scheme: dark) {
-  :root {
-    --foreground-rgb: 255, 255, 255;
-    --background-start-rgb: 0, 0, 0;
-    --background-end-rgb: 0, 0, 0;
+option {
+  color: black;
+}
+
+form {
+  width: 100%;
+}
+
+
+@layer base {
+  html {
+    font-family: "DM Sans", sans-serif !important;
+    font-feature-settings: "kern" !important;
+    -webkit-font-smoothing: antialiased;
+    letter-spacing: -0.5px;
   }
 }
 
-body {
-  color: rgb(var(--foreground-rgb));
-  background: linear-gradient(
-      to bottom,
-      transparent,
-      rgb(var(--background-end-rgb))
-    )
-    rgb(var(--background-start-rgb));
+input.defaultCheckbox::before {
+  content: url(/svg/checked.svg);
+  color: white;
+  opacity: 0;
+  height: 16px;
+  width: 16px;
+  position: absolute;
+  left: 50%;
+  transform: translate(-50%, 0px);
+}
+
+input:checked.defaultCheckbox::before {
+  opacity: 1;
 }
