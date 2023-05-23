@@ -7,3 +7,7 @@ export const dashboardStatColors: { [key: string]: Color } = {
   moderateDecrease: "rose",
   decrease: "rose",
 };
+
+export const regex = {
+  number: /^[0-9\b]+$/,
+};
