@@ -41,3 +41,7 @@ input.defaultCheckbox::before {
 input:checked.defaultCheckbox::before {
   opacity: 1;
 }
+
+.box-shadow-card {
+  box-shadow: 0 5px 15px rgba(0,0,0,0.07);
+}
