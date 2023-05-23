@@ -1,6 +1,21 @@
-import 'expensasaures/styles/globals.css'
-import type { AppProps } from 'next/app'
+import "expensasaures/styles/globals.css";
+import type { AppProps } from "next/app";
+import { useState } from "react";
+import { Hydrate, QueryClient, QueryClientProvider } from "react-query";
+import { ReactQueryDevtools } from "react-query/devtools";
+import { Toaster } from "sonner";
 
 export default function App({ Component, pageProps }: AppProps) {
-  return <Component {...pageProps} />
+  const [queryClient] = useState(() => new QueryClient());
+  return (
+    <>
+      <QueryClientProvider client={queryClient}>
+        <Hydrate state={pageProps.dehydratedState}>
+          <Toaster richColors closeButton />
+          <Component {...pageProps} />
+          <ReactQueryDevtools initialIsOpen={false} />
+        </Hydrate>
+      </QueryClientProvider>
+    </>
+  );
 }
