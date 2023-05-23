@@ -1,8 +1,11 @@
-import { Form, Field } from "react-final-form";
-import InputField from "../../ui/InputField";
+import Button from "expensasaures/components/ui/Button";
+import { useRouter } from "next/router";
+import { Field, Form } from "react-final-form";
+import { toast } from "sonner";
+import { shallow } from "zustand/shallow";
 import { ID, account } from "../../../shared/services/appwrite";
 import { useAuthStore } from "../../../shared/stores/useAuthStore";
-import { shallow } from "zustand/shallow";
+import InputField from "../../ui/InputField";
 
 function LoginForm() {
   const { authFormState } = useAuthStore(
@@ -14,7 +17,7 @@ function LoginForm() {
 
   const isLogin = authFormState === "SIGN_IN";
   const isSignup = authFormState === "SIGN_UP";
-
+  const router = useRouter();
   const onSubmit = async (values: any) => {
     try {
       if (isSignup) {
@@ -24,14 +27,19 @@ function LoginForm() {
           values.password,
           values.name
         );
-        console.log(response);
       } else if (isLogin) {
         const response = await account.createEmailSession(
           values.email,
           values.password
         );
-        console.log(response); // session ID will be available in the response object
+        const rest = await account.getSession(response.$id);
+        // session ID will be available in the response object
+        localStorage.setItem("sessionId", rest.$id);
         // TODO: handle successful sign in
+        // route to dashboard
+        // show toast.
+        toast.success(`Welcome to Expensasaurus`);
+        router.push("/dashboard");
       }
     } catch (error) {
       console.error(error);
@@ -113,13 +121,13 @@ function LoginForm() {
             )}
           </Field>
 
-          <button
+          <Button
             type="submit"
             disabled={submitting}
             className="linear mt-2 w-full rounded-xl bg-brand-500 py-[12px] text-base font-medium text-white transition duration-200 hover:bg-brand-600 active:bg-brand-700 dark:bg-brand-400 dark:text-white dark:hover:bg-brand-300 dark:active:bg-brand-200"
           >
             Sign In
-          </button>
+          </Button>
         </form>
       )}
     />
