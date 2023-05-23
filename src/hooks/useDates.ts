@@ -27,7 +27,6 @@ const useDates = () => {
         endOfThisMonth,
         startOfEarlierMonth,
         endOfEarlierMonth
-
     }
 
 }
