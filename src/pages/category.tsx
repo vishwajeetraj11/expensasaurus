@@ -66,6 +66,7 @@ const Categories = () => {
               const SelectedIcon = categories.find(
                 (c) => c.category === capitalize(category)
               )?.Icon;
+
               return (
                 <Card
                   onClick={() => {
@@ -77,7 +78,6 @@ const Categories = () => {
                   key={i}
                 >
                   <div className="flex">
-                    {" "}
                     {SelectedIcon && (
                       <div className="w-10 h-10 bg-indigo-600 rounded-full flex items-center justify-center mr-3">
                         <SelectedIcon className="w-5 h-5 text-white" />
