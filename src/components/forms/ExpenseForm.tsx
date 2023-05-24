@@ -1,16 +1,7 @@
-import React from "react";
-import { Field, Form } from "react-final-form";
-import InputField from "../ui/InputField";
-import TextArea from "../ui/TextArea";
-import FormInputLabel from "../ui/FormInputLabel";
-import { Button, SelectBox, SelectBoxItem } from "@tremor/react";
-import { BiBarChart } from "react-icons/bi";
-import { parseISO } from "date-fns";
-import { DesktopDatePicker } from "@mui/x-date-pickers";
-import { LocalizationProvider } from "@mui/x-date-pickers";
+import { DesktopDatePicker, LocalizationProvider } from "@mui/x-date-pickers";
 import { AdapterDateFns } from "@mui/x-date-pickers/AdapterDateFns";
-import FileUpload from "../FileUpload";
-import { validateExpenseForm } from "expensasaures/shared/utils/form";
+import { Button, SelectBox, SelectBoxItem } from "@tremor/react";
+import { Models, Role } from "appwrite";
 import { categories } from "expensasaures/shared/constants/categories";
 import {
   ID,
@@ -18,11 +9,17 @@ import {
   database,
 } from "expensasaures/shared/services/appwrite";
 import { useAuthStore } from "expensasaures/shared/stores/useAuthStore";
-import { shallow } from "zustand/shallow";
-import { Models, Role } from "appwrite";
-import Link from "next/link";
-import { toast } from "sonner";
+import { validateExpenseForm } from "expensasaures/shared/utils/form";
 import dynamic from "next/dynamic";
+import Link from "next/link";
+import { Field, Form } from "react-final-form";
+import { toast } from "sonner";
+import { shallow } from "zustand/shallow";
+import FileUpload from "../FileUpload";
+import FormInputLabel from "../ui/FormInputLabel";
+import InputField from "../ui/InputField";
+import TextArea from "../ui/TextArea";
+import CategoryIcon from "./CategorySelect";
 
 const ExpenseForm = () => {
   const { user } = useAuthStore((state) => ({ user: state.user }), shallow) as {
@@ -147,15 +144,17 @@ const ExpenseForm = () => {
                           onValueChange={(value) =>
                             input.onChange(value as string)
                           }
-                          defaultValue="1"
                         >
-                          {categories.map((category) => {
+                          {categories.map((category, index) => {
+                            const CIcon = () => (
+                              <CategoryIcon category={category} />
+                            );
                             return (
                               <SelectBoxItem
                                 key={category.id}
                                 value={category.category.toLowerCase()}
                                 text={category.category}
-                                icon={category.Icon}
+                                icon={CIcon}
                               />
                             );
                           })}
