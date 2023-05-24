@@ -37,16 +37,21 @@ export function calculateTransactionChange(previousMonthTotal: number, currentMo
     };
 }
 
-export function calculateTotalExpensesByCategory(expenses: Transaction[]): Record<string, { amount: number, transactionsCount: number }> {
-    const totalExpensesByCategory: Record<string, { amount: number, transactionsCount: number }> = {};
-
+export function calculateTotalExpensesByCategory(expenses: Transaction[]): Record<string, { amount: number, transactionsCount: number, percentage: number }> {
+    const totalExpensesByCategory: Record<string, { amount: number, transactionsCount: number, percentage: number }> = {};
+    const totalExpense = expenses.reduce((acc, expense) => acc + expense.amount, 0);
     for (const expense of expenses) {
         const { amount, category } = expense;
         if (!totalExpensesByCategory[category]) {
-            totalExpensesByCategory[category] = { amount: 0, transactionsCount: 0 }
+            totalExpensesByCategory[category] = { amount: 0, transactionsCount: 0, percentage: 0 }
         }
         totalExpensesByCategory[category].amount += amount;
         totalExpensesByCategory[category].transactionsCount += 1;
+    }
+
+    for (const category in totalExpensesByCategory) {
+        const { amount } = totalExpensesByCategory[category];
+        totalExpensesByCategory[category].percentage = (amount / totalExpense) * 100;
     }
 
     return totalExpensesByCategory;
@@ -73,7 +78,7 @@ export interface CategoryData {
     percentageChange: number;
 }
 
-export function calculateTotalExpensesWithPercentageChange(expenses: Transaction[], previousMonthTotals: Record<string, { amount: number, transactionsCount: number }>): Record<string, CategoryData> {
+export function calculateTotalExpensesWithPercentageChange(expenses: Transaction[], previousMonthTotals: Record<string, { amount: number, transactionsCount: number, percentage: number }>): Record<string, CategoryData> {
     const totalExpensesByCategory: Record<string, CategoryData> = {};
 
     for (const expense of expenses) {
