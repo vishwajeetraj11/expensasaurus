@@ -42,6 +42,7 @@ const ExpenseList = (props: Props) => {
     ],
     { enabled: !!user, staleTime: Infinity }
   );
+
   return (
     <>
       <h2 className="font-semibold text-gray-900">
@@ -55,7 +56,7 @@ const ExpenseList = (props: Props) => {
           <>loading...</>
         ) : data?.documents && data?.documents?.length > 0 ? (
           data?.documents?.map((data, index) => (
-            <ExpenseCalCard meeting={data} key={index} />
+            <ExpenseCalCard expense={data} key={index} />
           ))
         ) : (
           <p>
