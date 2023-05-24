@@ -111,9 +111,17 @@ const Calender = () => {
                     </button>
 
                     <div className="w-1 h-1 mx-auto mt-1">
-                      {thisMonthExpenses?.documents?.some((meeting) =>
-                        isSameDay(parseISO(meeting.date), day)
-                      ) && (
+                      {thisMonthExpenses?.documents?.some((expense) => {
+                        // console.log({
+                        //   date: expense.date,
+                        //   day: day.toISOString(),
+                        //   bool: isSameDay(
+                        //     parseISO(expense.date),
+                        //     parseISO(day.toISOString())
+                        //   ),
+                        // });
+                        return isSameDay(parseISO(expense.date), day);
+                      }) && (
                         <div className="w-1 h-1 rounded-full bg-blue-500">
                           &nbsp;
                         </div>
