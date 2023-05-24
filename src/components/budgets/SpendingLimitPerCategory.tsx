@@ -48,16 +48,14 @@ const SpendingLimitPerCategory = () => {
 
                       form.mutators.setFieldValue(`categories`, res);
                     }}
-                    value={categories
-                      .find((c) => c.category.toLowerCase() === key)
-                      ?.category.toLowerCase()}
+                    value={categories.find((c) => c.key === key)?.key}
                   >
                     {categories.map((category) => {
                       const CIcon = () => <CategoryIcon category={category} />;
                       return (
                         <SelectBoxItem
                           key={category.id}
-                          value={category.category.toLowerCase()}
+                          value={category.key}
                           text={category.category}
                           icon={CIcon}
                         />
@@ -102,21 +100,3 @@ const SpendingLimitPerCategory = () => {
 };
 
 export default SpendingLimitPerCategory;
-
-/*
-  <SelectBox
-        onValueChange={(value) => input.onChange(value as string)}
-        defaultValue="1"
-      >
-        {categories.map((category) => {
-          return (
-            <SelectBoxItem
-              key={category.id}
-              value={category.category.toLowerCase()}
-              text={category.category}
-              icon={category.Icon}
-            />
-          );
-        })}
-      </SelectBox>
-*/

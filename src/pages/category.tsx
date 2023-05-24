@@ -8,6 +8,7 @@ import {
   Title,
 } from "@tremor/react";
 import { Models, Query } from "appwrite";
+import clsx from "clsx";
 import Layout from "expensasaures/components/layout/Layout";
 import useDates, { dataFormatter } from "expensasaures/hooks/useDates";
 import { categories } from "expensasaures/shared/constants/categories";
@@ -49,6 +50,32 @@ const Categories = () => {
     thisMonthExpenses?.documents || []
   );
 
+  // const categoryBarInfo = () => {
+  //   const percentageArray = Object.entries(expensesByCategoriesThisMonth).map(
+  //     ([key, val]) => {
+  //       return Math.ceil(val.percentage);
+  //     }
+  //   );
+  //   const colorClassArray = Object.entries(expensesByCategoriesThisMonth).map(
+  //     ([key, val]) => {
+  //       let className = categories.find((c) => c.category === capitalize(key))
+  //         ?.className as string;
+  //       const regexPattern = /(?:bg|text)-(.*?)-\d+/g;
+  //       const colorNames = [];
+  //       let match;
+  //       while ((match = regexPattern.exec(className))) {
+  //         colorNames.push(match[1]);
+  //       }
+  //       return colorNames[0];
+  //     }
+  //   );
+  //   return { percentageArray, colorClassArray };
+  // };
+
+  {
+    /* Category Spending per day */
+  }
+
   const router = useRouter();
   return (
     <Layout>
@@ -60,12 +87,33 @@ const Categories = () => {
             <DateRangePicker onValueChange={setDates} value={dates} />
           </div>
         </Flex>
-        <div className="grid grid-cols-2 gap-4">
+        {/* <div className="mb-10">
+          <Text className="mt-10 mb-4">Expenses distribution</Text>
+          <Flex>
+            <Text>Rating Product A</Text>
+            <Text>62%</Text>
+          </Flex>
+          <CategoryBar
+            categoryPercentageValues={categoryBarInfo().percentageArray}
+            colors={categoryBarInfo().colorClassArray}
+           
+            className="mt-3 w-full"
+          />
+          <CategoryBar
+            categoryPercentageValues={[10, 20, 10]}
+            colors={["emerald", "yellow", "orange", "rose"]}
+            percentageValue={62}
+            className="mt-3"
+          />
+        </div> */}
+        <Text className="mb-4">Expenses per category for this month.</Text>
+        <div className="grid xl:grid-cols-4  lg:grid-cols-3 md:grid-cols-2 grid-cols-1 gap-4">
           {Object.entries(expensesByCategoriesThisMonth).map(
             ([category, value], i) => {
-              const SelectedIcon = categories.find(
+              const categoryInfo = categories.find(
                 (c) => c.category === capitalize(category)
-              )?.Icon;
+              );
+              const SelectedIcon = categoryInfo?.Icon;
 
               return (
                 <Card
@@ -74,13 +122,18 @@ const Categories = () => {
                       `/expenses?category=${encodeURIComponent(category)}`
                     );
                   }}
-                  className="w-full  box-shadow-card border-none ring-0 cursor-pointer"
+                  className="box-shadow-card border-none ring-0 cursor-pointer"
                   key={i}
                 >
                   <div className="flex">
                     {SelectedIcon && (
-                      <div className="w-10 h-10 bg-indigo-600 rounded-full flex items-center justify-center mr-3">
-                        <SelectedIcon className="w-5 h-5 text-white" />
+                      <div
+                        className={clsx(
+                          "w-10 h-10 bg-opacity-25 rounded-full flex items-center justify-center mr-3",
+                          categoryInfo.className
+                        )}
+                      >
+                        <SelectedIcon className="w-5 h-5" />
                       </div>
                     )}
                     <div className="flex flex-col flex-1">
@@ -98,7 +151,7 @@ const Categories = () => {
                       </Text>
                     </div>
                   </div>
-                  {thisMonthExpenses?.documents
+                  {false && thisMonthExpenses?.documents
                     ? thisMonthExpenses?.documents.length > 0 && (
                         <LineChart
                           className="h-80 mt-8"

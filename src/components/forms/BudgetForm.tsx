@@ -37,7 +37,7 @@ const BudgetForm = () => {
           title: values.title,
           description: values.description,
           amount: values.amount,
-          category: values.category.toLowerCase(),
+          category: values.category,
           tag: values.tag,
           date: values.date,
           userId: user?.userId,

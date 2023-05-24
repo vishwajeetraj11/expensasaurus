@@ -14,7 +14,7 @@ function ExpenseCalCard(props: Props) {
   const now = new Date();
   const formattedDate = formatDistance(createdDate, now);
   const categoryInfo = categories.find(
-    (category) => category.category.toLowerCase() === expense.category
+    (category) => category.key === expense.category
   );
   const SelectedIcon = categoryInfo?.Icon;
   return (

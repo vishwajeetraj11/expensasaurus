@@ -24,6 +24,7 @@ import { Transaction } from "expensasaures/shared/types/transaction";
 import { capitalize } from "expensasaures/shared/utils/common";
 import { getQueryForExpenses } from "expensasaures/shared/utils/react-query";
 import dynamic from "next/dynamic";
+import Link from "next/link";
 import { useEffect, useState } from "react";
 import { toast } from "sonner";
 import { shallow } from "zustand/shallow";
@@ -103,7 +104,13 @@ const index = () => {
   return (
     <Layout>
       <div className="dark:bg-navy-900 min-h-[100vh] max-w-[1200px] mx-auto">
-        <Title className="text-center py-10">Expenses</Title>
+        <div className="flex items-center justify-between">
+          &nbsp;
+          <Title className="text-center py-10">Expenses</Title>
+          <Link href={"/expenses/create"}>
+            <Button>Add Expense</Button>
+          </Link>
+        </div>
         <div className="flex gap-4">
           <div className="w-[30%] pl-3">
             <div className="flex items-center justify-between">
@@ -164,7 +171,7 @@ const index = () => {
                   return (
                     <SelectBoxItem
                       key={category.id}
-                      value={category.category.toLowerCase()}
+                      value={category.key}
                       text={category.category}
                       icon={CIcon}
                     />

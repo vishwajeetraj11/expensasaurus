@@ -9,6 +9,7 @@ const Navigation = () => {
         <Link href={"/expenses"}>Expense</Link>
         <Link href={"/category"}>Category</Link>
         <Link href={"/calender"}>Calender</Link>
+        <Link href={"/budgets"}>Budget</Link>
       </div>
     </div>
   );

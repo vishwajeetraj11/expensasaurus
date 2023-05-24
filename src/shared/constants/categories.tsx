@@ -13,12 +13,12 @@ import {
   TruckIcon,
   UserCircleIcon,
 } from "@heroicons/react/solid";
-// FilmIcon
 
 export const categories = [
   {
     id: 1,
     category: "Food",
+    key: "food",
     description:
       "Expenses related to groceries, dining out, or food delivery services",
     Icon: ShoppingBagIcon,
@@ -27,6 +27,7 @@ export const categories = [
   {
     id: 2,
     category: "Entertainment",
+    key: "entertainment",
     description:
       "Expenses related to activities or events for enjoyment or leisure, such as concerts, movies, or amusement parks",
     Icon: FilmIcon,
@@ -35,6 +36,7 @@ export const categories = [
   {
     id: 3,
     category: "Housing",
+    key: "housing",
     description:
       "Expenses related to housing, such as rent or mortgage payments, property taxes, or home insurance",
     Icon: HomeIcon,
@@ -43,6 +45,7 @@ export const categories = [
   {
     id: 4,
     category: "Transportation",
+    key: "transportation",
     description:
       "Expenses related to transportation, such as gas, maintenance, or public transportation fees",
     Icon: TruckIcon,
@@ -51,6 +54,7 @@ export const categories = [
   {
     id: 5,
     category: "Healthcare",
+    key: "healthcare",
     description:
       "Expenses related to healthcare, such as doctor visits, prescriptions, or health insurance premiums",
     Icon: PlusIcon,
@@ -59,6 +63,7 @@ export const categories = [
   {
     id: 6,
     category: "Travel",
+    key: "travel",
     description:
       "Expenses related to travel, such as airfare, lodging, or rental cars",
     Icon: GlobeIcon,
@@ -67,6 +72,7 @@ export const categories = [
   {
     id: 7,
     category: "Education",
+    key: "education",
     description:
       "Expenses related to education, such as tuition, books, or school supplies",
     Icon: AcademicCapIcon,
@@ -75,6 +81,7 @@ export const categories = [
   {
     id: 8,
     category: "Personal Care",
+    key: "personalcare",
     description:
       "Expenses related to personal grooming and hygiene, such as haircuts, beauty products, or toiletries",
     Icon: UserCircleIcon,
@@ -83,6 +90,7 @@ export const categories = [
   {
     id: 9,
     category: "Insurance",
+    key: "insurance",
     description:
       "Expenses related to insurance, such as car insurance, health insurance, or life insurance",
     Icon: CurrencyDollarIcon,
@@ -91,6 +99,7 @@ export const categories = [
   {
     id: 10,
     category: "Savings",
+    key: "savings",
     description:
       "Expenses related to savings, such as contributions to a savings account or retirement account",
     Icon: LibraryIcon,
@@ -99,6 +108,7 @@ export const categories = [
   {
     id: 11,
     category: "Investments",
+    key: "investments",
     description:
       "Expenses related to investments, such as contributions to a 401(k) or IRA",
     Icon: ChartBarIcon,
@@ -107,6 +117,7 @@ export const categories = [
   {
     id: 12,
     category: "Utilities",
+    key: "utilities",
     description:
       "Expenses related to utilities, such as electricity, gas, or water",
     Icon: AdjustmentsIcon,
@@ -115,6 +126,7 @@ export const categories = [
   {
     id: 13,
     category: "Business",
+    key: "business",
     description:
       "Expenses related to running a business, such as rent, utilities, or employee salaries",
     Icon: BriefcaseIcon,
@@ -123,6 +135,7 @@ export const categories = [
   {
     id: 15,
     category: "Other",
+    key: "other",
     description: "Expenses that do not fit into any other category",
     Icon: TruckIcon,
     className: "bg-yellow-500 text-yellow-500",
@@ -133,18 +146,21 @@ export const incomeCategories = [
   {
     id: 1,
     Icon: TruckIcon,
+    key: "salary",
     category: "Salary",
     description: "Regular income earned from employment.",
   },
   {
     id: 2,
     Icon: TruckIcon,
+    key: "freelance",
     category: "Freelance/Contract Work",
     description: "Income earned from freelance projects or contract work.",
   },
   {
     id: 3,
     Icon: TruckIcon,
+    key: "investments",
     category: "Investments",
     description:
       "Income generated from investments such as stocks, bonds, or real estate.",
@@ -152,18 +168,21 @@ export const incomeCategories = [
   {
     id: 4,
     Icon: TruckIcon,
+    key: "rental",
     category: "Rental Income",
     description: "Income received from renting out properties or assets.",
   },
   {
     id: 5,
     Icon: TruckIcon,
+    key: "business",
     category: "Business Income",
     description: "Income generated from a business or self-employment.",
   },
   {
     id: 6,
     Icon: TruckIcon,
+    key: "interest",
     category: "Interest/Dividends",
     description:
       "Income earned from interest on savings accounts or dividends from investments.",
@@ -171,6 +190,7 @@ export const incomeCategories = [
   {
     id: 7,
     Icon: TruckIcon,
+    key: "pension",
     category: "Pension/Social Security",
     description:
       "Income received from retirement pensions or government social security programs.",
@@ -178,6 +198,7 @@ export const incomeCategories = [
   {
     id: 8,
     Icon: TruckIcon,
+    key: "gift",
     category: "Gifts/Inheritance",
     description:
       "Income received as gifts or inheritance from family or friends.",
@@ -185,6 +206,7 @@ export const incomeCategories = [
   {
     id: 9,
     Icon: TruckIcon,
+    key: "royalties",
     category: "Royalties",
     description:
       "Income earned from the use of intellectual property, such as copyrights or patents.",
@@ -192,12 +214,14 @@ export const incomeCategories = [
   {
     id: 10,
     Icon: TruckIcon,
+    key: "sidehustle",
     category: "Side Hustle/Part-time Work",
     description: "Income earned from part-time jobs or side businesses.",
   },
   {
     id: 11,
     Icon: TruckIcon,
+    key: "other",
     category: "Other",
     description:
       "A general category to cover any income source that does not fit into the predefined categories.",

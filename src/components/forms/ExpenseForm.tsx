@@ -36,7 +36,7 @@ const ExpenseForm = () => {
           title: values.title,
           description: values.description,
           amount: values.amount,
-          category: values.category.toLowerCase(),
+          category: values.category,
           tag: values.tag,
           date: values.date,
           userId: user?.userId,
@@ -152,7 +152,7 @@ const ExpenseForm = () => {
                             return (
                               <SelectBoxItem
                                 key={category.id}
-                                value={category.category.toLowerCase()}
+                                value={category.key}
                                 text={category.category}
                                 icon={CIcon}
                               />
