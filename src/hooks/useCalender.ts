@@ -8,7 +8,6 @@ import {
     startOfToday
 } from "date-fns";
 
-import useDates from "expensasaures/hooks/useDates";
 import { getAllLists } from "expensasaures/shared/services/query";
 import { useAuthStore } from "expensasaures/shared/stores/useAuthStore";
 import { Transaction } from "expensasaures/shared/types/transaction";
@@ -49,10 +48,27 @@ export const useCalender = () => {
         { enabled: !!user, staleTime: Infinity }
     );
 
-    const { endOfThisMonth, startOfThisMonth } = useDates();
+    let [currentMonth, setCurrentMonth] = useState(format(today, "MMM-yyyy"));
+    let firstDayCurrentMonth = parse(currentMonth, "MMM-yyyy", new Date());
+
+    let days = eachDayOfInterval({
+        start: firstDayCurrentMonth,
+        end: endOfMonth(firstDayCurrentMonth),
+    });
+
+    const startOfThisMonth = new Date(
+        parse(currentMonth, "MMM-yyyy", new Date()).getFullYear(),
+        parse(currentMonth, "MMM-yyyy", new Date()).getMonth(),
+        1
+    ).toISOString();
+    const endOfThisMonth = new Date(
+        parse(currentMonth, "MMM-yyyy", new Date()).getFullYear(),
+        parse(currentMonth, "MMM-yyyy", new Date()).getMonth() + 1,
+        1
+    ).toISOString();
 
     const { data: thisMonthExpenses } = getAllLists<Transaction>(
-        ["Expenses", "Stats this month", user?.userId],
+        ["Expenses", "Stats this month", user?.userId, startOfThisMonth, endOfThisMonth],
         [
             "6467f9811c14ca905ed5",
             "6467f98b8e8fe5ffa576",
@@ -65,14 +81,6 @@ export const useCalender = () => {
         ],
         { enabled: !!user }
     );
-
-    let [currentMonth, setCurrentMonth] = useState(format(today, "MMM-yyyy"));
-    let firstDayCurrentMonth = parse(currentMonth, "MMM-yyyy", new Date());
-
-    let days = eachDayOfInterval({
-        start: firstDayCurrentMonth,
-        end: endOfMonth(firstDayCurrentMonth),
-    });
 
     const previousMonth = () => {
         let firstDayNextMonth = add(firstDayCurrentMonth, { months: -1 });
