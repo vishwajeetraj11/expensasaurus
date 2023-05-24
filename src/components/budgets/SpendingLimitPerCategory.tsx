@@ -9,6 +9,7 @@ import {
 import { categories } from "expensasaures/shared/constants/categories";
 import { regex } from "expensasaures/shared/constants/constants";
 import { useField, useForm } from "react-final-form";
+import CategoryIcon from "../forms/CategorySelect";
 
 const SpendingLimitPerCategory = () => {
   const form = useForm();
@@ -52,12 +53,13 @@ const SpendingLimitPerCategory = () => {
                       ?.category.toLowerCase()}
                   >
                     {categories.map((category) => {
+                      const CIcon = () => <CategoryIcon category={category} />;
                       return (
                         <SelectBoxItem
                           key={category.id}
                           value={category.category.toLowerCase()}
                           text={category.category}
-                          icon={category.Icon}
+                          icon={CIcon}
                         />
                       );
                     })}
