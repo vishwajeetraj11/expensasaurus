@@ -1,8 +1,19 @@
 import {
+  AcademicCapIcon,
+  AdjustmentsIcon,
   BriefcaseIcon,
-  DesktopComputerIcon,
+  ChartBarIcon,
+  CurrencyDollarIcon,
+  FilmIcon,
+  GlobeIcon,
+  HomeIcon,
+  LibraryIcon,
+  PlusIcon,
+  ShoppingBagIcon,
   TruckIcon,
+  UserCircleIcon,
 } from "@heroicons/react/solid";
+// FilmIcon
 
 export const categories = [
   {
@@ -10,21 +21,24 @@ export const categories = [
     category: "Food",
     description:
       "Expenses related to groceries, dining out, or food delivery services",
-    Icon: TruckIcon,
+    Icon: ShoppingBagIcon,
+    className: "bg-teal-500 text-teal-500",
   },
   {
     id: 2,
     category: "Entertainment",
     description:
       "Expenses related to activities or events for enjoyment or leisure, such as concerts, movies, or amusement parks",
-    Icon: TruckIcon,
+    Icon: FilmIcon,
+    className: "bg-yellow-500 text-yellow-500",
   },
   {
     id: 3,
     category: "Housing",
     description:
       "Expenses related to housing, such as rent or mortgage payments, property taxes, or home insurance",
-    Icon: DesktopComputerIcon,
+    Icon: HomeIcon,
+    className: "bg-orange-500 text-orange-500",
   },
   {
     id: 4,
@@ -32,62 +46,71 @@ export const categories = [
     description:
       "Expenses related to transportation, such as gas, maintenance, or public transportation fees",
     Icon: TruckIcon,
+    className: "bg-indigo-500 text-indigo-500",
   },
   {
     id: 5,
     category: "Healthcare",
     description:
       "Expenses related to healthcare, such as doctor visits, prescriptions, or health insurance premiums",
-    Icon: TruckIcon,
+    Icon: PlusIcon,
+    className: "bg-green-500 text-green-500",
   },
   {
     id: 6,
     category: "Travel",
     description:
       "Expenses related to travel, such as airfare, lodging, or rental cars",
-    Icon: TruckIcon,
+    Icon: GlobeIcon,
+    className: "bg-purple-500 text-purple-500",
   },
   {
     id: 7,
     category: "Education",
     description:
       "Expenses related to education, such as tuition, books, or school supplies",
-    Icon: TruckIcon,
+    Icon: AcademicCapIcon,
+    className: "bg-emerald-500 text-emerald-500",
   },
   {
     id: 8,
     category: "Personal Care",
     description:
       "Expenses related to personal grooming and hygiene, such as haircuts, beauty products, or toiletries",
-    Icon: TruckIcon,
+    Icon: UserCircleIcon,
+    className: "bg-pink-300 text-pink-300",
   },
   {
     id: 9,
     category: "Insurance",
     description:
       "Expenses related to insurance, such as car insurance, health insurance, or life insurance",
-    Icon: TruckIcon,
+    Icon: CurrencyDollarIcon,
+    className: "bg-sky-500 text-sky-500",
   },
   {
     id: 10,
     category: "Savings",
     description:
       "Expenses related to savings, such as contributions to a savings account or retirement account",
-    Icon: TruckIcon,
+    Icon: LibraryIcon,
+    className: "bg-cyan-500 text-cyan-500",
   },
   {
     id: 11,
     category: "Investments",
     description:
       "Expenses related to investments, such as contributions to a 401(k) or IRA",
-    Icon: TruckIcon,
+    Icon: ChartBarIcon,
+    className: "bg-sky-500 text-sky-500",
   },
   {
     id: 12,
     category: "Utilities",
     description:
       "Expenses related to utilities, such as electricity, gas, or water",
-    Icon: TruckIcon,
+    Icon: AdjustmentsIcon,
+    className: "bg-red-500 text-red-500",
   },
   {
     id: 13,
@@ -95,12 +118,14 @@ export const categories = [
     description:
       "Expenses related to running a business, such as rent, utilities, or employee salaries",
     Icon: BriefcaseIcon,
+    className: "bg-blue-600 text-blue-600",
   },
   {
     id: 15,
     category: "Other",
     description: "Expenses that do not fit into any other category",
     Icon: TruckIcon,
+    className: "bg-yellow-500 text-yellow-500",
   },
 ] as const;
 
