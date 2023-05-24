@@ -5,14 +5,13 @@ import {
   DateRangePickerValue,
   SelectBox,
   SelectBoxItem,
-  TableCell,
-  TableRow,
   Text,
   TextInput,
   Title,
 } from "@tremor/react";
 import { Models } from "appwrite";
-import { formatDistance } from "date-fns";
+import ExpenseCalCard from "expensasaures/components/calender/ExpenseCalCard";
+import CategoryIcon from "expensasaures/components/forms/CategorySelect";
 import Layout from "expensasaures/components/layout/Layout";
 import {
   categories,
@@ -103,7 +102,7 @@ const index = () => {
 
   return (
     <Layout>
-      <div className="dark:bg-navy-900 min-h-[100vh]">
+      <div className="dark:bg-navy-900 min-h-[100vh] max-w-[1200px] mx-auto">
         <Title className="text-center py-10">Expenses</Title>
         <div className="flex gap-4">
           <div className="w-[30%] pl-3">
@@ -161,12 +160,13 @@ const index = () => {
                 onValueChange={(value) => setCategory(value)}
               >
                 {categories.map((category) => {
+                  const CIcon = () => <CategoryIcon category={category} />;
                   return (
                     <SelectBoxItem
                       key={category.id}
                       value={category.category.toLowerCase()}
                       text={category.category}
-                      icon={category.Icon}
+                      icon={CIcon}
                     />
                   );
                 })}
@@ -187,27 +187,7 @@ const index = () => {
           </div>
           <div className="w-[70%]">
             {data?.documents?.map((expense) => {
-              return (
-                <TableRow key={expense.$id}>
-                  <TableCell className="text-slate-800">
-                    {expense.title}
-                  </TableCell>
-                  <TableCell>
-                    <Text className="text-slate-800">{expense.category}</Text>
-                  </TableCell>
-                  <TableCell>
-                    <Text className="text-slate-800">{expense.amount}</Text>
-                  </TableCell>
-                  <TableCell className="text-slate-800">
-                    {formatDistance(new Date(expense.date), new Date())}
-                  </TableCell>
-                  <TableCell className="text-slate-800">
-                    <button type="button" onClick={() => onDelete(expense)}>
-                      Delete
-                    </button>
-                  </TableCell>
-                </TableRow>
-              );
+              return <ExpenseCalCard expense={expense} key={expense.$id} />;
             })}
           </div>
         </div>
