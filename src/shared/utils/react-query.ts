@@ -1,7 +1,6 @@
 import { DateRangePickerValue } from "@tremor/react";
 import { Models, Query } from "appwrite";
 import { isEqual, isValid } from "date-fns";
-import { toast } from "sonner";
 import { Transaction } from "../types/transaction";
 
 type params = {
@@ -53,7 +52,7 @@ export const getQueryForExpenses = ({
             ).toISOString();
             result.push(Query.lessThanEqual('date', lastDateMarked))
         } else {
-            toast.error('Both dates equal')
+            // toast.error('Both dates equal')
             result.push(Query.lessThanEqual('date', endOfTheDay))
         }
     }
@@ -71,4 +70,48 @@ export const getQueryForExpenses = ({
     if (limit) { result.push(Query.limit(limit)) }
     if (orderByDesc) { result.push(Query.orderDesc(orderByDesc)) }
     return result
+}
+
+type categoryParams = Pick<params, 'dates' | 'user'>
+
+export const getQueryForCategoryPage = ({
+    user, dates
+}: categoryParams) => {
+    const result = [];
+    const validDates = dates.filter((date) => {
+        return isValid(date)
+    }) as Date[];
+
+    if (validDates.length > 0) {
+
+        const startOfTheMonth = new Date(
+            validDates[0].getFullYear(),
+            validDates[0].getMonth(),
+            validDates[0].getDate()
+        ).toISOString();
+
+        const endOfTheDayForStartOfMonth = new Date(
+            validDates[0].getFullYear(),
+            validDates[0].getMonth(),
+            validDates[0].getDate() + 1
+        ).toISOString();
+
+        if (startOfTheMonth) {
+            result.push(Query.greaterThanEqual('date', startOfTheMonth))
+        }
+
+        if (validDates?.[1] && !isEqual(validDates[1], validDates[0])) {
+            const lastDateMarked = new Date(
+                validDates[1].getFullYear(),
+                validDates[1].getMonth(),
+                validDates[1].getDate()
+            ).toISOString();
+            result.push(Query.lessThanEqual('date', lastDateMarked))
+        } else {
+            // toast.error('Both dates equal')
+            result.push(Query.lessThanEqual('date', endOfTheDayForStartOfMonth))
+        }
+    }
+
+    return [Query.equal("userId", user?.userId), ...result]
 }
