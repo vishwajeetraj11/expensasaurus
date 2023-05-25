@@ -1,3 +1,4 @@
+import { isValid } from 'date-fns';
 import { MutableState, Tools } from 'final-form';
 
 type mutatorsType = (
@@ -61,5 +62,33 @@ export const validateExpenseForm = (values: any) => {
 
 export const validateBudgetForm = (values: any) => {
     const errors: any = {};
+
+    // Validate dates
+    if (!Array.isArray(values.dates) || values.dates.length === 0) {
+        errors['dates'] = "Please provide at least one date.";
+    } else if (values.dates.length > 2) {
+        errors['dates'] = "You can only provide a maximum of two dates.";
+    } else {
+        for (const date of values.dates) {
+            if (!isValid(date)) {
+                errors['dates'] = 'Invalid date';
+            }
+        }
+    }
+
+    // Validate title
+    if (values.title.trim() === "") {
+        errors['title'] = 'Title cannot be empty.';
+    }
+
+    // Validate amount
+    if (Number(values.amount) <= 0) {
+        errors['amount'] = ("Amount must be a positive number.");
+    }
+
+    // Validate categories
+    if (typeof values.categories !== "object" || values.categories === null) {
+        errors['categories'] = "Categories must be a key-value pair object.";
+    }
     return errors;
 }
