@@ -3,20 +3,20 @@ import {
   DateRangePicker,
   DateRangePickerValue,
   Flex,
-  LineChart,
   Text,
   Title,
 } from "@tremor/react";
-import { Models, Query } from "appwrite";
+import { Models } from "appwrite";
 import clsx from "clsx";
 import Layout from "expensasaures/components/layout/Layout";
-import useDates, { dataFormatter } from "expensasaures/hooks/useDates";
+import useDates from "expensasaures/hooks/useDates";
 import { categories } from "expensasaures/shared/constants/categories";
 import { getAllLists } from "expensasaures/shared/services/query";
 import { useAuthStore } from "expensasaures/shared/stores/useAuthStore";
 import { Transaction } from "expensasaures/shared/types/transaction";
 import { calculateTotalExpensesByCategory } from "expensasaures/shared/utils/calculation";
 import { capitalize } from "expensasaures/shared/utils/common";
+import { getQueryForCategoryPage } from "expensasaures/shared/utils/react-query";
 import { useRouter } from "next/router";
 import { useState } from "react";
 import { shallow } from "zustand/shallow";
@@ -32,16 +32,14 @@ const Categories = () => {
     user: Models.Session;
   };
   const { data: thisMonthExpenses } = getAllLists<Transaction>(
-    ["Expenses", "Stats this month", user?.userId],
+    ["Expenses", "Stats this month", user?.userId, dates[0], dates[1]],
     [
       "6467f9811c14ca905ed5",
       "6467f98b8e8fe5ffa576",
-      [
-        Query.equal("userId", user?.userId),
-        Query.lessThanEqual("date", endOfThisMonth),
-        Query.greaterThan("date", startOfThisMonth),
-        Query.orderAsc("date"),
-      ],
+      getQueryForCategoryPage({
+        dates,
+        user,
+      }),
     ],
     { enabled: !!user }
   );
@@ -106,7 +104,7 @@ const Categories = () => {
             className="mt-3"
           />
         </div> */}
-        <Text className="mb-4">Expenses per category for this month.</Text>
+        <Text className="mb-4">Expenses per category</Text>
         <div className="grid xl:grid-cols-4  lg:grid-cols-3 md:grid-cols-2 grid-cols-1 gap-4">
           {Object.entries(expensesByCategoriesThisMonth).map(
             ([category, value], i) => {
@@ -151,7 +149,7 @@ const Categories = () => {
                       </Text>
                     </div>
                   </div>
-                  {false && thisMonthExpenses?.documents
+                  {/* {false && thisMonthExpenses?.documents
                     ? thisMonthExpenses?.documents.length > 0 && (
                         <LineChart
                           className="h-80 mt-8"
@@ -179,7 +177,7 @@ const Categories = () => {
                           showXAxis
                         />
                       )
-                    : null}
+                    : null} */}
                 </Card>
               );
             }
