@@ -17,7 +17,6 @@ import {
   categories,
   categoryNames,
 } from "expensasaures/shared/constants/categories";
-import { database } from "expensasaures/shared/services/appwrite";
 import { getAllLists } from "expensasaures/shared/services/query";
 import { useAuthStore } from "expensasaures/shared/stores/useAuthStore";
 import { Transaction } from "expensasaures/shared/types/transaction";
@@ -26,7 +25,6 @@ import { getQueryForExpenses } from "expensasaures/shared/utils/react-query";
 import dynamic from "next/dynamic";
 import Link from "next/link";
 import { useEffect, useState } from "react";
-import { toast } from "sonner";
 import { shallow } from "zustand/shallow";
 
 const index = () => {
@@ -86,19 +84,6 @@ const index = () => {
     setQuery("");
     setTag("");
     setCategory("");
-  };
-
-  const onDelete = async (expense: Transaction) => {
-    try {
-      const data = await database.deleteDocument(
-        "6467f9811c14ca905ed5",
-        "6467f98b8e8fe5ffa576",
-        expense.$id
-      );
-      toast.success("Expense deleted successfully");
-    } catch (error) {
-      toast.error("Expense deletion failed.");
-    }
   };
 
   return (
