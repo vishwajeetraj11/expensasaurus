@@ -2,6 +2,7 @@ import { LocalizationProvider } from "@mui/x-date-pickers";
 import { AdapterDateFns } from "@mui/x-date-pickers/AdapterDateFns";
 import { Button, DateRangePicker } from "@tremor/react";
 import { Models, Role } from "appwrite";
+import { ENVS } from "expensasaures/shared/constants/constants";
 import {
   ID,
   Permission,
@@ -13,7 +14,6 @@ import {
   validateBudgetForm,
 } from "expensasaures/shared/utils/form";
 import dynamic from "next/dynamic";
-import Link from "next/link";
 import { Field, Form } from "react-final-form";
 import { toast } from "sonner";
 import { shallow } from "zustand/shallow";
@@ -29,19 +29,34 @@ const BudgetForm = () => {
 
   const handleSubmit = async (values: Record<string, any>) => {
     try {
+      if (values.categories && values.amount) {
+        const categorySumsArray = Object.entries(values.categories).map(
+          ([_, value]) => value
+        ) as number[];
+
+        const totalCategoriesSum = categorySumsArray.reduce(
+          (accumulator, currentValue) => accumulator + currentValue,
+          0
+        );
+
+        if (totalCategoriesSum > values.amount) {
+          // return toast.error("Total category sum cannot be greater than amount");
+          return;
+        }
+      }
       const createdBudget = await database.createDocument(
-        "6467f9811c14ca905ed5",
-        "6467f98b8e8fe5ffa576",
+        ENVS.DB_ID,
+        ENVS.COLLECTIONS.BUDGETS,
         ID.unique(),
         {
           title: values.title,
           description: values.description,
-          amount: values.amount,
-          category: values.category,
-          tag: values.tag,
-          date: values.date,
           userId: user?.userId,
+          startingDate: values.dates[0],
+          endDate: values.dates[1],
+          amount: values.amount,
           currency: values.currency,
+          ...values.category,
         },
         [
           Permission.read(Role.user(user.userId)),
@@ -49,6 +64,7 @@ const BudgetForm = () => {
           Permission.delete(Role.user(user.userId)),
         ]
       );
+
       toast.success("Expense created successfully");
     } catch (error) {
       console.log(error);
@@ -58,7 +74,6 @@ const BudgetForm = () => {
 
   return (
     <div>
-      <Link href={"/expenses"}>Expenses</Link>
       <LocalizationProvider dateAdapter={AdapterDateFns}>
         <Form
           validate={validateBudgetForm}
@@ -66,15 +81,19 @@ const BudgetForm = () => {
           mutators={defaultMutators}
           initialValues={{
             dates: [],
+            title: "",
+            description: "",
+            amount: "",
+            currency: "INR",
             categories: {},
           }}
         >
-          {({ errors, handleSubmit }) => {
+          {({ errors, values, handleSubmit }) => {
             return (
-              <div className="w-[800px] flex flex-col gap-4">
+              <div className="max-w-[500px] mx-auto flex flex-col gap-4">
                 <form onSubmit={handleSubmit}>
                   <Field
-                    name="date"
+                    name="dates"
                     component={"input"}
                     label="Date"
                     type="date"
@@ -82,12 +101,17 @@ const BudgetForm = () => {
                     {({ meta, input }) => (
                       <>
                         <DateRangePicker
-                          className="max-w-md mx-auto"
+                          // minDate={new Date()}
                           value={input.value}
                           onValueChange={(value) => {
                             input.onChange(value);
                           }}
                         />
+                        {meta.touched && meta.error && (
+                          <p className="text-xs text-red-500 mt-2">
+                            {meta.error}
+                          </p>
+                        )}
                       </>
                     )}
                   </Field>
@@ -151,13 +175,22 @@ const BudgetForm = () => {
                     )}
                   </Field>
 
-                  <Field name="category">
-                    {() => <SpendingLimitPerCategory />}
+                  <Field name="categories">
+                    {({ meta }) => (
+                      <>
+                        <SpendingLimitPerCategory />
+                        {meta.touched && meta.error && (
+                          <p className="text-xs text-red-500 mt-2">
+                            {meta.error}
+                          </p>
+                        )}
+                      </>
+                    )}
                   </Field>
 
                   <Button
                     size="lg"
-                    className="w-full"
+                    className="w-full mt-10"
                     variant="primary"
                     type="submit"
                   >
