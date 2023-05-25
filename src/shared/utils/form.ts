@@ -1,4 +1,4 @@
-import { isValid } from 'date-fns';
+import { isSameDay, isValid } from 'date-fns';
 import { MutableState, Tools } from 'final-form';
 
 type mutatorsType = (
@@ -64,16 +64,15 @@ export const validateBudgetForm = (values: any) => {
     const errors: any = {};
 
     // Validate dates
-    if (!Array.isArray(values.dates) || values.dates.length === 0) {
-        errors['dates'] = "Please provide at least one date.";
-    } else if (values.dates.length > 2) {
-        errors['dates'] = "You can only provide a maximum of two dates.";
+    const dates = values.dates;
+
+    if (!isValid(dates[0]) || !isValid(dates[1])) {
+        errors['dates'] = 'Please select starting and ending dates.';
     } else {
-        for (const date of values.dates) {
-            if (!isValid(date)) {
-                errors['dates'] = 'Invalid date';
-            }
-        }
+        errors.dates = undefined;
+    }
+    if (isSameDay(dates[0], dates[1])) {
+        errors['dates'] = 'Please select different dates.';
     }
 
     // Validate title
@@ -87,8 +86,8 @@ export const validateBudgetForm = (values: any) => {
     }
 
     // Validate categories
-    if (typeof values.categories !== "object" || values.categories === null) {
-        errors['categories'] = "Categories must be a key-value pair object.";
+    if (Object.keys(values.categories).length === 0) {
+        errors['categories'] = "All selected categories must sum to 100% of the amount.";
     }
     return errors;
 }
