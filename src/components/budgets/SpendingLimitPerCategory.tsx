@@ -8,6 +8,7 @@ import {
 } from "@tremor/react";
 import { categories } from "expensasaures/shared/constants/categories";
 import { regex } from "expensasaures/shared/constants/constants";
+import { capitalize } from "expensasaures/shared/utils/common";
 import { useField, useForm } from "react-final-form";
 import CategoryIcon from "../forms/CategorySelect";
 
@@ -16,6 +17,7 @@ const SpendingLimitPerCategory = () => {
   const formState = form.getState();
   const { input, meta } = useField("category");
   const category = formState.values.categories as Record<string, number>;
+  const amount = formState.values.amount;
   const onAddCategory = () => {
     if (category["category"]) {
       return;
@@ -24,12 +26,20 @@ const SpendingLimitPerCategory = () => {
     res["category"] = 0;
     form.mutators.setFieldValue("categories", res);
   };
+  const totalCategoriesSum = Object.entries(category)
+    .map(([_, value]) => value)
+    .reduce((accumulator, currentValue) => accumulator + currentValue, 0);
 
   return (
     <div className="mb-10">
       <div className="flex items-center justify-between mb-4">
         <Text>Category</Text>
-        <Button type="button" variant="primary" onClick={onAddCategory}>
+        <Button
+          disabled={!Boolean(amount) || totalCategoriesSum >= amount}
+          type="button"
+          variant="primary"
+          onClick={onAddCategory}
+        >
           + Add Category
         </Button>
       </div>
@@ -80,19 +90,17 @@ const SpendingLimitPerCategory = () => {
                     }}
                   />
                 </div>
+                {category[key] > amount && (
+                  <p className="text-xs text-red-500 text-right">
+                    {capitalize(key)} cannot be more than total spending limit
+                  </p>
+                )}
               </>
             );
           })}
         <Flex>
           <Text>Total</Text>
-          <Text>
-            {Object.entries(category)
-              .map(([_, value]) => value)
-              .reduce(
-                (accumulator, currentValue) => accumulator + currentValue,
-                0
-              )}
-          </Text>
+          <Text>{totalCategoriesSum}</Text>
         </Flex>
       </div>
     </div>
