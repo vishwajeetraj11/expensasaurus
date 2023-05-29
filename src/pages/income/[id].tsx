@@ -1,5 +1,6 @@
 import { Models } from "appwrite";
 import Layout from "expensasaures/components/layout/Layout";
+import { ENVS } from "expensasaures/shared/constants/constants";
 import { getDoc } from "expensasaures/shared/services/query";
 import { useAuthStore } from "expensasaures/shared/stores/useAuthStore";
 import { Transaction } from "expensasaures/shared/types/transaction";
@@ -16,7 +17,7 @@ const id = () => {
 
   const { data } = getDoc<Transaction>(
     ["Income by ID", id, user?.userId],
-    ["6467f9811c14ca905ed5", "646879f739377942444c", id as string],
+    [ENVS.DB_ID, "646879f739377942444c", id as string],
     { enabled: !!user }
   );
 

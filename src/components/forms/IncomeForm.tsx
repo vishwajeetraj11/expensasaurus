@@ -3,6 +3,7 @@ import { AdapterDateFns } from "@mui/x-date-pickers/AdapterDateFns";
 import { Button, SelectBox, SelectBoxItem } from "@tremor/react";
 import { Models, Role } from "appwrite";
 import { incomeCategories } from "expensasaures/shared/constants/categories";
+import { ENVS } from "expensasaures/shared/constants/constants";
 import {
   ID,
   Permission,
@@ -28,7 +29,7 @@ const IncomeForm = () => {
   const handleSubmit = async (values: Record<string, any>) => {
     try {
       const createdExpense = await database.createDocument(
-        "6467f9811c14ca905ed5",
+        ENVS.DB_ID,
         "646879f739377942444c",
         ID.unique(),
         {

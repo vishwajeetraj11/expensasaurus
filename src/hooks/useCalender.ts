@@ -7,6 +7,7 @@ import {
     parse,
     startOfToday
 } from "date-fns";
+import { ENVS } from "expensasaures/shared/constants/constants";
 
 import { getAllLists } from "expensasaures/shared/services/query";
 import { useAuthStore } from "expensasaures/shared/stores/useAuthStore";
@@ -37,7 +38,7 @@ export const useCalender = () => {
     const { data } = getAllLists<Transaction>(
         ["Expenses", user?.userId, selectedDay],
         [
-            "6467f9811c14ca905ed5",
+            ENVS.DB_ID,
             "6467f98b8e8fe5ffa576",
             [
                 Query.equal("userId", user?.userId),
@@ -70,7 +71,7 @@ export const useCalender = () => {
     const { data: thisMonthExpenses } = getAllLists<Transaction>(
         ["Expenses", "Stats this month", user?.userId, startOfThisMonth, endOfThisMonth],
         [
-            "6467f9811c14ca905ed5",
+            ENVS.DB_ID,
             "6467f98b8e8fe5ffa576",
             [
                 Query.equal("userId", user?.userId),

@@ -1,6 +1,7 @@
 import {
     Models, Query
 } from 'appwrite';
+import { ENVS } from 'expensasaures/shared/constants/constants';
 import { getAllLists } from 'expensasaures/shared/services/query';
 import { useAuthStore } from 'expensasaures/shared/stores/useAuthStore';
 import { DashboardStat, Transaction } from 'expensasaures/shared/types/transaction';
@@ -20,7 +21,7 @@ const useDashboard = () => {
     const { data: thisMonthExpenses } = getAllLists<Transaction>(
         ["Expenses", "Stats this month", user?.userId],
         [
-            "6467f9811c14ca905ed5",
+            ENVS.DB_ID,
             "6467f98b8e8fe5ffa576",
             [
                 Query.equal("userId", user?.userId),
@@ -35,7 +36,7 @@ const useDashboard = () => {
     const { data: earlierMonthExpenses } = getAllLists<Transaction>(
         ["Expenses", "Stats earlier month", user?.userId],
         [
-            "6467f9811c14ca905ed5",
+            ENVS.DB_ID,
             "6467f98b8e8fe5ffa576",
             [
                 Query.equal("userId", user?.userId),
@@ -49,7 +50,7 @@ const useDashboard = () => {
     const { data: thisMonthIncomes } = getAllLists<Transaction>(
         ["Incomes", "Stats this month", user?.userId],
         [
-            "6467f9811c14ca905ed5",
+            ENVS.DB_ID,
             "646879f739377942444c",
             [
                 Query.equal("userId", user?.userId),
@@ -63,7 +64,7 @@ const useDashboard = () => {
     const { data: earlierMonthIncomes } = getAllLists<Transaction>(
         ["Incomes", "Stats earlier month", user?.userId],
         [
-            "6467f9811c14ca905ed5",
+            ENVS.DB_ID,
             "646879f739377942444c",
             [
                 Query.equal("userId", user?.userId),

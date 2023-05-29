@@ -1,5 +1,6 @@
 import { Models, Query } from "appwrite";
 import { format, isSameDay, isTomorrow } from "date-fns";
+import { ENVS } from "expensasaures/shared/constants/constants";
 import { getAllLists } from "expensasaures/shared/services/query";
 import { useAuthStore } from "expensasaures/shared/stores/useAuthStore";
 import { Transaction } from "expensasaures/shared/types/transaction";
@@ -32,7 +33,7 @@ const ExpenseList = (props: Props) => {
   const { data, isLoading } = getAllLists<Transaction>(
     ["Expenses", user?.userId, selectedDay],
     [
-      "6467f9811c14ca905ed5",
+      ENVS.DB_ID,
       "6467f98b8e8fe5ffa576",
       [
         Query.equal("userId", user?.userId),
