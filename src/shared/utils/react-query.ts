@@ -5,7 +5,7 @@ import { Transaction } from "../types/transaction";
 
 type params = {
     user: Models.Session,
-    limit: number,
+    limit?: number,
     orderByDesc?: keyof Transaction,
     orderByAesc?: keyof Transaction,
     dates: DateRangePickerValue,
