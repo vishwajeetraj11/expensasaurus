@@ -1,5 +1,4 @@
 import {
-  Card,
   DateRangePicker,
   DateRangePickerValue,
   Flex,
@@ -7,10 +6,11 @@ import {
   Title,
 } from "@tremor/react";
 import { Models } from "appwrite";
-import clsx from "clsx";
+import ExpenseByCategory from "expensasaures/components/category/ExpenseByCategory";
 import Layout from "expensasaures/components/layout/Layout";
 import useDates from "expensasaures/hooks/useDates";
 import { categories } from "expensasaures/shared/constants/categories";
+import { ENVS } from "expensasaures/shared/constants/constants";
 import { getAllLists } from "expensasaures/shared/services/query";
 import { useAuthStore } from "expensasaures/shared/stores/useAuthStore";
 import { Transaction } from "expensasaures/shared/types/transaction";
@@ -18,7 +18,7 @@ import { calculateTotalExpensesByCategory } from "expensasaures/shared/utils/cal
 import { capitalize } from "expensasaures/shared/utils/common";
 import { getQueryForCategoryPage } from "expensasaures/shared/utils/react-query";
 import { useRouter } from "next/router";
-import { useState } from "react";
+import { Fragment, useState } from "react";
 import { shallow } from "zustand/shallow";
 
 const Categories = () => {
@@ -34,7 +34,7 @@ const Categories = () => {
   const { data: thisMonthExpenses } = getAllLists<Transaction>(
     ["Expenses", "Stats this month", user?.userId, dates[0], dates[1]],
     [
-      "6467f9811c14ca905ed5",
+      ENVS.DB_ID,
       "6467f98b8e8fe5ffa576",
       getQueryForCategoryPage({
         dates,
@@ -112,73 +112,16 @@ const Categories = () => {
                 (c) => c.category === capitalize(category)
               );
               const SelectedIcon = categoryInfo?.Icon;
-
+              if (!categoryInfo) return <Fragment key={i}></Fragment>;
               return (
-                <Card
-                  onClick={() => {
-                    router.push(
-                      `/expenses?category=${encodeURIComponent(category)}`
-                    );
-                  }}
-                  className="box-shadow-card border-none ring-0 cursor-pointer"
+                <ExpenseByCategory
                   key={i}
-                >
-                  <div className="flex">
-                    {SelectedIcon && (
-                      <div
-                        className={clsx(
-                          "w-10 h-10 bg-opacity-25 rounded-full flex items-center justify-center mr-3",
-                          categoryInfo.className
-                        )}
-                      >
-                        <SelectedIcon className="w-5 h-5" />
-                      </div>
-                    )}
-                    <div className="flex flex-col flex-1">
-                      <div className="flex items-center justify-between">
-                        <Text className="font-medium text-slate-700">
-                          {capitalize(category)}
-                        </Text>
-                        <Text className="font-bold text-slate-900">
-                          ₹{value.amount}
-                        </Text>
-                      </div>
-                      <Text className="text-slate-700">
-                        {value.transactionsCount} transaction
-                        {value.transactionsCount > 1 ? "s" : ""}
-                      </Text>
-                    </div>
-                  </div>
-                  {/* {false && thisMonthExpenses?.documents
-                    ? thisMonthExpenses?.documents.length > 0 && (
-                        <LineChart
-                          className="h-80 mt-8"
-                          data={thisMonthExpenses?.documents
-                            .filter((expense) => expense.category === category)
-                            .map((expense) => {
-                              const date = new Date(expense.date);
-                              const dateResult =
-                                date.getDate() +
-                                "." +
-                                (date.getMonth() + 1) +
-                                "." +
-                                date.getFullYear();
-                              return {
-                                date: dateResult,
-                                amount: expense.amount,
-                              };
-                            })}
-                          index="date"
-                          categories={["amount"]}
-                          colors={["blue"]}
-                          valueFormatter={dataFormatter}
-                          showLegend={false}
-                          yAxisWidth={60}
-                          showXAxis
-                        />
-                      )
-                    : null} */}
-                </Card>
+                  category={category}
+                  categoryInfo={categoryInfo}
+                  SelectedIcon={SelectedIcon}
+                  value={value}
+                  i={i}
+                />
               );
             }
           )}
