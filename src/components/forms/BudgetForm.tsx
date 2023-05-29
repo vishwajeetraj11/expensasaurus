@@ -44,6 +44,14 @@ const BudgetForm = () => {
           return;
         }
       }
+
+      const categoriesNum = Object.fromEntries(
+        Object.entries(values.categories).map(([key, value]) => [
+          key,
+          Number(value),
+        ])
+      );
+
       const createdBudget = await database.createDocument(
         ENVS.DB_ID,
         ENVS.COLLECTIONS.BUDGETS,
@@ -54,9 +62,9 @@ const BudgetForm = () => {
           userId: user?.userId,
           startingDate: values.dates[0],
           endDate: values.dates[1],
-          amount: values.amount,
+          amount: Number(values.amount),
           currency: values.currency,
-          ...values.category,
+          ...categoriesNum,
         },
         [
           Permission.read(Role.user(user.userId)),
@@ -65,10 +73,10 @@ const BudgetForm = () => {
         ]
       );
 
-      toast.success("Expense created successfully");
+      toast.success("Budget created successfully");
     } catch (error) {
       console.log(error);
-      toast.error("Expense creation failed");
+      toast.error("Budget creation failed");
     }
   };
 
