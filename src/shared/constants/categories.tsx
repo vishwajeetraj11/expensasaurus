@@ -231,3 +231,10 @@ export const incomeCategories = [
 export const categoryNames: string[] = categories.map(
   (category) => category.category
 );
+
+export const categoryKeys = categories.map((category) => category.key);
+export type categoryKey = (typeof categoryKeys)[number];
+
+export type ExpensesByCategory = {
+  [key in categoryKey]: number;
+};
