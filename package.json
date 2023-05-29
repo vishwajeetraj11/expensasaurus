@@ -11,9 +11,13 @@
   "dependencies": {
     "@emotion/react": "^11.11.0",
     "@emotion/styled": "^11.11.0",
+    "@faker-js/faker": "^8.0.1",
+    "@headlessui/react": "^1.7.14",
     "@heroicons/react": "1.0.6",
     "@mui/material": "^5.13.1",
     "@mui/x-date-pickers": "^6.4.0",
+    "@tanstack/match-sorter-utils": "^8.8.4",
+    "@tanstack/react-table": "^8.9.1",
     "@tremor/react": "^2.6.2",
     "@types/node": "20.1.6",
     "@types/react": "18.2.6",
