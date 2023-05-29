@@ -3,6 +3,7 @@ import { Models } from "appwrite";
 
 import { startOfYear, subDays } from "date-fns";
 import { dataFormatter } from "expensasaures/hooks/useDates";
+import { ENVS } from "expensasaures/shared/constants/constants";
 import { getAllLists } from "expensasaures/shared/services/query";
 import { useAuthStore } from "expensasaures/shared/stores/useAuthStore";
 import { Transaction } from "expensasaures/shared/types/transaction";
@@ -19,7 +20,7 @@ export default function LineChartTabs() {
   };
   const { data: thisMonthExpenses, isSuccess } = getAllLists<Transaction>(
     ["Expenses", "Stats this month", user?.userId],
-    ["6467f9811c14ca905ed5", "6467f98b8e8fe5ffa576", []],
+    [ENVS.DB_ID, "6467f98b8e8fe5ffa576", []],
     {
       enabled: false,
     }
