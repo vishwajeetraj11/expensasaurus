@@ -1,4 +1,10 @@
-import { QueryKey, UseQueryOptions, useQuery } from "react-query";
+import {
+  QueryKey,
+  UseMutationOptions,
+  UseQueryOptions,
+  useMutation,
+  useQuery,
+} from "react-query";
 import { database } from "./appwrite";
 
 export interface InfiniteScrollApiParams<B extends any = any> {
@@ -49,6 +55,20 @@ export const QueryFactoryOneDoc = <T extends unknown>(
   );
 };
 
+export const QueryFactoryDeleteDoc = (
+  queryKey: QueryKey,
+  query: [string, string, string],
+  options?: UseMutationOptions<any, any, any>
+) => {
+  return useMutation<any, any, any>(
+    queryKey,
+    async () => {
+      return database.deleteDocument(...query).then((result) => result);
+    },
+    options
+  );
+};
+
 export const getAllLists = <T extends unknown>(
   queryKey: QueryKey,
   query: [string, string, string[]],
@@ -58,8 +78,14 @@ export const getAllLists = <T extends unknown>(
 export const getDoc = <T extends unknown>(
   queryKey: QueryKey,
   query: [string, string, string],
-  options: UseQueryOptions<DocumentListType<T>, any, any>
+  options: UseQueryOptions<T, any, any>
 ) => QueryFactoryOneDoc(queryKey, query, options);
+
+export const deleteDoc = (
+  queryKey: QueryKey,
+  query: [string, string, string],
+  options: UseMutationOptions<any, any, any>
+) => QueryFactoryDeleteDoc(queryKey, query, options);
 
 // export const InfiniteQueryFactory = <
 //   T extends unknown,
