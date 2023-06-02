@@ -85,13 +85,13 @@ const ExpenseForm = () => {
   return (
     <div>
       <LocalizationProvider dateAdapter={AdapterDateFns}>
-        {data ? (
+        {(isUpdateRoute && data) || !isUpdateRoute ? (
           <Form
             validate={validateExpenseForm}
             onSubmit={handleSubmit}
             initialValues={
               isUpdateRoute
-                ? { ...data, date: new Date(data.date) }
+                ? { ...data, date: new Date(data?.date as string) }
                 : {
                     title: "",
                     description: "",
@@ -243,7 +243,7 @@ const ExpenseForm = () => {
                     </Field>
                     <Button
                       size="lg"
-                      className="w-full"
+                      className="w-full mt-4"
                       variant="primary"
                       type="submit"
                     >
