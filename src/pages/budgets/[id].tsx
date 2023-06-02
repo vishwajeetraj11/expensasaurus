@@ -1,5 +1,6 @@
 import { Metric, Title } from "@tremor/react";
 import { Models, Query } from "appwrite";
+import EBarChart from "expensasaures/components/budgets/BudgetBarChart";
 import ExpenseByCategory from "expensasaures/components/category/ExpenseByCategory";
 import Layout from "expensasaures/components/layout/Layout";
 import { categories } from "expensasaures/shared/constants/categories";
@@ -8,7 +9,7 @@ import { getAllLists, getDoc } from "expensasaures/shared/services/query";
 import { useAuthStore } from "expensasaures/shared/stores/useAuthStore";
 import { Budget } from "expensasaures/shared/types/budget";
 import { Transaction } from "expensasaures/shared/types/transaction";
-import { calculateTotalExpensesByCategory } from "expensasaures/shared/utils/calculation";
+import { calcTotalExpByCategoryBuget } from "expensasaures/shared/utils/calculation";
 import { capitalize } from "expensasaures/shared/utils/common";
 import { useRouter } from "next/router";
 import { Fragment } from "react";
@@ -56,46 +57,83 @@ const id = () => {
     transportation: data?.transportation || 0,
   };
 
-  const expensesByCategory = calculateTotalExpensesByCategory(
+  const expensesByCategory = calcTotalExpByCategoryBuget(
     budgetDurationExpenses?.documents || []
   );
 
   const match = () => {
-    const res: any = {};
-    const njk = Object.fromEntries(
+    const graphData: {
+      topic: string;
+      budget: number;
+      spending: number;
+    }[] = [];
+    const result = Object.fromEntries(
       Object.entries(budgetByCategory).map(([key, val]) => {
-        return [key, { budget: val, ...expensesByCategory[key] }];
+        if (!expensesByCategory[key])
+          return [
+            key,
+            {
+              budget: val,
+              currency: "INR",
+              amount: 0,
+              transactionsCount: 0,
+              budgetPercent: 0,
+            },
+          ];
+        graphData.push({
+          topic: key,
+          budget: val,
+          spending: expensesByCategory[key].amount,
+        });
+        return [
+          key,
+          {
+            budget: val,
+            ...expensesByCategory[key],
+            budgetPercent:
+              val === 0 && expensesByCategory[key].amount === 0
+                ? 0
+                : val > expensesByCategory[key].amount
+                ? (expensesByCategory[key].amount / val) * 100
+                : 100,
+          },
+        ];
       })
     );
-    return njk;
+    return { result, graphData };
   };
 
   return (
     <Layout>
-      <div className="mx-auto max-w-[1200px] pt-10">
+      <div className="mx-auto max-w-[1200px] pt-10 block">
         <Metric className="text-slate-600 mb-4">Spending Limit</Metric>
-        <Title>{data?.title}</Title>
-        {Object.entries(match()).map(([category, value], i) => {
-          const categoryInfo = categories.find(
-            (c) => c.category === capitalize(category)
-          );
-          const SelectedIcon = categoryInfo?.Icon;
-          if (!categoryInfo) return <Fragment key={i}></Fragment>;
-          return (
-            <ExpenseByCategory
-              key={i}
-              category={category}
-              categoryInfo={categoryInfo}
-              SelectedIcon={SelectedIcon}
-              value={{
-                amount: value.amount,
-                transactionsCount: value.transactionsCount,
-                budget: value.budget,
-              }}
-              i={i}
-            />
-          );
-        })}
+        <Title className="mb-4">{data?.title}</Title>
+        <div className="grid grid-cols-3 gap-4">
+          {Object.entries(match().result).map(([category, value], i) => {
+            const categoryInfo = categories.find(
+              (c) => c.category === capitalize(category)
+            );
+            const SelectedIcon = categoryInfo?.Icon;
+            if (!categoryInfo) return <Fragment key={i}></Fragment>;
+            return (
+              <ExpenseByCategory
+                key={i}
+                category={category}
+                categoryInfo={categoryInfo}
+                SelectedIcon={SelectedIcon}
+                value={{
+                  currency: value.currency,
+                  amount: value.amount,
+                  transactionsCount: value.transactionsCount,
+                  budget: value.budget,
+                  budgetPercent: value.budgetPercent,
+                }}
+                i={i}
+              />
+            );
+          })}
+        </div>
+        <EBarChart data={match().graphData} />
       </div>
     </Layout>
   );
