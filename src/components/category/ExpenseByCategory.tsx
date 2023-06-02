@@ -2,6 +2,7 @@ import { Card, Text } from "@tremor/react";
 import clsx from "clsx";
 import { categories } from "expensasaures/shared/constants/categories";
 import { capitalize } from "expensasaures/shared/utils/common";
+import { formatCurrency } from "expensasaures/shared/utils/currency";
 import { useRouter } from "next/router";
 
 interface Props {
@@ -10,6 +11,8 @@ interface Props {
     amount: number;
     transactionsCount: number;
     budget?: number;
+    currency: string;
+    budgetPercent?: number;
   };
   categoryInfo: (typeof categories)[number];
   SelectedIcon?: (typeof categories)[number]["Icon"];
@@ -44,15 +47,35 @@ const ExpenseByCategory = (props: Props) => {
             <Text className="font-medium text-slate-700">
               {capitalize(category)}
             </Text>
+
             <Text className="font-bold text-slate-900">
-              ₹{value.amount}
-              {value.budget ? `/${value.budget}` : ""}
+              {value.currency && formatCurrency(value.currency, value.amount)}
+              {value.budget && value.currency
+                ? `/${formatCurrency(value.currency, value.budget)}`
+                : ""}
             </Text>
           </div>
-          <Text className="text-slate-700">
-            {value.transactionsCount} transaction
-            {value.transactionsCount > 1 ? "s" : ""}
-          </Text>
+          <div className="flex">
+            <Text className="text-slate-700">
+              {JSON.stringify(value.transactionsCount)} transaction
+              {value.transactionsCount > 1 || value.transactionsCount === 0
+                ? "s"
+                : ""}
+            </Text>
+            {value.budgetPercent ? (
+              <Text
+                className={clsx(
+                  "ml-auto border rounded-full font-medium px-2 text-xs py-1 mt-1",
+                  "text-slate-600 border-slate-300"
+                  // value.budgetPercent === 100
+                  //   ? "border-red-400 text-red-500"
+                  //   : "border-blue-500 text-blue-600"
+                )}
+              >
+                {value.budgetPercent?.toFixed(1)}%
+              </Text>
+            ) : null}
+          </div>
         </div>
       </div>
     </Card>
