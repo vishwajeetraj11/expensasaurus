@@ -1,14 +1,19 @@
 import {
+  Card,
   DateRangePicker,
   DateRangePickerValue,
   Flex,
+  LineChart,
+  SelectBox,
+  SelectBoxItem,
   Text,
   Title,
 } from "@tremor/react";
 import { Models } from "appwrite";
 import ExpenseByCategory from "expensasaures/components/category/ExpenseByCategory";
+import CategoryIcon from "expensasaures/components/forms/CategorySelect";
 import Layout from "expensasaures/components/layout/Layout";
-import useDates from "expensasaures/hooks/useDates";
+import useDates, { dataFormatter } from "expensasaures/hooks/useDates";
 import { categories } from "expensasaures/shared/constants/categories";
 import { ENVS } from "expensasaures/shared/constants/constants";
 import { getAllLists } from "expensasaures/shared/services/query";
@@ -17,7 +22,6 @@ import { Transaction } from "expensasaures/shared/types/transaction";
 import { calculateTotalExpensesByCategory } from "expensasaures/shared/utils/calculation";
 import { capitalize } from "expensasaures/shared/utils/common";
 import { getQueryForCategoryPage } from "expensasaures/shared/utils/react-query";
-import { useRouter } from "next/router";
 import { Fragment, useState } from "react";
 import { shallow } from "zustand/shallow";
 
@@ -31,6 +35,7 @@ const Categories = () => {
   const { user } = useAuthStore((state) => ({ user: state.user }), shallow) as {
     user: Models.Session;
   };
+  const [selectedCategory, setSelectedCategory] = useState("education");
   const { data: thisMonthExpenses } = getAllLists<Transaction>(
     ["Expenses", "Stats this month", user?.userId, dates[0], dates[1]],
     [
@@ -70,11 +75,23 @@ const Categories = () => {
   //   return { percentageArray, colorClassArray };
   // };
 
-  {
-    /* Category Spending per day */
-  }
+  const txnsByCategory =
+    thisMonthExpenses?.documents
+      .filter((expense) => expense.category === selectedCategory)
+      .map((expense) => {
+        const date = new Date(expense.date);
+        const dateResult =
+          date.getDate() +
+          "." +
+          (date.getMonth() + 1) +
+          "." +
+          date.getFullYear();
+        return {
+          date: dateResult,
+          amount: expense.amount,
+        };
+      }) || [];
 
-  const router = useRouter();
   return (
     <Layout>
       <div className="mx-auto max-w-[1200px]">
@@ -126,6 +143,41 @@ const Categories = () => {
             }
           )}
         </div>
+        <div className="flex justify-between items-center my-10">
+          <Text className="">Category wise transactions</Text>
+          <SelectBox
+            className="w-[300px]"
+            onValueChange={(value) => setSelectedCategory(value as string)}
+            value={selectedCategory}
+          >
+            {categories.map((category, index) => {
+              const CIcon = () => <CategoryIcon category={category} />;
+              return (
+                <SelectBoxItem
+                  key={category.id}
+                  value={category.key}
+                  text={category.category}
+                  icon={CIcon}
+                />
+              );
+            })}
+          </SelectBox>
+        </div>
+        {txnsByCategory.length !== 0 && (
+          <Card className="box-shadow-card">
+            <LineChart
+              className="h-80 mt-8"
+              data={txnsByCategory}
+              index="date"
+              categories={["amount"]}
+              colors={["blue"]}
+              valueFormatter={dataFormatter}
+              showLegend={false}
+              yAxisWidth={60}
+              showXAxis
+            />
+          </Card>
+        )}
       </div>
     </Layout>
   );
