@@ -11,7 +11,7 @@ const DeleteButton = (props: DeleteButtonProps) => {
     className
   );
   return (
-    <button type="button" className={classes} {...props}>
+    <button type="button" {...props} className={classes}>
       <TrashIcon className="text-red-600 w-4 h-4" />
     </button>
   );
