@@ -10,6 +10,7 @@ import {
   Title,
 } from "@tremor/react";
 import { Models } from "appwrite";
+import ESCategoryChart from "expensasaures/components/category/ESCategoryChart";
 import ExpenseByCategory from "expensasaures/components/category/ExpenseByCategory";
 import CategoryIcon from "expensasaures/components/forms/CategorySelect";
 import Layout from "expensasaures/components/layout/Layout";
@@ -35,7 +36,7 @@ const Categories = () => {
   const { user } = useAuthStore((state) => ({ user: state.user }), shallow) as {
     user: Models.Session;
   };
-  const [selectedCategory, setSelectedCategory] = useState("education");
+  const [selectedCategory, setSelectedCategory] = useState("");
   const { data: thisMonthExpenses } = getAllLists<Transaction>(
     ["Expenses", "Stats this month", user?.userId, dates[0], dates[1]],
     [
@@ -94,10 +95,10 @@ const Categories = () => {
 
   return (
     <Layout>
-      <div className="mx-auto max-w-[1200px]">
+      <div className="mx-auto max-w-[1200px] px-4">
         <Title className="py-10 text-center">Category</Title>
         <Flex className="items-baseline mb-10">
-          <div className="">Filters</div>
+          <div className="">Date Range</div>
           <div className="ml-auto">
             <DateRangePicker onValueChange={setDates} value={dates} />
           </div>
@@ -121,7 +122,7 @@ const Categories = () => {
             className="mt-3"
           />
         </div> */}
-        <Text className="mb-4">Expenses per category</Text>
+        <Text className="text-slate-600 mb-4">Expenses per category</Text>
         <div className="grid xl:grid-cols-4  lg:grid-cols-3 md:grid-cols-2 grid-cols-1 gap-4">
           {Object.entries(expensesByCategoriesThisMonth).map(
             ([category, value], i) => {
@@ -144,7 +145,7 @@ const Categories = () => {
           )}
         </div>
         <div className="flex justify-between items-center my-10">
-          <Text className="">Category wise transactions</Text>
+          <Text className="text-slate-600">Category wise transactions</Text>
           <SelectBox
             className="w-[300px]"
             onValueChange={(value) => setSelectedCategory(value as string)}
@@ -163,7 +164,7 @@ const Categories = () => {
             })}
           </SelectBox>
         </div>
-        {txnsByCategory.length !== 0 && (
+        {txnsByCategory.length !== 0 ? (
           <Card className="box-shadow-card">
             <LineChart
               className="h-80 mt-8"
@@ -177,6 +178,8 @@ const Categories = () => {
               showXAxis
             />
           </Card>
+        ) : (
+          <ESCategoryChart />
         )}
       </div>
     </Layout>
