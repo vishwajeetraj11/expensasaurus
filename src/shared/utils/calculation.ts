@@ -1,3 +1,4 @@
+import { categories } from "../constants/categories"
 import { Transaction } from "../types/transaction"
 
 export const calcExpenseStats = (expenses: Transaction[]) => {
@@ -37,13 +38,13 @@ export function calculateTransactionChange(previousMonthTotal: number, currentMo
     };
 }
 
-export function calculateTotalExpensesByCategory(expenses: Transaction[]): Record<string, { amount: number, transactionsCount: number, percentage: number }> {
-    const totalExpensesByCategory: Record<string, { amount: number, transactionsCount: number, percentage: number }> = {};
+export function calculateTotalExpensesByCategory(expenses: Transaction[]): Record<string, { amount: number, transactionsCount: number, percentage: number, currency: string }> {
+    const totalExpensesByCategory: Record<string, { amount: number, transactionsCount: number, percentage: number, currency: string }> = {};
     const totalExpense = expenses.reduce((acc, expense) => acc + expense.amount, 0);
     for (const expense of expenses) {
         const { amount, category } = expense;
         if (!totalExpensesByCategory[category]) {
-            totalExpensesByCategory[category] = { amount: 0, transactionsCount: 0, percentage: 0 }
+            totalExpensesByCategory[category] = { amount: 0, transactionsCount: 0, percentage: 0, currency: expenses[0].currency }
         }
         totalExpensesByCategory[category].amount += amount;
         totalExpensesByCategory[category].transactionsCount += 1;
@@ -52,10 +53,38 @@ export function calculateTotalExpensesByCategory(expenses: Transaction[]): Recor
     for (const category in totalExpensesByCategory) {
         const { amount } = totalExpensesByCategory[category];
         totalExpensesByCategory[category].percentage = (amount / totalExpense) * 100;
+        totalExpensesByCategory[category].currency = expenses[0].currency;
     }
 
     return totalExpensesByCategory;
 }
+
+export function calcTotalExpByCategoryBuget(expenses: Transaction[]): Record<string, { amount: number, transactionsCount: number, percentage: number, currency: string }> {
+    const totalExpensesByCategory: Record<string, { amount: number, transactionsCount: number, percentage: number, currency: string }> = {};
+    const totalExpense = expenses.reduce((acc, expense) => acc + expense.amount, 0);
+    if (expenses.length) {
+        categories.forEach((category) => {
+            totalExpensesByCategory[category.key] = { amount: 0, transactionsCount: 0, percentage: 0, currency: expenses[0].currency, }
+        })
+    }
+    for (const expense of expenses) {
+        const { amount, category } = expense;
+        if (!totalExpensesByCategory[category]) {
+            totalExpensesByCategory[category] = { amount: 0, transactionsCount: 0, percentage: 0, currency: expenses[0].currency }
+        }
+        totalExpensesByCategory[category].amount += amount;
+        totalExpensesByCategory[category].transactionsCount += 1;
+    }
+
+    for (const category in totalExpensesByCategory) {
+        const { amount } = totalExpensesByCategory[category];
+        totalExpensesByCategory[category].percentage = (amount / totalExpense) * 100;
+        totalExpensesByCategory[category].currency = expenses[0].currency;
+    }
+
+    return totalExpensesByCategory;
+}
+
 
 // export function groupExpensesByCategory(expenses: Transaction[]): Record<string, { expenses: Transaction }> {
 //     const totalExpensesByCategory: Record<string, { amount: number, transactionsCount: number }> = {};
