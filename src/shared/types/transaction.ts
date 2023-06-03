@@ -15,6 +15,7 @@ export interface Transaction {
     tag: string;
     title: string;
     userId: string;
+    attachments?: string[];
 }
 
 export interface DashboardStat {
