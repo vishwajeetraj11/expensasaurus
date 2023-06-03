@@ -7,7 +7,7 @@ import { Transaction } from "expensasaures/shared/types/transaction";
 import { getBase64, isUploadedFileImage } from "expensasaures/shared/utils/file";
 import { useRouter } from "next/router";
 import { Fragment, useState } from "react";
-import { useField } from "react-final-form";
+import { useField, useFormState } from "react-final-form";
 import { FcFile } from "react-icons/fc";
 import { useQueries, useQueryClient } from "react-query";
 import { useDropArea } from "react-use";
@@ -16,11 +16,18 @@ import { shallow } from "zustand/shallow";
 import { Attachment } from "./expense/Attachments";
 import { FIlePreview, ImageFilePreview } from "./expense/expenseForm/FilePreview";
 
+interface Props {
 
-const FileUpload = () => {
+}
+
+const FileUpload = (props: Props) => {
+
   const { user } = useAuthStore((state) => ({ user: state.user }), shallow) as {
     user: Models.Session;
   };
+
+  const { submitting } = useFormState();
+  const disabled = submitting
 
   const router = useRouter();
   const isUpdateRoute = router.route === "/expenses/[id]/edit";
@@ -33,6 +40,7 @@ const FileUpload = () => {
       const [file] = files;
       const res = {} as FileWPreview;
       const maxSizeInBytes = 5 * 1024 * 1024
+      if (disabled) return;
       if (file.size > maxSizeInBytes) {
         toast.error('File size is too large. Max size is 5MB')
         return;
@@ -53,7 +61,7 @@ const FileUpload = () => {
 
   const queryClient = useQueryClient()
 
-  const filePreviews = useQueries(input.value.filter((value: FileWPreview | string) => typeof value === 'string').map((id: string) => ({
+  const filePreviews = useQueries(input?.value?.filter((value: FileWPreview | string) => typeof value === 'string').map((id: string) => ({
     queryKey: ['get-file-preview', id, user.userId],
     queryFn: async () => {
       return storage.getFilePreview(ENVS.BUCKET_ID, id);
@@ -90,20 +98,20 @@ const FileUpload = () => {
 
       <label
         htmlFor="cover-photo"
-        className="block text-sm font-medium leading-6 text-gray-900 mt-4"
+        className="ml-3 font-bold text-sm text-navy-700 dark:text-white mt-4"
       >
         Attachments
       </label>
       <div className="flex gap-4 my-4 empty:my-0">
         {files.map((file, index) => {
-          return file.preview ? <ImageFilePreview file={file} setFiles={setFiles} key={index} /> : <FIlePreview file={file} setFiles={setFiles} key={index} />
+          return file.preview ? <ImageFilePreview disabled={disabled} file={file} setFiles={setFiles} key={index} /> : <FIlePreview file={file} disabled={disabled} setFiles={setFiles} key={index} />
         })}
         {isUpdateRoute && filePreviews?.map((filePreview, index) => {
           const { data } = filePreview;
           if (!data) return <Fragment key={index} />
           const result = data as unknown as URL
           const fileId = new URL(result?.href || '').pathname.split('/')[6];
-          return <Attachment onDelete={() => onDelete(fileId)} data={data as unknown as URL} key={index} />;
+          return <Attachment disabled={disabled} onDelete={() => onDelete(fileId)} data={data as unknown as URL} key={index} />;
         })}
       </div>
       <div {...bond} className="col-span-full mt-4">
