@@ -15,6 +15,9 @@ const Navigation = () => {
           <Link href={"/expenses"}>
             <p className="px-4 py-2 rounded-full">Expense</p>
           </Link>
+          <Link href={"/incomes"}>
+            <p className="px-4 py-2 rounded-full">Incomes</p>
+          </Link>
           <Link href={"/category"}>
             <p className="px-4 py-2 rounded-full">Category</p>
           </Link>
