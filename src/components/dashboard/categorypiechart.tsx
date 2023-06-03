@@ -20,8 +20,8 @@ import { ChartPieIcon, ViewListIcon } from "@heroicons/react/outline";
 
 import { ArrowNarrowRightIcon } from "@heroicons/react/solid";
 
+import { categories } from "expensasaures/shared/constants/categories";
 import { CategoryData } from "expensasaures/shared/utils/calculation";
-import { capitalize } from "expensasaures/shared/utils/common";
 import { useEffect, useState } from "react";
 
 interface StockData {
@@ -51,22 +51,23 @@ export default function CategoriesPieChart(props: Props) {
 
   useEffect(() => {
     const stocks: StockData[] = [];
+
     if (expensesAndPercentByCategoryThisMonth) {
       Object.entries(expensesAndPercentByCategoryThisMonth).forEach(
         ([key, value]) => {
           const percent = value.percentageChange;
           stocks.push({
-            name: capitalize(key),
+            name: categories.find((category) => category.key === key)?.category || "",
             value: value.totalExpenses,
             performance: value.percentageChange.toFixed(2) + "%",
             deltaType:
               percent > 30
                 ? "increase"
                 : percent < 30 && percent > 0
-                ? "moderateIncrease"
-                : percent < 0 && percent > -10
-                ? "moderateDecrease"
-                : "decrease",
+                  ? "moderateIncrease"
+                  : percent < 0 && percent > -10
+                    ? "moderateDecrease"
+                    : "decrease",
           });
         }
       );
@@ -74,9 +75,10 @@ export default function CategoriesPieChart(props: Props) {
     setCategoryExpense(stocks);
   }, [expensesAndPercentByCategoryThisMonth]);
 
+
   return (
     // <Card className="max-w-md mx-auto">
-    <Card className="">
+    <Card className="box-shadow-card">
       <Flex className="space-x-8" justifyContent="between" alignItems="center">
         <Title>Overview</Title>
         <Toggle
@@ -88,7 +90,7 @@ export default function CategoriesPieChart(props: Props) {
           <ToggleItem value="list" icon={ViewListIcon} />
         </Toggle>
       </Flex>
-      <Text className="mt-8">Remaining Balance</Text>
+      <Text className="mt-8">Savings</Text>
       <Metric>₹ {incomeThisMonth - expenseThisMonth}</Metric>
       <Divider />
 
