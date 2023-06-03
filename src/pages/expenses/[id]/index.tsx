@@ -11,6 +11,7 @@ import DeleteModal from "expensasaures/components/modal/DeleteModal";
 import useDates from "expensasaures/hooks/useDates";
 import { categories } from "expensasaures/shared/constants/categories";
 import { ENVS } from "expensasaures/shared/constants/constants";
+import { storage } from "expensasaures/shared/services/appwrite";
 import {
   deleteDoc,
   getAllLists,
@@ -24,6 +25,7 @@ import { getQueryForExpenses } from "expensasaures/shared/utils/react-query";
 import Link from "next/link";
 import { useRouter } from "next/router";
 import { useState } from "react";
+import { useQueries } from "react-query";
 import { toast } from "sonner";
 import { shallow } from "zustand/shallow";
 
@@ -33,8 +35,9 @@ const id = () => {
   };
   const router = useRouter();
   const { id } = router.query;
+  const [startDelete, setStartDelete] = useState(false);
 
-  const { data } = getDoc<Transaction>(
+  const { data, error, isLoading } = getDoc<Transaction>(
     ["Expenses by ID", id, user?.userId],
     [ENVS.DB_ID, ENVS.COLLECTIONS.EXPENSES, id as string],
     { enabled: !!user }
@@ -83,6 +86,20 @@ const id = () => {
 
   const [isDeleteOpen, setIsDeleteOpen] = useState<boolean>(false);
 
+  const attachments = data?.attachments || [];
+
+  const fileDelete = useQueries(attachments.map((id: string) => ({
+    queryKey: ['file-delete', id, user.userId],
+    queryFn: async () => {
+      return storage.deleteFile(ENVS.BUCKET_ID, id);
+    },
+    enabled: false
+  })));
+
+  if (error && error.code === 404) {
+    return <>Expense Not Found</>
+  }
+
   return (
     <Layout>
       <div className="mx-auto max-w-[1200px] pt-10 block">
@@ -107,13 +124,9 @@ const id = () => {
                 <Metric>{data?.title}</Metric>
               </div>
               <div className="flex gap-3 ml-auto">
-                <EditButton
-                  onClick={() => {
-                    router.push(`/expenses/${id}/edit`, undefined, {
-                      shallow: true,
-                    });
-                  }}
-                />
+                <Link href={`/expenses/${id}/edit`} shallow>
+                  <EditButton />
+                </Link>
                 <DeleteButton
                   onClick={() => {
                     setIsDeleteOpen(true);
@@ -200,21 +213,34 @@ const id = () => {
       <DeleteModal
         action="delete"
         onAction={() => {
-          mutate(
-            {},
-            {
-              onSettled: () => {
-                reset();
-              },
-              onSuccess: () => {
-                toast.success("Expense deleted successfully");
-                router.push("/expenses");
-              },
-              onError: () => {
-                toast.error("Expense deletion failed");
-              },
-            }
-          );
+          try {
+            let isError = false;
+            fileDelete.forEach((query) => {
+              setTimeout(() => {
+                query.refetch({ throwOnError: true }).catch((err) => {
+                  toast.error("Expense deletion failed, please try again sometime later.");
+                });
+              }, 100);
+            });
+
+            mutate(
+              {},
+              {
+                onSettled: () => {
+                  reset();
+                },
+                onSuccess: () => {
+                  toast.success("Expense deleted successfully");
+                  router.push("/expenses");
+                },
+                onError: () => {
+                  toast.error("Expense deletion failed");
+                },
+              }
+            );
+          } catch (e) {
+
+          }
         }}
         resource="expense"
         isOpen={isDeleteOpen}
