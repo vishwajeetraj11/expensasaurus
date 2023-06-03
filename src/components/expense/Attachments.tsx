@@ -43,10 +43,11 @@ const Attachments = (props: AttachmentsProps) => {
 interface AttachmentProps {
     data: URL | undefined,
     onDelete?: () => void
+    disabled?: boolean
 }
 
 export const Attachment = (props: AttachmentProps) => {
-    const { data, onDelete } = props;
+    const { data, onDelete, disabled = false } = props;
     const fileId = new URL(data?.href || '').pathname.split('/')[6];
 
     const onDownload = () => {
@@ -55,9 +56,9 @@ export const Attachment = (props: AttachmentProps) => {
     }
 
     return <div className='relative'>
-        {onDelete && <span onClick={onDelete} className="z-[1] top-[-10px] flex items-center group transition-all duration-200 justify-center right-[-10px] hover:bg-red-600 absolute bg-white p-2 rounded-full border border-[#f4f4f4] h-[30px] w-[30px] cursor-pointer">
+        {onDelete && <button type='button' disabled={disabled} onClick={onDelete} className="z-[1] top-[-10px] flex items-center group transition-all duration-200 justify-center right-[-10px] hover:bg-red-600 absolute bg-white p-2 rounded-full border border-[#f4f4f4] h-[30px] w-[30px] cursor-pointer">
             <MdClose className="h-[12px]  group-hover:text-white" />
-        </span>}
+        </button>}
         {data?.href
             ? <img src={data?.href} className='h-[100px] w-[100px] object-cover opacity-90' alt='File' />
             : null}
