@@ -11,7 +11,7 @@ const DashboardStatistics = (props: Props) => {
   return (
     <Grid numColsSm={2} numColsLg={3} className="gap-6">
       {stats.map((item) => (
-        <Card key={item.title}>
+        <Card className='box-shadow-card' key={item.title}>
           <Text className="text-stone-600 font-medium">{item.title}</Text>
           <Flex
             justifyContent="start"
