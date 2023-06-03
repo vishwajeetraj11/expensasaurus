@@ -2,6 +2,7 @@ import { Metric, Text } from "@tremor/react";
 import { Models } from "appwrite";
 import clsx from "clsx";
 import { format } from "date-fns";
+import Attachments from "expensasaures/components/expense/Attachments";
 import DeleteButton from "expensasaures/components/icons/DeleteButton";
 import EditButton from "expensasaures/components/icons/EditButton";
 
@@ -139,6 +140,7 @@ const id = () => {
               <Text className="text-slate-700 p-3 bg-slate-50 mt-2">
                 {data?.description}
               </Text>
+              {data?.attachments && <Attachments ids={data?.attachments} />}
             </div>
           </div>
           <div className="md:w-[40%] w-full">

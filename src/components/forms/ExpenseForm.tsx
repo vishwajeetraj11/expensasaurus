@@ -8,6 +8,7 @@ import {
   ID,
   Permission,
   database,
+  storage,
 } from "expensasaures/shared/services/appwrite";
 import { getDoc } from "expensasaures/shared/services/query";
 import { useAuthStore } from "expensasaures/shared/stores/useAuthStore";
@@ -16,6 +17,7 @@ import { validateExpenseForm } from "expensasaures/shared/utils/form";
 import dynamic from "next/dynamic";
 import { useRouter } from "next/router";
 import { Field, Form } from "react-final-form";
+import { useQueries } from "react-query";
 import { toast } from "sonner";
 import { shallow } from "zustand/shallow";
 import FileUpload from "../FileUpload";
@@ -37,6 +39,17 @@ const ExpenseForm = () => {
     [ENVS.DB_ID, ENVS.COLLECTIONS.EXPENSES, id as string],
     { enabled: false }
   );
+
+  const attachments = data?.attachments || [];
+
+  const filePreviews = useQueries(attachments.map(id => ({
+    queryKey: ['get-file-preview', id, user.userId],
+    queryFn: async () => {
+      return storage.getFilePreview(ENVS.BUCKET_ID, id);
+    },
+    enabled: !!user && !!data
+  })));
+
   const isUpdateRoute = router.route === "/expenses/[id]/edit";
 
   const handleSubmit = async (values: Record<string, any>) => {
@@ -46,14 +59,37 @@ const ExpenseForm = () => {
     const toastFailureMessage = isUpdateRoute
       ? "Expense updation failed"
       : "Expense creation failed";
+    let attachements = values.attachments;
+
+    let attachmentsIds: string[] = [];
+    let promises = [];
+    if (attachements.length > 0) {
+      for (let i = 0; i < attachements.length; i++) {
+        const file = attachements[i];
+        if (typeof file === 'string') {
+          attachmentsIds.push(file);
+          continue;
+        }
+        promises.push(storage.createFile(ENVS.BUCKET_ID, ID.unique(), file));
+      }
+    }
+
     try {
       const permissionsArray = isUpdateRoute
         ? undefined
         : [
-            Permission.read(Role.user(user.userId)),
-            Permission.update(Role.user(user.userId)),
-            Permission.delete(Role.user(user.userId)),
-          ];
+          Permission.read(Role.user(user.userId)),
+          Permission.update(Role.user(user.userId)),
+          Permission.delete(Role.user(user.userId)),
+        ];
+
+      const dbIds: [string, string, string] = [
+        ENVS.DB_ID,
+        ENVS.COLLECTIONS.EXPENSES,
+        isUpdateRoute ? (id as string) : ID.unique(),
+      ];
+      const files = await Promise.all(promises);
+      attachmentsIds = attachmentsIds.concat(files.map((file) => file.$id));
 
       const formValues = {
         title: values.title,
@@ -64,18 +100,14 @@ const ExpenseForm = () => {
         date: values.date,
         userId: user?.userId,
         currency: values.currency,
+        attachments: attachmentsIds,
       };
-
-      const dbIds: [string, string, string] = [
-        ENVS.DB_ID,
-        ENVS.COLLECTIONS.EXPENSES,
-        isUpdateRoute ? (id as string) : ID.unique(),
-      ];
 
       const upsertedExpense = isUpdateRoute
         ? await database.updateDocument(...dbIds, formValues, permissionsArray)
         : await database.createDocument(...dbIds, formValues, permissionsArray);
       toast.success(toastMessage);
+      router.push(`/expenses/${upsertedExpense.$id}`);
     } catch (error) {
       console.log(error);
       toast.error(toastFailureMessage);
@@ -92,16 +124,17 @@ const ExpenseForm = () => {
             initialValues={
               isUpdateRoute
                 ? { ...data, date: new Date(data?.date as string) }
-                : {
-                    title: "",
-                    description: "",
-                    amount: 0,
-                    category: "",
-                    tag: "",
-                    date: new Date(),
-                    attachment: [],
-                    currency: "INR",
-                  }
+                :
+                {
+                  title: "",
+                  description: "",
+                  amount: 0,
+                  category: "",
+                  tag: "",
+                  date: new Date(),
+                  attachments: [],
+                  currency: "INR",
+                }
             }
           >
             {({ errors, handleSubmit }) => {
@@ -223,7 +256,6 @@ const ExpenseForm = () => {
                     >
                       {({ meta, input }) => (
                         <>
-                          {JSON.stringify(input.value)}
                           <DesktopDatePicker
                             className="w-full"
                             onChange={(value) =>
@@ -234,7 +266,7 @@ const ExpenseForm = () => {
                         </>
                       )}
                     </Field>
-                    <Field name="attachment">
+                    <Field name="attachments">
                       {() => (
                         <>
                           <FileUpload />

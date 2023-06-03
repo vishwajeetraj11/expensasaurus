@@ -21,4 +21,5 @@ export const ENVS = {
   DB_ID: process.env.NEXT_PUBLIC_DATABASE_ID as string,
   PROJECT_ID: process.env.NEXT_PUBLIC_PROJECT_ID as string,
   APPWRITE_ENDPOINT: process.env.NEXT_PUBLIC_APPWRITE_ENDPOINT as string,
+  BUCKET_ID: process.env.NEXT_PUBLIC_BUCKET_ID as string,
 };
