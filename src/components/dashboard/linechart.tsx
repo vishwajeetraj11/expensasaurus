@@ -27,7 +27,8 @@ export default function LineChartTabs() {
   );
 
   useEffect(() => {
-    if (!data.length) {
+
+    if (thisMonthExpenses && thisMonthExpenses?.documents.length && !data.length) {
       const mappedData = thisMonthExpenses?.documents.map(
         (item: Transaction) => {
           const date = new Date(item.date);
@@ -89,7 +90,9 @@ export default function LineChartTabs() {
     }
   };
   return (
-    <Card>
+    <Card
+      className='box-shadow-card'
+    >
       <Title>Expense</Title>
       <Text>This Month</Text>
       {/* <TabList
