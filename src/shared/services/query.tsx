@@ -5,7 +5,7 @@ import {
   useMutation,
   useQuery,
 } from "react-query";
-import { database } from "./appwrite";
+import { database, storage } from "./appwrite";
 
 export interface InfiniteScrollApiParams<B extends any = any> {
   pageParam: number;
@@ -55,6 +55,24 @@ export const QueryFactoryOneDoc = <T extends unknown>(
   );
 };
 
+export const QueryFactoryOneFileDownload = <T extends unknown>(
+  queryKey: QueryKey,
+  fileId: string, bucketId: string,
+  options?: UseQueryOptions<any, any, any>
+) => {
+  return useQuery<any, any, any>(
+    queryKey,
+    async () => {
+      return storage.getFileDownload(bucketId, fileId);
+    },
+    {
+      refetchOnWindowFocus: false,
+      retry: false,
+      ...options,
+    }
+  );
+};
+
 export const QueryFactoryDeleteDoc = (
   queryKey: QueryKey,
   query: [string, string, string],
@@ -86,6 +104,12 @@ export const deleteDoc = (
   query: [string, string, string],
   options: UseMutationOptions<any, any, any>
 ) => QueryFactoryDeleteDoc(queryKey, query, options);
+
+export const downloadFile = (
+  queryKey: QueryKey,
+  fileId: string, bucketId: string,
+  options: UseQueryOptions<any, any, any>
+) => QueryFactoryOneFileDownload(queryKey, fileId, bucketId, options);
 
 // export const InfiniteQueryFactory = <
 //   T extends unknown,
