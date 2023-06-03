@@ -37,10 +37,6 @@ export const validateExpenseForm = (values: any) => {
         errors.title = "Title is required";
     }
 
-    if (!values.description) {
-        errors.description = "Description is required";
-    }
-
     if (!values.amount) {
         errors.amount = "Amount is required";
     }
