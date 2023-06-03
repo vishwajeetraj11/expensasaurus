@@ -7,16 +7,18 @@ import { ENVS } from "expensasaures/shared/constants/constants";
 import {
   ID,
   Permission,
-  database,
+  database
 } from "expensasaures/shared/services/appwrite";
+import { getDoc } from "expensasaures/shared/services/query";
 import { useAuthStore } from "expensasaures/shared/stores/useAuthStore";
+import { Transaction } from "expensasaures/shared/types/transaction";
 import { validateExpenseForm } from "expensasaures/shared/utils/form";
 import dynamic from "next/dynamic";
 import Link from "next/link";
+import { useRouter } from "next/router";
 import { Field, Form } from "react-final-form";
 import { toast } from "sonner";
 import { shallow } from "zustand/shallow";
-import FileUpload from "../FileUpload";
 import FormInputLabel from "../ui/FormInputLabel";
 import InputField from "../ui/InputField";
 import TextArea from "../ui/TextArea";
@@ -25,53 +27,82 @@ const IncomeForm = () => {
   const { user } = useAuthStore((state) => ({ user: state.user }), shallow) as {
     user: Models.Session;
   };
+  const router = useRouter()
+  const { id } = router.query;
+
+  const isUpdateRoute = router.route === "/incomes/[id]/edit";
+
+  const { data } = getDoc<Transaction>(
+    ["Income by ID", id, user?.userId],
+    [ENVS.DB_ID, ENVS.COLLECTIONS.INCOMES, id as string],
+    {}
+  );
 
   const handleSubmit = async (values: Record<string, any>) => {
+    const toastMessage = isUpdateRoute
+      ? "Income updated successfully"
+      : "Income created successfully";
+    const toastFailureMessage = isUpdateRoute
+      ? "Income updation failed"
+      : "Income creation failed";
+    const permissionsArray = isUpdateRoute
+      ? undefined
+      : [
+        Permission.read(Role.user(user.userId)),
+        Permission.update(Role.user(user.userId)),
+        Permission.delete(Role.user(user.userId)),
+      ];
+    const formValues = {
+      title: values.title,
+      description: values.description,
+      amount: values.amount,
+      category: values.category,
+      tag: values.tag,
+      date: values.date,
+      userId: user?.userId,
+      currency: values.currency,
+    };
+    const dbIds: [string, string, string] = [
+      ENVS.DB_ID,
+      ENVS.COLLECTIONS.INCOMES,
+      isUpdateRoute ? (id as string) : ID.unique(),
+    ];
     try {
-      const createdExpense = await database.createDocument(
-        ENVS.DB_ID,
-        "646879f739377942444c",
-        ID.unique(),
-        {
-          title: values.title,
-          description: values.description,
-          amount: values.amount,
-          category: values.category,
-          tag: values.tag,
-          date: values.date,
-          userId: user?.userId,
-          currency: values.currency,
-        },
-        [
-          Permission.read(Role.user(user.userId)),
-          Permission.update(Role.user(user.userId)),
-          Permission.delete(Role.user(user.userId)),
-        ]
-      );
-      toast.success("Income created successfully");
+      const upsertedIncome = isUpdateRoute
+        ? await database.updateDocument(...dbIds, formValues, permissionsArray)
+        : await database.createDocument(...dbIds, formValues, permissionsArray);
+
+      toast.success(toastMessage);
+      router.push(`/incomes/${upsertedIncome.$id}`)
     } catch (error) {
       console.log(error);
-      toast.error("Income creation failed");
+      toast.error(toastFailureMessage);
     }
   };
+
 
   return (
     <div>
       <Link href={"/income"}>Income</Link>
       <LocalizationProvider dateAdapter={AdapterDateFns}>
-        <Form
+        {(isUpdateRoute && data) || !isUpdateRoute ? <Form
           validate={validateExpenseForm}
           onSubmit={handleSubmit}
-          initialValues={{
-            title: "",
-            description: "",
-            amount: 0,
-            category: "",
-            tag: "",
-            date: new Date(),
-            attachment: [],
-            currency: "INR",
-          }}
+          initialValues={
+            isUpdateRoute
+              ? { ...data, date: new Date(data?.date as string) }
+              :
+              {
+                title: "",
+                description: "",
+                amount: 0,
+                category: "",
+                tag: "",
+                date: new Date(),
+                attachments: [],
+                currency: "INR",
+              }
+          }
         >
           {({ errors, handleSubmit }) => {
             return (
@@ -144,7 +175,7 @@ const IncomeForm = () => {
                           onValueChange={(value) =>
                             input.onChange(value as string)
                           }
-                          defaultValue="1"
+                          value={input.value}
                         >
                           {incomeCategories.map((category) => {
                             return (
@@ -189,7 +220,7 @@ const IncomeForm = () => {
                   >
                     {({ meta, input }) => (
                       <>
-                        {JSON.stringify(input.value)}
+
                         <DesktopDatePicker
                           className="w-full"
                           onChange={(value) =>
@@ -200,13 +231,13 @@ const IncomeForm = () => {
                       </>
                     )}
                   </Field>
-                  <Field name="attachment">
+                  {/* <Field name="attachments">
                     {() => (
                       <>
                         <FileUpload />
                       </>
                     )}
-                  </Field>
+                  </Field> */}
                   <Button
                     size="lg"
                     className="w-full"
@@ -219,7 +250,7 @@ const IncomeForm = () => {
               </div>
             );
           }}
-        </Form>
+        </Form> : null}
       </LocalizationProvider>
     </div>
   );
