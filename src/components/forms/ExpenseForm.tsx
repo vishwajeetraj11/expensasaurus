@@ -8,7 +8,7 @@ import {
   ID,
   Permission,
   database,
-  storage,
+  storage
 } from "expensasaures/shared/services/appwrite";
 import { getDoc } from "expensasaures/shared/services/query";
 import { useAuthStore } from "expensasaures/shared/stores/useAuthStore";
@@ -16,6 +16,7 @@ import { Transaction } from "expensasaures/shared/types/transaction";
 import { validateExpenseForm } from "expensasaures/shared/utils/form";
 import dynamic from "next/dynamic";
 import { useRouter } from "next/router";
+import { useState } from "react";
 import { Field, Form } from "react-final-form";
 import { useQueries } from "react-query";
 import { toast } from "sonner";
@@ -39,6 +40,7 @@ const ExpenseForm = () => {
     [ENVS.DB_ID, ENVS.COLLECTIONS.EXPENSES, id as string],
     { enabled: false }
   );
+  const [loading, setLoading] = useState(false)
 
   const attachments = data?.attachments || [];
 
@@ -53,6 +55,7 @@ const ExpenseForm = () => {
   const isUpdateRoute = router.route === "/expenses/[id]/edit";
 
   const handleSubmit = async (values: Record<string, any>) => {
+    // setLoading(true)
     const toastMessage = isUpdateRoute
       ? "Expense updated successfully"
       : "Expense created successfully";
@@ -100,7 +103,7 @@ const ExpenseForm = () => {
         date: values.date,
         userId: user?.userId,
         currency: values.currency,
-        attachments: attachmentsIds,
+        attachments: attachmentsIds.length > 0 ? attachmentsIds : undefined,
       };
 
       const upsertedExpense = isUpdateRoute
@@ -111,6 +114,9 @@ const ExpenseForm = () => {
     } catch (error) {
       console.log(error);
       toast.error(toastFailureMessage);
+    }
+    finally {
+      // setLoading(false) do not use -> forces reredner causing form intial values to be reset
     }
   };
 
@@ -137,7 +143,7 @@ const ExpenseForm = () => {
                 }
             }
           >
-            {({ errors, handleSubmit }) => {
+            {({ errors, handleSubmit, submitting }) => {
               return (
                 <div className="w-[800px] flex flex-col gap-4">
                   <form onSubmit={handleSubmit}>
@@ -149,6 +155,7 @@ const ExpenseForm = () => {
                     >
                       {({ meta, input }) => (
                         <InputField
+                          disabled={submitting}
                           extra="mb-3"
                           label="Title*"
                           placeholder="Auto to College"
@@ -169,11 +176,12 @@ const ExpenseForm = () => {
                     >
                       {({ meta, input }) => (
                         <>
-                          <FormInputLabel htmlFor="description">
+                          <FormInputLabel className="ml-3 font-bold text-sm text-navy-700 dark:text-white" htmlFor="description">
                             Description
                           </FormInputLabel>
                           <TextArea
                             id="description"
+                            disabled={submitting}
                             {...input}
                             message={meta.touched && meta.error}
                             error={Boolean(meta.error && meta.touched)}
@@ -189,6 +197,7 @@ const ExpenseForm = () => {
                     >
                       {({ meta, input }) => (
                         <InputField
+                          disabled={submitting}
                           extra="mb-3"
                           label="Amount*"
                           placeholder="50"
@@ -208,6 +217,7 @@ const ExpenseForm = () => {
                             onValueChange={(value) =>
                               input.onChange(value as string)
                             }
+                            disabled={submitting}
                             value={input.value}
                           >
                             {categories.map((category, index) => {
@@ -236,8 +246,9 @@ const ExpenseForm = () => {
                     >
                       {({ meta, input }) => (
                         <InputField
+                          disabled={submitting}
                           extra="mb-3"
-                          label="Tag*"
+                          label="Tag"
                           placeholder="Vacation"
                           id="tag"
                           type="text"
@@ -257,6 +268,7 @@ const ExpenseForm = () => {
                       {({ meta, input }) => (
                         <>
                           <DesktopDatePicker
+                            disabled={submitting}
                             className="w-full"
                             onChange={(value) =>
                               input.onChange(value?.toISOString())
