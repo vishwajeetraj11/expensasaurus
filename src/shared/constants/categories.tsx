@@ -80,10 +80,10 @@ export const categories = [
   },
   {
     id: 8,
-    category: "Personal Care",
+    category: "Personal",
     key: "personalcare",
     description:
-      "Expenses related to personal grooming and hygiene, such as haircuts, beauty products, or toiletries",
+      "Expenses related to personal grooming, hygiene and purchases.",
     Icon: UserCircleIcon,
     className: "bg-pink-300 text-pink-300",
   },
@@ -148,6 +148,7 @@ export const incomeCategories = [
     Icon: TruckIcon,
     key: "salary",
     category: "Salary",
+    className: "bg-yellow-500 text-yellow-500",
     description: "Regular income earned from employment.",
   },
   {
@@ -155,6 +156,7 @@ export const incomeCategories = [
     Icon: TruckIcon,
     key: "freelance",
     category: "Freelance/Contract Work",
+    className: "bg-yellow-500 text-yellow-500",
     description: "Income earned from freelance projects or contract work.",
   },
   {
@@ -162,6 +164,7 @@ export const incomeCategories = [
     Icon: TruckIcon,
     key: "investments",
     category: "Investments",
+    className: "bg-yellow-500 text-yellow-500",
     description:
       "Income generated from investments such as stocks, bonds, or real estate.",
   },
@@ -170,6 +173,7 @@ export const incomeCategories = [
     Icon: TruckIcon,
     key: "rental",
     category: "Rental Income",
+    className: "bg-yellow-500 text-yellow-500",
     description: "Income received from renting out properties or assets.",
   },
   {
@@ -177,12 +181,14 @@ export const incomeCategories = [
     Icon: TruckIcon,
     key: "business",
     category: "Business Income",
+    className: "bg-yellow-500 text-yellow-500",
     description: "Income generated from a business or self-employment.",
   },
   {
     id: 6,
     Icon: TruckIcon,
     key: "interest",
+    className: "bg-yellow-500 text-yellow-500",
     category: "Interest/Dividends",
     description:
       "Income earned from interest on savings accounts or dividends from investments.",
@@ -192,6 +198,7 @@ export const incomeCategories = [
     Icon: TruckIcon,
     key: "pension",
     category: "Pension/Social Security",
+    className: "bg-yellow-500 text-yellow-500",
     description:
       "Income received from retirement pensions or government social security programs.",
   },
@@ -200,6 +207,7 @@ export const incomeCategories = [
     Icon: TruckIcon,
     key: "gift",
     category: "Gifts/Inheritance",
+    className: "bg-yellow-500 text-yellow-500",
     description:
       "Income received as gifts or inheritance from family or friends.",
   },
@@ -208,6 +216,7 @@ export const incomeCategories = [
     Icon: TruckIcon,
     key: "royalties",
     category: "Royalties",
+    className: "bg-yellow-500 text-yellow-500",
     description:
       "Income earned from the use of intellectual property, such as copyrights or patents.",
   },
@@ -216,6 +225,7 @@ export const incomeCategories = [
     Icon: TruckIcon,
     key: "sidehustle",
     category: "Side Hustle/Part-time Work",
+    className: "bg-yellow-500 text-yellow-500",
     description: "Income earned from part-time jobs or side businesses.",
   },
   {
@@ -223,6 +233,7 @@ export const incomeCategories = [
     Icon: TruckIcon,
     key: "other",
     category: "Other",
+    className: "bg-yellow-500 text-yellow-500",
     description:
       "A general category to cover any income source that does not fit into the predefined categories.",
   },
