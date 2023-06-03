@@ -1,3 +1,4 @@
+import { AppwriteException } from "appwrite";
 import {
   QueryKey,
   UseMutationOptions,
@@ -40,9 +41,9 @@ export const QueryFactoryList = <T extends unknown>(
 export const QueryFactoryOneDoc = <T extends unknown>(
   queryKey: QueryKey,
   query: [string, string, string],
-  options?: UseQueryOptions<T, any, any>
+  options?: UseQueryOptions<T, AppwriteException, any>
 ) => {
-  return useQuery<T, any, T>(
+  return useQuery<T, AppwriteException, T>(
     queryKey,
     async () => {
       return database.getDocument(...query).then((result) => result) as T;
@@ -96,7 +97,7 @@ export const getAllLists = <T extends unknown>(
 export const getDoc = <T extends unknown>(
   queryKey: QueryKey,
   query: [string, string, string],
-  options: UseQueryOptions<T, any, any>
+  options: UseQueryOptions<T, AppwriteException, any>
 ) => QueryFactoryOneDoc(queryKey, query, options);
 
 export const deleteDoc = (
