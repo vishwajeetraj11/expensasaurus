@@ -1,3 +1,4 @@
+import { PaginationState } from "@tanstack/react-table";
 import { DateRangePickerValue } from "@tremor/react";
 import { Models, Query } from "appwrite";
 import { isEqual, isValid } from "date-fns";
@@ -13,11 +14,12 @@ type params = {
     minAmount?: string,
     maxAmount?: string,
     category?: string
-    tag?: string
+    tag?: string,
+    fetchDataOptions?: PaginationState
 }
 
 export const getQueryForExpenses = ({
-    user, limit, orderByDesc, dates, query, minAmount, maxAmount, category, tag
+    user, limit, orderByDesc, dates, query, minAmount, maxAmount, category, tag, fetchDataOptions
 }: params) => {
     const result = [];
     const userId = user?.userId;
@@ -69,13 +71,17 @@ export const getQueryForExpenses = ({
     if (userId) { result.push(Query.equal("userId", user?.userId)) }
     if (limit) { result.push(Query.limit(limit)) }
     if (orderByDesc) { result.push(Query.orderDesc(orderByDesc)) }
+    if (fetchDataOptions) {
+        const { pageIndex, pageSize } = fetchDataOptions;
+        result.push(Query.offset(pageIndex * pageSize))
+    }
     return result
 }
 
-type categoryParams = Pick<params, 'dates' | 'user'>
+type categoryParams = Pick<params, 'dates' | 'user' | 'limit'>
 
 export const getQueryForCategoryPage = ({
-    user, dates
+    user, dates, limit
 }: categoryParams) => {
     const result = [];
     const validDates = dates.filter((date) => {
@@ -111,6 +117,7 @@ export const getQueryForCategoryPage = ({
             // toast.error('Both dates equal')
             result.push(Query.lessThanEqual('date', endOfTheDayForStartOfMonth))
         }
+        if (limit) { result.push(Query.limit(limit)) }
     }
 
     return [Query.equal("userId", user?.userId), ...result]
