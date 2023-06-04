@@ -1,11 +1,10 @@
-import { TrashIcon } from "@heroicons/react/outline";
 import clsx from "clsx";
 import { format, formatDistance } from "date-fns";
 import { categories } from "expensasaures/shared/constants/categories";
 import { ENVS } from "expensasaures/shared/constants/constants";
 import { database } from "expensasaures/shared/services/appwrite";
 import { Transaction } from "expensasaures/shared/types/transaction";
-import { timeSince } from "expensasaures/shared/utils/dates";
+import { formatCurrency } from "expensasaures/shared/utils/currency";
 import { toast } from "sonner";
 interface Props {
   expense: Transaction;
@@ -49,7 +48,7 @@ function ExpenseCalCard(props: Props) {
           </div>
         )}
 
-        <div className="w-[65%]">
+        <div className="w-[80%]">
           <p className="text-stone-700 font-semibold text-md">
             {expense.title}
           </p>
@@ -57,16 +56,13 @@ function ExpenseCalCard(props: Props) {
             {expense.description}
           </p>
         </div>
-        <div className="ml-auto flex flex-col">
-          <p className="text-xs  text-slate-500 text-right">
-            {timeSince(createdDate) || formattedDate}
+        <div className="ml-auto self-center flex flex-col">
+          <p className="text-md text-slate-500 font-semibold text-right">
+            {formatCurrency(expense.currency, expense.amount)}
           </p>
-          <div
-            onClick={(e) => onDelete(expense.$id)}
-            className="bg-red-500/30 cursor-pointer mt-auto ml-auto w-5 h-5 rounded-full flex items-center justify-center"
-          >
-            <TrashIcon className="text-red-500 w-3 h-3" />
-          </div>
+          {/* <div className="flex gap-4 mt-2 ml-auto"><DeleteButton size="sm" onClick={(e) => onDelete(expense.$id)} />
+            <Link href={`/expenses/${expense.$id}/edit`}><EditButton size="sm" /></Link>
+          </div> */}
         </div>
       </div>
     </li>
