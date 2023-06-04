@@ -81,7 +81,7 @@ export const categories = [
   {
     id: 8,
     category: "Personal",
-    key: "personalcare",
+    key: "personal",
     description:
       "Expenses related to personal grooming, hygiene and purchases.",
     Icon: UserCircleIcon,
