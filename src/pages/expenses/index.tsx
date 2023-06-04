@@ -193,7 +193,13 @@ const index = () => {
             {/* {data?.documents?.map((expense) => {
               return <ExpenseCalCard expense={expense} key={expense.$id} />;
             })} */}
-            {data && <ExpenseTable setPagination={setPagination} pageCount={Math.ceil(data?.total / pagination.pageSize)} fetchDataOptions={fetchDataOptions} data={data?.documents || []} />}
+            {data && <ExpenseTable
+              type="expense"
+              setPagination={setPagination}
+              pageCount={Math.ceil(data?.total / pagination.pageSize)}
+              fetchDataOptions={fetchDataOptions}
+              data={data?.documents || []}
+            />}
           </div>
         </div>
       </div>

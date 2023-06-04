@@ -180,10 +180,13 @@ const index = () => {
 
                     </div>
                     <div className="w-[70%] flex flex-1 flex-col">
-                        {/* {data?.documents?.map((expense) => {
-              return <ExpenseCalCard expense={expense} key={expense.$id} />;
-            })} */}
-                        {data && <ExpenseTable setPagination={setPagination} pageCount={Math.ceil(data?.total / pagination.pageSize)} fetchDataOptions={fetchDataOptions} data={data?.documents || []} />}
+                        {data && <ExpenseTable
+                            type="income"
+                            setPagination={setPagination}
+                            pageCount={Math.ceil(data?.total / pagination.pageSize)}
+                            fetchDataOptions={fetchDataOptions}
+                            data={data?.documents || []}
+                        />}
                     </div>
                 </div>
             </div>

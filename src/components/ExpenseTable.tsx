@@ -22,11 +22,14 @@ interface Props {
   fetchDataOptions: PaginationState;
   pageCount: number;
   setPagination: Dispatch<SetStateAction<PaginationState>>
+  type: 'expense' | 'income'
 }
 
 const ExpenseTable = (props: Props) => {
-  const { data, fetchDataOptions, pageCount, setPagination } = props;
-  const rerender = React.useReducer(() => ({}), {})[1];
+  const { data, fetchDataOptions, pageCount, setPagination, type } = props;
+  const isExpense = type === 'expense'
+  // const isIncome = type === 'income'
+  // const rerender = React.useReducer(() => ({}), {})[1];
 
   const columns = React.useMemo<ColumnDef<Transaction>[]>(
     () => [
@@ -34,7 +37,7 @@ const ExpenseTable = (props: Props) => {
         accessorKey: "id",
         accessorFn: (row) => capitalize(row.$id),
         header: () => "Link",
-        cell: (info) => <Link target="_blank" href={`/expenses/${info.getValue()}`}>
+        cell: (info) => <Link target="_blank" href={isExpense ? `/expenses/${info.getValue()}` : `/incomes/${info.getValue()}`}>
           <FiExternalLink />
         </Link>,
         footer: (props) => props.column.id,
