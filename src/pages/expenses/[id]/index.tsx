@@ -3,6 +3,7 @@ import { Models } from "appwrite";
 import clsx from "clsx";
 import { format } from "date-fns";
 import Attachments from "expensasaures/components/expense/Attachments";
+import Tag from "expensasaures/components/expense/Tag";
 import DeleteButton from "expensasaures/components/icons/DeleteButton";
 import EditButton from "expensasaures/components/icons/EditButton";
 
@@ -122,6 +123,7 @@ const id = () => {
                   <Text className="mt-3">{capitalize(data?.category)}</Text>
                 )}
                 <Metric>{data?.title}</Metric>
+                {data?.tag ? <Tag text={data.tag}></Tag> : ''}
               </div>
               <div className="flex gap-3 ml-auto">
                 <Link href={`/expenses/${id}/edit`} shallow>
