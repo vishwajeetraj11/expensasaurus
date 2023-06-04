@@ -18,7 +18,7 @@ const useDashboard = () => {
 
     // const { earlierMonthExpenses, earlierMonthIncomes, thisMonthExpenses, thisMonthIncomes } = demo;
 
-    const { data: thisMonthExpenses } = getAllLists<Transaction>(
+    const { data: thisMonthExpenses, isLoading: isThisMonthExpensesLoading, isFetching } = getAllLists<Transaction>(
         ["Expenses", "Stats this month", user?.userId],
         [
             ENVS.DB_ID,
@@ -34,7 +34,7 @@ const useDashboard = () => {
         { enabled: !!user }
     );
 
-    const { data: earlierMonthExpenses } = getAllLists<Transaction>(
+    const { data: earlierMonthExpenses, isLoading: isEarlierMonthExpensesLoading } = getAllLists<Transaction>(
         ["Expenses", "Stats earlier month", user?.userId],
         [
             ENVS.DB_ID,
@@ -122,11 +122,14 @@ const useDashboard = () => {
         },
     ];
 
+    const isLoading = isThisMonthExpensesLoading || isEarlierMonthExpensesLoading
+
     return {
         statistics,
         expensesAndPercentByCategoryThisMonth,
         incomeThisMonth: incomeStatsThisMonth.sum,
         expenseThisMonth: expenseStatsThisMonth.sum,
+        isLoading,
     }
 }
 

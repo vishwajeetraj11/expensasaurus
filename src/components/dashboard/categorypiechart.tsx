@@ -40,7 +40,7 @@ interface Props {
   expenseThisMonth: number;
 }
 
-export default function CategoriesPieChart(props: Props) {
+const CategoriesPieChart = (props: Props) => {
   const {
     expensesAndPercentByCategoryThisMonth,
     incomeThisMonth,
@@ -77,7 +77,6 @@ export default function CategoriesPieChart(props: Props) {
 
 
   return (
-    // <Card className="max-w-md mx-auto">
     <Card className="box-shadow-card">
       <Flex className="space-x-8" justifyContent="between" alignItems="center">
         <Title>Overview</Title>
@@ -141,4 +140,35 @@ export default function CategoriesPieChart(props: Props) {
       </Flex>
     </Card>
   );
+}
+
+export default CategoriesPieChart;
+
+export const CategoriesPieChartLoading = () => {
+  return <div className="relative p-6 w-full mb-5 overflow-hidden rounded-2xl bg-white/10 shadow-xl shadow-black/5 before:absolute before:inset-0 before:-translate-x-full before:animate-[shimmer_2s_infinite] before:border-t before:border-slate-100 before:bg-gradient-to-r before:from-transparent before:via-slate-50/50 before:to-transparent">
+    <div className="flex items-center justify-between">
+      <div className="h-[28px] bg-slate-500/20 rounded-full w-[150px]">&nbsp;</div>
+      <div className="h-[40px] w-[88px] p-1 bg-slate-500/20 rounded-[8px]">
+        <div className="h-full w-[44px] bg-white rounded-[8px]">&nbsp;</div>
+        <div>&nbsp;</div>
+      </div>
+    </div>
+
+    <div className="mt-8">
+      <div className="h-[15px] bg-slate-500/20 rounded-full w-[100px]">&nbsp;</div>
+      <div className="h-[30px] bg-slate-500/20 rounded-full w-[150px] mt-2">&nbsp;</div>
+    </div>
+
+    <hr className="my-6 bg-gray-200 h-[2px]" />
+
+    <div className="pie-chart absolute mt-[-40px]">
+    </div>
+
+    <hr className="bg-gray-200 h-[2px] mt-[227px]" />
+
+    <div className="mt-4 h-[28px] bg-gray-200 rounded-lg w-[50px]">
+      &nbsp;
+    </div>
+
+  </div>
 }

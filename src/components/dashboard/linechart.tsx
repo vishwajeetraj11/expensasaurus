@@ -2,8 +2,9 @@ import { Card, LineChart, Text, Title } from "@tremor/react";
 import { Models } from "appwrite";
 
 import { startOfYear, subDays } from "date-fns";
-import { dataFormatter } from "expensasaures/hooks/useDates";
+import { dataFormatter, dataFormatterLoading } from "expensasaures/hooks/useDates";
 import { ENVS } from "expensasaures/shared/constants/constants";
+import { demoDashboardLineChart } from "expensasaures/shared/constants/loadingData";
 import { getAllLists } from "expensasaures/shared/services/query";
 import { useAuthStore } from "expensasaures/shared/stores/useAuthStore";
 import { Transaction } from "expensasaures/shared/types/transaction";
@@ -11,7 +12,7 @@ import { useEffect, useState } from "react";
 
 import { shallow } from "zustand/shallow";
 
-export default function LineChartTabs() {
+const LineChartTabs = () => {
   const [selectedPeriod, setSelectedPeriod] = useState("Max");
   const [data, setData] = useState<{ date: string; amount: number }[] | []>([]);
 
@@ -95,22 +96,12 @@ export default function LineChartTabs() {
     >
       <Title>Expense</Title>
       <Text>This Month</Text>
-      {/* <TabList
-        defaultValue={selectedPeriod}
-        onValueChange={(value) => setSelectedPeriod(value)}
-        className="mt-10"
-      >
-        <Tab value="1M" text="1M" />
-        <Tab value="2M" text="2M" />
-        <Tab value="6M" text="6M" />
-        <Tab value="YTD" text="YTD" />
-        <Tab value="Max" text="Max" />
-      </TabList> */}
       {isSuccess && (
         <LineChart
           className="h-80 mt-8"
           data={getFilteredData(selectedPeriod) || []}
           index="date"
+          curveType="natural"
           categories={["amount"]}
           colors={["blue"]}
           valueFormatter={dataFormatter}
@@ -122,3 +113,24 @@ export default function LineChartTabs() {
     </Card>
   );
 }
+
+export const LineChartTabsLoading = () => {
+  return <div className="relative p-6 w-full mb-5 overflow-hidden rounded-2xl bg-white/10 shadow-xl shadow-black/5 before:absolute before:inset-0 before:-translate-x-full before:animate-[shimmer_2s_infinite] before:border-t before:border-slate-100 before:bg-gradient-to-r before:from-transparent before:via-slate-50/50 before:to-transparent">
+    <div className="h-[20px] bg-slate-500/20 rounded-full w-[100px] mb-2">&nbsp;</div>
+    <div className="h-[12px] bg-slate-500/20 rounded-full w-[100px]">&nbsp;</div>
+    <LineChart
+      className="h-80 mt-8 opacity-40 z-[-1] relative"
+      data={demoDashboardLineChart}
+      curveType="natural"
+      index="date"
+      categories={["amount"]}
+      colors={["slate"]}
+      valueFormatter={dataFormatterLoading}
+      showLegend={false}
+      yAxisWidth={60}
+      showXAxis
+    />
+  </div>
+}
+
+export default LineChartTabs;
