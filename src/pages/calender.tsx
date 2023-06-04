@@ -26,10 +26,10 @@ const Calender = () => {
 
   return (
     <Layout>
-      <div className="pt-16">
-        <div className="max-w-md px-4 mx-auto sm:px-7 md:max-w-4xl md:px-6">
-          <div className="md:grid md:grid-cols-2 md:divide-x md:divide-gray-200">
-            <div className="md:pr-14">
+      <div className="pt-16 px-4 max-w-[1200px] mx-auto w-full">
+        <div className="px-4 mx-auto sm:px-7 md:px-6">
+          <div className="md:grid md:grid-cols-[392px_1fr] md:divide-x md:divide-gray-200">
+            <div className="md:pr-14 md:max-w-md">
               <div className="flex items-center">
                 <h2 className="flex-auto font-semibold text-gray-900">
                   {format(firstDayCurrentMonth, "MMMM yyyy")}
@@ -83,25 +83,25 @@ const Calender = () => {
                       className={clsx(
                         isEqual(day, selectedDay) && "text-white",
                         !isEqual(day, selectedDay) &&
-                          isToday(day) &&
-                          "text-red-500",
+                        isToday(day) &&
+                        "text-red-500",
                         !isEqual(day, selectedDay) &&
-                          !isToday(day) &&
-                          isSameMonth(day, firstDayCurrentMonth) &&
-                          "text-gray-900",
+                        !isToday(day) &&
+                        isSameMonth(day, firstDayCurrentMonth) &&
+                        "text-gray-900",
                         !isEqual(day, selectedDay) &&
-                          !isToday(day) &&
-                          !isSameMonth(day, firstDayCurrentMonth) &&
-                          "text-gray-400",
+                        !isToday(day) &&
+                        !isSameMonth(day, firstDayCurrentMonth) &&
+                        "text-gray-400",
                         isEqual(day, selectedDay) &&
-                          isToday(day) &&
-                          "bg-red-500",
+                        isToday(day) &&
+                        "bg-red-500",
                         isEqual(day, selectedDay) &&
-                          !isToday(day) &&
-                          "bg-gray-900",
+                        !isToday(day) &&
+                        "bg-gray-900",
                         !isEqual(day, selectedDay) && "hover:bg-gray-200",
                         (isEqual(day, selectedDay) || isToday(day)) &&
-                          "font-semibold",
+                        "font-semibold",
                         "mx-auto flex h-8 w-8 items-center justify-center rounded-full"
                       )}
                     >
@@ -122,10 +122,10 @@ const Calender = () => {
                         // });
                         return isSameDay(parseISO(expense.date), day);
                       }) && (
-                        <div className="w-1 h-1 rounded-full bg-blue-500">
-                          &nbsp;
-                        </div>
-                      )}
+                          <div className="w-1 h-1 rounded-full bg-blue-500">
+                            &nbsp;
+                          </div>
+                        )}
                     </div>
                   </div>
                 ))}
