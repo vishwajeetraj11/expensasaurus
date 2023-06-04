@@ -7,7 +7,7 @@ import {
   SelectBox,
   SelectBoxItem,
   Text,
-  Title,
+  Title
 } from "@tremor/react";
 import { Models } from "appwrite";
 import ESCategoryChart from "expensasaures/components/category/ESCategoryChart";
@@ -106,22 +106,13 @@ const Categories = () => {
         </Flex>
         {/* <div className="mb-10">
           <Text className="mt-10 mb-4">Expenses distribution</Text>
-          <Flex>
-            <Text>Rating Product A</Text>
-            <Text>62%</Text>
-          </Flex>
+
           <CategoryBar
             categoryPercentageValues={categoryBarInfo().percentageArray}
-            colors={categoryBarInfo().colorClassArray}
-           
+            colors={categoryBarInfo().colorClassArray as Color[]}
             className="mt-3 w-full"
           />
-          <CategoryBar
-            categoryPercentageValues={[10, 20, 10]}
-            colors={["emerald", "yellow", "orange", "rose"]}
-            percentageValue={62}
-            className="mt-3"
-          />
+
         </div> */}
         <Text className="text-slate-600 mb-4">Expenses per category</Text>
         <div className="grid xl:grid-cols-4  lg:grid-cols-3 md:grid-cols-2 grid-cols-1 gap-4">
