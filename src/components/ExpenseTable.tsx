@@ -65,7 +65,7 @@ const ExpenseTable = (props: Props) => {
         id: "startingDate",
         cell: (info) => {
           const date = new Date(info.getValue() as string);
-          return format(date, "dd-MM-yyyy");
+          return format(date, "dd MMMM yyyy");
         },
         header: () => "Date",
         footer: (props) => props.column.id,
