@@ -26,11 +26,11 @@ const Layout = (props: Props) => {
   }, [user]);
 
   return (
-    <>
+    <div className="pb-10 sm:pb-20 flex flex-col min-h-screen">
       <Navigation />
       <DarkMode />
       {children}
-    </>
+    </div>
   );
 };
 

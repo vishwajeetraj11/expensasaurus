@@ -102,7 +102,7 @@ const id = () => {
 
   return (
     <Layout>
-      <div className="mx-auto max-w-[1200px] pt-10 block">
+      <div className="mx-auto max-w-[1200px] pt-10 block w-full">
         <div className="flex items-start flex-col md:flex-row w-full gap-10 px-4">
           <div className="flex flex-col flex-1 w-[inherit]">
             <div className="flex">
@@ -150,10 +150,10 @@ const id = () => {
                   </Text>
                 )}
               </div>
-              <Text className="text-slate-700 p-3 bg-slate-50 mt-2">
+
+              {data?.attachments?.length ? <> <Text className="text-slate-700 p-3 bg-slate-50 mt-2">
                 {data?.description}
-              </Text>
-              {data?.attachments && <Attachments ids={data?.attachments} />}
+              </Text><Attachments ids={data?.attachments} /></> : null}
             </div>
           </div>
           <div className="md:w-[40%] w-full">

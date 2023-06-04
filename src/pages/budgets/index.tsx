@@ -9,7 +9,7 @@ const index = () => {
 
   return (
     <Layout>
-      <div className="mx-auto max-w-[1200px]">
+      <div className="mx-auto max-w-[1200px] w-full">
         <div className="flex items-center justify-between">
           &nbsp;
           <Title className="text-center py-10">Budgets</Title>
