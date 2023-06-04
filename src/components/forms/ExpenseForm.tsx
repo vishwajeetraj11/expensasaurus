@@ -18,7 +18,7 @@ import dynamic from "next/dynamic";
 import { useRouter } from "next/router";
 import { useState } from "react";
 import { Field, Form } from "react-final-form";
-import { useQueries } from "react-query";
+import { useQueries, useQueryClient } from "react-query";
 import { toast } from "sonner";
 import { shallow } from "zustand/shallow";
 import FileUpload from "../FileUpload";
@@ -51,6 +51,7 @@ const ExpenseForm = () => {
     },
     enabled: !!user && !!data
   })));
+  const queryClient = useQueryClient();
 
   const isUpdateRoute = router.route === "/expenses/[id]/edit";
 
@@ -110,6 +111,7 @@ const ExpenseForm = () => {
         ? await database.updateDocument(...dbIds, formValues, permissionsArray)
         : await database.createDocument(...dbIds, formValues, permissionsArray);
       toast.success(toastMessage);
+      queryClient.invalidateQueries(["Expenses by ID", id, user?.userId]);
       router.push(`/expenses/${upsertedExpense.$id}`);
     } catch (error) {
       console.log(error);

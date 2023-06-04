@@ -17,6 +17,7 @@ import dynamic from "next/dynamic";
 import Link from "next/link";
 import { useRouter } from "next/router";
 import { Field, Form } from "react-final-form";
+import { useQueryClient } from "react-query";
 import { toast } from "sonner";
 import { shallow } from "zustand/shallow";
 import FormInputLabel from "../ui/FormInputLabel";
@@ -29,6 +30,7 @@ const IncomeForm = () => {
   };
   const router = useRouter()
   const { id } = router.query;
+  const queryClient = useQueryClient();
 
   const isUpdateRoute = router.route === "/incomes/[id]/edit";
 
@@ -73,6 +75,7 @@ const IncomeForm = () => {
         : await database.createDocument(...dbIds, formValues, permissionsArray);
 
       toast.success(toastMessage);
+      queryClient.invalidateQueries(["Income by ID", id, user?.userId]);
       router.push(`/incomes/${upsertedIncome.$id}`)
     } catch (error) {
       console.log(error);
