@@ -33,6 +33,7 @@ export const QueryFactoryList = <T extends unknown>(
       refetchOnWindowFocus: false,
       retry: false,
       staleTime: Infinity,
+      cacheTime: Infinity,
       ...options,
     }
   );
@@ -51,6 +52,8 @@ export const QueryFactoryOneDoc = <T extends unknown>(
     {
       refetchOnWindowFocus: false,
       retry: false,
+      staleTime: Infinity,
+      cacheTime: Infinity,
       ...options,
     }
   );
@@ -69,6 +72,8 @@ export const QueryFactoryOneFileDownload = <T extends unknown>(
     {
       refetchOnWindowFocus: false,
       retry: false,
+      staleTime: Infinity,
+      cacheTime: Infinity,
       ...options,
     }
   );
