@@ -181,7 +181,6 @@ const index = () => {
               <TextInput
                 defaultValue={tag}
                 onKeyDown={(e) => {
-                  console.log(e);
                   if (e.code === "Enter") {
                     setTag(e.currentTarget.value);
                   }
