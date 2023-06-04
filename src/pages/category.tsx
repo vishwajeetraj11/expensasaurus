@@ -162,6 +162,7 @@ const Categories = () => {
               className="h-80 mt-8"
               data={txnsByCategory}
               index="date"
+              curveType="natural"
               categories={["amount"]}
               colors={["blue"]}
               valueFormatter={dataFormatter}

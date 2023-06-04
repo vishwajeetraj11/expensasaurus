@@ -67,7 +67,7 @@ const id = () => {
   );
 
   return <Layout>
-    <div className="mx-auto max-w-[1200px] pt-10 block">
+    <div className="mx-auto max-w-[1200px] pt-10 block w-full">
       <div className="flex items-start flex-col md:flex-row w-full gap-10 px-4">
         <div className="flex flex-col flex-1 w-[inherit]">
           <div className="flex">

@@ -22,6 +22,7 @@ import { ArrowNarrowRightIcon } from "@heroicons/react/solid";
 
 import { categories } from "expensasaures/shared/constants/categories";
 import { CategoryData } from "expensasaures/shared/utils/calculation";
+import Link from "next/link";
 import { useEffect, useState } from "react";
 
 interface StockData {
@@ -129,14 +130,15 @@ const CategoriesPieChart = (props: Props) => {
         </>
       )}
       <Flex className="mt-6 pt-4 border-t">
-        <Button
-          size="xs"
-          variant="light"
-          icon={ArrowNarrowRightIcon}
-          iconPosition="right"
-        >
-          View more
-        </Button>
+        <Link href={'/category'} shallow>
+          <Button
+            size="xs"
+            variant="light"
+            icon={ArrowNarrowRightIcon}
+            iconPosition="right"
+          >
+            View more
+          </Button></Link>
       </Flex>
     </Card>
   );
