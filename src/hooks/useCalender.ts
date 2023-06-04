@@ -44,6 +44,7 @@ export const useCalender = () => {
                 Query.equal("userId", user?.userId),
                 Query.lessThanEqual("date", endOfDay),
                 Query.greaterThan("date", startOfDay),
+                Query.limit(100)
             ],
         ],
         { enabled: !!user, staleTime: Infinity }
@@ -78,6 +79,7 @@ export const useCalender = () => {
                 Query.lessThanEqual("date", endOfThisMonth),
                 Query.greaterThan("date", startOfThisMonth),
                 Query.orderAsc("date"),
+                Query.limit(100)
             ],
         ],
         { enabled: !!user }

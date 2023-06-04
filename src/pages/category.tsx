@@ -45,6 +45,7 @@ const Categories = () => {
       getQueryForCategoryPage({
         dates,
         user,
+        limit: 100
       }),
     ],
     { enabled: !!user }
@@ -95,7 +96,7 @@ const Categories = () => {
 
   return (
     <Layout>
-      <div className="mx-auto max-w-[1200px] px-4">
+      <div className="mx-auto max-w-[1200px] px-4 w-full">
         <Title className="py-10 text-center">Category</Title>
         <Flex className="items-baseline mb-10">
           <div className="">Date Range</div>

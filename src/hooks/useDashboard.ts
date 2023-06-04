@@ -28,6 +28,7 @@ const useDashboard = () => {
                 Query.lessThanEqual("date", endOfThisMonth),
                 Query.greaterThan("date", startOfThisMonth),
                 Query.orderAsc("date"),
+                Query.limit(100)
             ],
         ],
         { enabled: !!user }
