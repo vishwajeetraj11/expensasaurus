@@ -1,8 +1,7 @@
-import { FcGoogle } from "react-icons/fc";
-
 import LoginForm from "expensasaures/components/forms/auth/LoginForm";
 import AuthLayout from "expensasaures/components/layout/AuthLayout";
 import { account } from "expensasaures/shared/services/appwrite";
+import { BsGithub } from "react-icons/bs";
 import { shallow } from "zustand/shallow";
 import { useAuthStore } from "../shared/stores/useAuthStore";
 
@@ -29,14 +28,15 @@ export default function SignIn() {
           <p className="mb-9 ml-1 text-base text-gray-600">
             Enter your email and password to sign in!
           </p>
+
           <div className="mb-6 flex h-[50px] w-full items-center justify-center gap-2 rounded-xl bg-lightPrimary hover:cursor-pointer dark:bg-navy-800">
             <div className="rounded-full text-xl">
-              <FcGoogle />
+              <BsGithub />
             </div>
             <h5 onClick={() => {
-              account.createOAuth2Session('github');
+              account.createOAuth2Session('github', `${window.location.origin}/dashboard`, `${window.location.origin}/`);
             }} className="text-sm font-medium text-navy-700 dark:text-white">
-              Sign In with Google
+              Sign In with Github
             </h5>
           </div>
           <div className="mb-6 flex items-center  gap-3">
