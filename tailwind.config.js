@@ -118,6 +118,7 @@ module.exports = {
         "3xl": "14px 17px 40px 4px",
         inset: "inset 0px 18px 22px",
         darkinset: "0px 4px 4px inset",
+        subtle: "0 5px 15px rgba(0,0,0,0.07)"
       },
       borderRadius: {
         primary: "20px",
