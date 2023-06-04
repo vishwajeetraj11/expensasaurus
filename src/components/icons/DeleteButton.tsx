@@ -2,17 +2,24 @@ import { TrashIcon } from "@heroicons/react/outline";
 import clsx from "clsx";
 import React from "react";
 
-interface DeleteButtonProps extends React.HTMLAttributes<HTMLButtonElement> {}
+interface DeleteButtonProps extends React.HTMLAttributes<HTMLButtonElement> {
+  size?: "sm" | "md" | "lg";
+}
 
 const DeleteButton = (props: DeleteButtonProps) => {
-  const { className } = props;
+  const { className, size = 'lg' } = props;
+  const isLarge = size === 'lg';
+  const isSmall = size === 'sm';
   const classes = clsx(
-    "w-8 h-8 bg-red-600/10 hover:bg-red-600/20 transition-all duration-200 rounded-full flex items-center justify-center",
+    "bg-red-600/10 hover:bg-red-600/20 transition-all duration-200 rounded-full flex items-center justify-center",
+    isLarge && "w-8 h-8",
+    isSmall && "w-5 h-5",
     className
   );
+  const iconClasses = clsx("text-red-600", isLarge ? "w-4 h-4" : "w-3 h-3")
   return (
     <button type="button" {...props} className={classes}>
-      <TrashIcon className="text-red-600 w-4 h-4" />
+      <TrashIcon className={iconClasses} />
     </button>
   );
 };
