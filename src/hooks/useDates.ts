@@ -34,5 +34,8 @@ const useDates = () => {
 export const dataFormatter = (number: number) =>
     `₹ ${Intl.NumberFormat("us").format(number).toString()}`;
 
+export const dataFormatterLoading = (number: number) =>
+    `$ ${Intl.NumberFormat("us").format(number).toString()}`;
+
 
 export default useDates
