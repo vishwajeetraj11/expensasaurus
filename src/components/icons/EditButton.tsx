@@ -7,7 +7,7 @@ interface EditButtonProps extends React.HTMLAttributes<HTMLButtonElement> {
 }
 
 const EditButton = (props: EditButtonProps) => {
-  const { className, size } = props;
+  const { className, size = 'lg' } = props;
   const isLarge = size === 'lg';
   const isSmall = size === 'sm';
 
