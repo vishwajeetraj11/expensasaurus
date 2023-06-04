@@ -1,10 +1,10 @@
 import { FcGoogle } from "react-icons/fc";
 
-import { useAuthStore } from "../shared/stores/useAuthStore";
-import { shallow } from "zustand/shallow";
-import AuthLayout from "expensasaures/components/layout/AuthLayout";
 import LoginForm from "expensasaures/components/forms/auth/LoginForm";
-import Checkbox from "expensasaures/components/ui/Checkbox";
+import AuthLayout from "expensasaures/components/layout/AuthLayout";
+import { account } from "expensasaures/shared/services/appwrite";
+import { shallow } from "zustand/shallow";
+import { useAuthStore } from "../shared/stores/useAuthStore";
 
 export default function SignIn() {
   const { setAuthFormState } = useAuthStore(
@@ -33,7 +33,9 @@ export default function SignIn() {
             <div className="rounded-full text-xl">
               <FcGoogle />
             </div>
-            <h5 className="text-sm font-medium text-navy-700 dark:text-white">
+            <h5 onClick={() => {
+              account.createOAuth2Session('github');
+            }} className="text-sm font-medium text-navy-700 dark:text-white">
               Sign In with Google
             </h5>
           </div>
