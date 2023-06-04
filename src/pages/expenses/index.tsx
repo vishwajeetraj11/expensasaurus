@@ -1,4 +1,5 @@
 import { XCircleIcon } from "@heroicons/react/outline";
+import { PaginationState } from "@tanstack/react-table";
 import {
   Button,
   DateRangePicker,
@@ -7,10 +8,10 @@ import {
   SelectBoxItem,
   Text,
   TextInput,
-  Title,
+  Title
 } from "@tremor/react";
 import { Models } from "appwrite";
-import ExpenseCalCard from "expensasaures/components/calender/ExpenseCalCard";
+import ExpenseTable from "expensasaures/components/ExpenseTable";
 import CategoryIcon from "expensasaures/components/forms/CategorySelect";
 import Layout from "expensasaures/components/layout/Layout";
 import {
@@ -36,8 +37,8 @@ const index = () => {
   const categoryQuery = params.get("category");
   const validQuery = categoryQuery
     ? categoryNames
-        .find((c) => c === capitalize(categoryQuery as string))
-        ?.toLowerCase()
+      .find((c) => c === capitalize(categoryQuery as string))
+      ?.toLowerCase()
     : false;
 
   const [dates, setDates] = useState<DateRangePickerValue>([]);
@@ -46,6 +47,14 @@ const index = () => {
   const [maxAmount, setMaxAmount] = useState("");
   const [category, setCategory] = useState(validQuery || "");
   const [tag, setTag] = useState("");
+
+  const [pagination, setPagination] =
+    useState<PaginationState>({
+      pageIndex: 0,
+      pageSize: 10,
+    })
+  const fetchDataOptions = pagination
+
 
   const { data } = getAllLists<Transaction>(
     [
@@ -57,13 +66,14 @@ const index = () => {
       minAmount,
       category,
       tag,
+      fetchDataOptions
     ],
     [
       ENVS.DB_ID,
       ENVS.COLLECTIONS.EXPENSES,
       getQueryForExpenses({
         dates,
-        limit: 25,
+        limit: pagination.pageSize,
         orderByDesc: "date",
         user,
         query,
@@ -71,12 +81,13 @@ const index = () => {
         maxAmount,
         category,
         tag,
+        fetchDataOptions
       }),
     ],
-    { enabled: !!user }
+    { enabled: !!user, keepPreviousData: true }
   );
 
-  useEffect(() => {}, []);
+  useEffect(() => { }, []);
 
   const onClearFilters = () => {
     setDates([]);
@@ -89,7 +100,7 @@ const index = () => {
 
   return (
     <Layout>
-      <div className="dark:bg-navy-900 min-h-[100vh] max-w-[1200px] mx-auto">
+      <div className="dark:bg-navy-900 flex flex-col flex-1 w-full max-w-[1200px] mx-auto">
         <div className="flex items-center justify-between">
           &nbsp;
           <Title className="text-center py-10">Expenses</Title>
@@ -97,7 +108,7 @@ const index = () => {
             <Button>Add Expense</Button>
           </Link>
         </div>
-        <div className="flex gap-4">
+        <div className="flex gap-8 flex-1">
           <div className="w-[30%] pl-3">
             <div className="flex items-center justify-between">
               <Button>Filter</Button>
@@ -177,11 +188,13 @@ const index = () => {
                 }}
               />
             </div>
+
           </div>
-          <div className="w-[70%]">
-            {data?.documents?.map((expense) => {
+          <div className="w-[70%] flex flex-1 flex-col">
+            {/* {data?.documents?.map((expense) => {
               return <ExpenseCalCard expense={expense} key={expense.$id} />;
-            })}
+            })} */}
+            {data && <ExpenseTable setPagination={setPagination} pageCount={Math.ceil(data?.total / pagination.pageSize)} fetchDataOptions={fetchDataOptions} data={data?.documents || []} />}
           </div>
         </div>
       </div>
