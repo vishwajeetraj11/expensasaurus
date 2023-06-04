@@ -7,6 +7,8 @@ import DeleteButton from "expensasaures/components/icons/DeleteButton";
 import EditButton from "expensasaures/components/icons/EditButton";
 
 import Layout from "expensasaures/components/layout/Layout";
+import NotFound from "expensasaures/components/lottie/notFound";
+import Searching from "expensasaures/components/lottie/searching";
 import DeleteModal from "expensasaures/components/modal/DeleteModal";
 import { categories, incomeCategories } from "expensasaures/shared/constants/categories";
 import { ENVS } from "expensasaures/shared/constants/constants";
@@ -35,7 +37,7 @@ const id = () => {
   const { id } = router.query;
   const [isDeleteOpen, setIsDeleteOpen] = useState<boolean>(false);
 
-  const { data } = getDoc<Transaction>(
+  const { data, isLoading, isSuccess, error } = getDoc<Transaction>(
     ["Income by ID", id, user?.userId],
     [ENVS.DB_ID, "646879f739377942444c", id as string],
     { enabled: !!user }
@@ -66,9 +68,23 @@ const id = () => {
     {}
   );
 
+  if (error && error.code === 404) {
+    return <Layout>
+      <NotFound
+        title="Income Not Found"
+        subtitle="Missing Income"
+        description="It appears that the income you're searching for has gone missing on the financial horizon. Financial journeys are full of surprises, and sometimes certain income sources may fade away or transform into new opportunities. Take a moment to reevaluate your income streams, explore new avenues, or adjust your financial plans accordingly. Remember, there are always new opportunities waiting to be discovered. Stay resilient, adapt to change, and let's continue the pursuit of financial stability and growth!" />
+    </Layout>
+  }
+
   return <Layout>
     <div className="mx-auto max-w-[1200px] pt-10 block w-full">
-      <div className="flex items-start flex-col md:flex-row w-full gap-10 px-4">
+      {isLoading ? <Searching
+        title="Searching for income..."
+        // subtitle="Please wait while we retrieve the income details."
+        subtitle="Meanwhile, here's a tip for you."
+        description="Track your income, and watch your financial possibilities grow."
+      /> : isSuccess ? <div className="flex items-start flex-col md:flex-row w-full gap-10 px-4">
         <div className="flex flex-col flex-1 w-[inherit]">
           <div className="flex">
             {categoryInfo && (
@@ -173,12 +189,11 @@ const id = () => {
               })}
           </div>
         </div>
-      </div>
+      </div> : null}
     </div>
     <DeleteModal
       action="delete"
       onAction={() => {
-
         mutate(
           {},
           {
