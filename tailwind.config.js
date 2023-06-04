@@ -313,6 +313,13 @@ module.exports = {
         },
       }),
     },
+    keyframes: {
+      shimmer: {
+        '100%': {
+          transform: 'translateX(100%)',
+        },
+      },
+    },
     screens: {
       sm: "576px",
       "sm-max": { max: "576px" },
