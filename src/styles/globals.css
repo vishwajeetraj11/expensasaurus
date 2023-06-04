@@ -72,3 +72,14 @@ input:checked.defaultCheckbox::before {
   width: 366px;
 }
 
+
+
+#gradient-canvas {
+  width:100%;
+  height:100%;
+  --gradient-color-1: #3b82f6; 
+  --gradient-color-2: #0ea5e9; 
+  --gradient-color-3: #06b6d4;  
+  --gradient-color-4: #6366f1;
+  z-index:0;
+}
