@@ -1,3 +1,4 @@
+import clsx from "clsx";
 import { useAuthStore } from "expensasaures/shared/stores/useAuthStore";
 import { useRouter } from "next/router";
 import React, { useEffect } from "react";
@@ -6,10 +7,11 @@ import Navigation from "../Navigation";
 
 interface Props {
   children: React.ReactNode;
+  disablePadding?: boolean;
 }
 
 const Layout = (props: Props) => {
-  const { children } = props;
+  const { children, disablePadding } = props;
   const { user, getUser } = useAuthStore(
     (store) => ({ user: store.user, getUser: store.getUser }),
     shallow
@@ -25,7 +27,7 @@ const Layout = (props: Props) => {
   }, [user]);
 
   return (
-    user ? <div className="pb-10 flex flex-col min-h-screen">
+    user ? <div className={clsx("flex flex-col min-h-screen", !disablePadding && 'pb-10')}>
       <Navigation />
       {/* <DarkMode /> */}
       {children}
