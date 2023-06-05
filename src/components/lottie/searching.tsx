@@ -27,8 +27,10 @@ const Searching = (props: Props) => {
             />
             <div className='flex flex-col justify-center items-center'>
                 {title && <Metric className='font-thin mb-2'>{title}</Metric>}
-                {visible && subtitle && <Subtitle className='w-[60%] mb-3 text-center'>{subtitle}</Subtitle>}
-                {visible && description && <Title className='max-w-[60%] text-center'>{description}</Title>}
+                {/* {visible && subtitle && <Subtitle className='w-[60%] mb-3 text-center'>{subtitle}</Subtitle>} */}
+                {subtitle && <Subtitle className='w-[60%] mb-3 text-center'>{subtitle}</Subtitle>}
+                {/* {visible && description && <Title className='max-w-[60%] text-center'>{description}</Title>} */}
+                {description && <Title className='max-w-[60%] text-center'>{description}</Title>}
             </div>
         </div>
     )
