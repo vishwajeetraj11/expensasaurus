@@ -21,13 +21,13 @@ interface Props {
   data: Transaction[];
   fetchDataOptions: PaginationState;
   pageCount: number;
-  setPagination: Dispatch<SetStateAction<PaginationState>>
-  type: 'expense' | 'income'
+  setPagination: Dispatch<SetStateAction<PaginationState>>;
+  type: "expense" | "income";
 }
 
 const ExpenseTable = (props: Props) => {
   const { data, fetchDataOptions, pageCount, setPagination, type } = props;
-  const isExpense = type === 'expense'
+  const isExpense = type === "expense";
   // const isIncome = type === 'income'
   // const rerender = React.useReducer(() => ({}), {})[1];
 
@@ -37,9 +37,18 @@ const ExpenseTable = (props: Props) => {
         accessorKey: "id",
         accessorFn: (row) => capitalize(row.$id),
         header: () => "Link",
-        cell: (info) => <Link target="_blank" href={isExpense ? `/expenses/${info.getValue()}` : `/incomes/${info.getValue()}`}>
-          <FiExternalLink />
-        </Link>,
+        cell: (info) => (
+          <Link
+            target="_blank"
+            href={
+              isExpense
+                ? `/expenses/${info.getValue()}`
+                : `/incomes/${info.getValue()}`
+            }
+          >
+            <FiExternalLink />
+          </Link>
+        ),
         footer: (props) => props.column.id,
       },
       {
@@ -49,7 +58,9 @@ const ExpenseTable = (props: Props) => {
         id: "title",
         cell: (info) => {
           const title = info.getValue() as string;
-          return <p>{title.length > 60 ? `${title.slice(0, 60)}...` : title}</p>;
+          return (
+            <p>{title.length > 60 ? `${title.slice(0, 60)}...` : title}</p>
+          );
         },
         footer: (props) => props.column.id,
       },
@@ -70,55 +81,40 @@ const ExpenseTable = (props: Props) => {
         header: () => "Date",
         footer: (props) => props.column.id,
       },
-      // {
-      //   accessorKey: "endDate",
-      //   header: () => <span>Ending Date</span>,
-      //   cell: (info) => {
-      //     const date = new Date(info.getValue() as string);
-      //     return format(date, "dd-MM-yyyy");
-      //   },
-      //   footer: (props) => props.column.id,
-      // },
-
       {
         accessorKey: "amount",
         header: () => <span>Total</span>,
         footer: (props) => props.column.id,
       },
-      // { show in :id page
-      //   accessorKey: "status",
-      //   header: "Status",
-      //   footer: (props) => props.column.id,
-      // },
-      // {
-      //   accessorKey: "progress",
-      //   header: "Profile Progress",
-      //   footer: (props) => props.column.id,
-      // },
     ],
     []
   );
 
   return (
     <>
-      <Table setPagination={setPagination} pageCount={pageCount} fetchDataOptions={fetchDataOptions} data={data} columns={columns} />
-
+      <Table
+        setPagination={setPagination}
+        pageCount={pageCount}
+        fetchDataOptions={fetchDataOptions}
+        data={data}
+        columns={columns}
+      />
     </>
   );
-}
+};
 
 function Table({
   data,
   columns,
   fetchDataOptions,
   pageCount,
-  setPagination
+  setPagination,
 }: {
   data: Transaction[];
   columns: ColumnDef<Transaction>[];
-  fetchDataOptions: PaginationState,
-  pageCount: number,
-  setPagination: Dispatch<SetStateAction<PaginationState>>
+  fetchDataOptions: PaginationState;
+  pageCount: number;
+  setPagination: Dispatch<SetStateAction<PaginationState>>;
 }) {
   const { pageIndex, pageSize } = fetchDataOptions;
   const pagination = React.useMemo(
@@ -127,7 +123,7 @@ function Table({
       pageSize,
     }),
     [pageIndex, pageSize]
-  )
+  );
 
   const table = useReactTable({
     data,
@@ -148,11 +144,10 @@ function Table({
 
   return (
     <div className="p-2 flex flex-col flex-1">
-
       <table className="w-full">
         <thead>
           {table.getHeaderGroups().map((headerGroup) => (
-            <tr key={headerGroup.id} className=''>
+            <tr key={headerGroup.id} className="">
               {headerGroup.headers.map((header) => {
                 return (
                   <th
@@ -185,7 +180,10 @@ function Table({
               <tr className="border-b" key={row.id}>
                 {row.getVisibleCells().map((cell) => {
                   return (
-                    <td className="min-w-[100px] pl-4 first:pl-0 h-[50px] text-slate-700" key={cell.id}>
+                    <td
+                      className="min-w-[100px] pl-4 first:pl-0 h-[50px] text-slate-700"
+                      key={cell.id}
+                    >
                       {flexRender(
                         cell.column.columnDef.cell,
                         cell.getContext()
@@ -200,7 +198,6 @@ function Table({
       </table>
       <hr className="my-4 mt-auto" />
       <div className="flex items-center justify-between gap-2">
-
         <span className="flex items-center gap-1">
           <div>Page</div>
           <strong>
@@ -271,7 +268,6 @@ function Table({
           </SelectBox> */}
         </div>
       </div>
-
     </div>
   );
 }
