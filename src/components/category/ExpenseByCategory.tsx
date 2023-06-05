@@ -26,8 +26,7 @@ const ExpenseByCategory = (props: Props) => {
   const budgetDefined = props.type === 'budget-defined';
   const budgetNotDefined = props.type === 'budget-not-defined';
   const router = useRouter();
-  console.log(budgetDefined)
-  console.log(value.budgetPercent)
+
   return (
     <Card
       onClick={() => {
