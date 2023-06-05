@@ -6,6 +6,7 @@ import {
   DateRangePickerValue,
   SelectBox,
   SelectBoxItem,
+  Subtitle,
   Text,
   TextInput,
   Title
@@ -14,6 +15,8 @@ import { Models } from "appwrite";
 import ExpenseTable from "expensasaures/components/ExpenseTable";
 import CategoryIcon from "expensasaures/components/forms/CategorySelect";
 import Layout from "expensasaures/components/layout/Layout";
+import emptyDocsAnimation from "expensasaures/lottie/emptyDocs.json";
+import animationData from "expensasaures/lottie/searchingDocs.json";
 import {
   categories,
   categoryNames,
@@ -23,10 +26,12 @@ import { getAllLists } from "expensasaures/shared/services/query";
 import { useAuthStore } from "expensasaures/shared/stores/useAuthStore";
 import { Transaction } from "expensasaures/shared/types/transaction";
 import { capitalize } from "expensasaures/shared/utils/common";
+import { defaultOptions } from "expensasaures/shared/utils/lottie";
 import { getQueryForExpenses } from "expensasaures/shared/utils/react-query";
 import dynamic from "next/dynamic";
 import Link from "next/link";
 import { useEffect, useState } from "react";
+import Lottie from "react-lottie";
 import { shallow } from "zustand/shallow";
 
 const index = () => {
@@ -48,15 +53,13 @@ const index = () => {
   const [category, setCategory] = useState(validQuery || "");
   const [tag, setTag] = useState("");
 
-  const [pagination, setPagination] =
-    useState<PaginationState>({
-      pageIndex: 0,
-      pageSize: 10,
-    })
-  const fetchDataOptions = pagination
+  const [pagination, setPagination] = useState<PaginationState>({
+    pageIndex: 0,
+    pageSize: 10,
+  });
+  const fetchDataOptions = pagination;
 
-
-  const { data } = getAllLists<Transaction>(
+  const { data, isLoading, } = getAllLists<Transaction>(
     [
       "Expenses",
       user?.userId,
@@ -66,7 +69,7 @@ const index = () => {
       minAmount,
       category,
       tag,
-      fetchDataOptions
+      fetchDataOptions,
     ],
     [
       ENVS.DB_ID,
@@ -81,7 +84,7 @@ const index = () => {
         maxAmount,
         category,
         tag,
-        fetchDataOptions
+        fetchDataOptions,
       }),
     ],
     { enabled: !!user, keepPreviousData: true }
@@ -97,6 +100,8 @@ const index = () => {
     setTag("");
     setCategory("");
   };
+
+  const disableFilters = isLoading
 
   return (
     <Layout>
@@ -120,6 +125,7 @@ const index = () => {
             <DateRangePicker
               className="max-w-md mx-auto"
               value={dates}
+              disabled={disableFilters}
               onValueChange={(value) => {
                 setDates(value);
               }}
@@ -128,6 +134,7 @@ const index = () => {
               <Text className="my-2">Search</Text>
               <TextInput
                 defaultValue={query}
+                disabled={disableFilters}
                 onKeyDown={(e) => {
                   if (e.code === "Enter") {
                     setQuery(e.currentTarget.value);
@@ -139,6 +146,7 @@ const index = () => {
               <Text className="my-2">Min Amount</Text>
               <TextInput
                 defaultValue={minAmount}
+                disabled={disableFilters}
                 onKeyDown={(e) => {
                   if (e.code === "Enter") {
                     setMinAmount(e.currentTarget.value);
@@ -150,6 +158,7 @@ const index = () => {
               <Text className="my-2">Max Amount</Text>
               <TextInput
                 defaultValue={maxAmount}
+                disabled={disableFilters}
                 onKeyDown={(e) => {
                   if (e.code === "Enter") {
                     setMaxAmount(e.currentTarget.value);
@@ -161,6 +170,7 @@ const index = () => {
               <Text className="my-2">Category</Text>
               <SelectBox
                 value={category}
+                disabled={disableFilters}
                 onValueChange={(value) => setCategory(value)}
               >
                 {categories.map((category) => {
@@ -179,6 +189,7 @@ const index = () => {
             <div className="mt-4">
               <Text className="my-2">Tag</Text>
               <TextInput
+                disabled={disableFilters}
                 defaultValue={tag}
                 onKeyDown={(e) => {
                   if (e.code === "Enter") {
@@ -187,19 +198,33 @@ const index = () => {
                 }}
               />
             </div>
-
           </div>
           <div className="w-[70%] flex flex-1 flex-col">
-            {/* {data?.documents?.map((expense) => {
-              return <ExpenseCalCard expense={expense} key={expense.$id} />;
-            })} */}
-            {data && <ExpenseTable
-              type="expense"
-              setPagination={setPagination}
-              pageCount={Math.ceil(data?.total / pagination.pageSize)}
-              fetchDataOptions={fetchDataOptions}
-              data={data?.documents || []}
-            />}
+            {isLoading ? <>
+              <div className="w-full">
+                <Lottie options={defaultOptions(animationData)}
+                  height={'auto'}
+                  width={'auto'}
+                />
+              </div>
+            </> : data
+              ? data.documents?.length === 0
+                ?
+                <div className="w-full">
+                  <Lottie options={defaultOptions(emptyDocsAnimation)}
+                    height={'auto'}
+                    width={'auto'}
+                  />
+                  <Subtitle className='text-slate-700 text-center ml-[-30px]'>No Expenses Listed</Subtitle>
+                </div> : (
+                  <ExpenseTable
+                    type="expense"
+                    setPagination={setPagination}
+                    pageCount={Math.ceil(data?.total / pagination.pageSize)}
+                    fetchDataOptions={fetchDataOptions}
+                    data={data?.documents || []}
+                  />
+                ) : null}
           </div>
         </div>
       </div>

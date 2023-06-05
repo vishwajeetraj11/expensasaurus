@@ -6,6 +6,7 @@ import {
     DateRangePickerValue,
     SelectBox,
     SelectBoxItem,
+    Subtitle,
     Text,
     TextInput,
     Title
@@ -14,6 +15,8 @@ import { Models } from "appwrite";
 import ExpenseTable from "expensasaures/components/ExpenseTable";
 import CategoryIcon from "expensasaures/components/forms/CategorySelect";
 import Layout from "expensasaures/components/layout/Layout";
+import emptyDocsAnimation from "expensasaures/lottie/emptyDocs.json";
+import animationData from "expensasaures/lottie/searchingDocs.json";
 import {
     categories,
     categoryNames,
@@ -23,10 +26,12 @@ import { getAllLists } from "expensasaures/shared/services/query";
 import { useAuthStore } from "expensasaures/shared/stores/useAuthStore";
 import { Transaction } from "expensasaures/shared/types/transaction";
 import { capitalize } from "expensasaures/shared/utils/common";
+import { defaultOptions } from "expensasaures/shared/utils/lottie";
 import { getQueryForExpenses } from "expensasaures/shared/utils/react-query";
 import dynamic from "next/dynamic";
 import Link from "next/link";
 import { useEffect, useState } from "react";
+import Lottie from "react-lottie";
 import { shallow } from "zustand/shallow";
 
 const index = () => {
@@ -56,7 +61,7 @@ const index = () => {
     const fetchDataOptions = pagination
 
 
-    const { data } = getAllLists<Transaction>(
+    const { data, isLoading } = getAllLists<Transaction>(
         [
             "Incomes",
             user?.userId,
@@ -180,13 +185,32 @@ const index = () => {
 
                     </div>
                     <div className="w-[70%] flex flex-1 flex-col">
-                        {data && <ExpenseTable
-                            type="income"
-                            setPagination={setPagination}
-                            pageCount={Math.ceil(data?.total / pagination.pageSize)}
-                            fetchDataOptions={fetchDataOptions}
-                            data={data?.documents || []}
-                        />}
+                        {isLoading ? <>
+                            <div className="w-full">
+                                <Lottie options={defaultOptions(animationData)}
+                                    height={'auto'}
+                                    width={'auto'}
+                                />
+                            </div>
+                        </> : data
+                            ? data.documents?.length === 0
+                                ?
+                                <div className="w-full">
+                                    <Lottie options={defaultOptions(emptyDocsAnimation)}
+                                        height={'auto'}
+                                        width={'auto'}
+                                    />
+                                    <Subtitle className='text-slate-700 text-center ml-[-30px]'>No Incomes Listed</Subtitle>
+                                </div> : (
+                                    <ExpenseTable
+                                        type="income"
+                                        setPagination={setPagination}
+                                        pageCount={Math.ceil(data?.total / pagination.pageSize)}
+                                        fetchDataOptions={fetchDataOptions}
+                                        data={data?.documents || []}
+                                    />
+                                ) : null}
+
                     </div>
                 </div>
             </div>
