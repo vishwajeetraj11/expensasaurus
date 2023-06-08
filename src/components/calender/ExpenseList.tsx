@@ -40,7 +40,7 @@ const ExpenseList = (props: Props) => {
     ["Expenses", user?.userId, selectedDay],
     [
       ENVS.DB_ID,
-      "6467f98b8e8fe5ffa576",
+      ENVS.COLLECTIONS.EXPENSES,
       [
         Query.equal("userId", user?.userId),
         Query.lessThanEqual("date", endOfDay),
@@ -80,7 +80,7 @@ const ExpenseList = (props: Props) => {
         //   No expenses listed for{" "}
         //   {isSameDay(selectedDay, new Date())
         //     ? "today"
-        //     : isTomorrow(selectedDay)
+        // : isTomorrow(selectedDay)
         //       ? "tomorrow"
         //       : format(selectedDay, "MMM dd, yyy")}
         //   .
