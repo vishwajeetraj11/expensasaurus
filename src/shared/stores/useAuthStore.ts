@@ -9,13 +9,18 @@ type useAuthStoreType = {
     user: Models.Session | null,
     setUser: (user: Models.Session | null) => void,
     getUser: () => Promise<Models.Session | undefined>
+    userInfo: Models.User<Models.Preferences> | null,
+    setUserInfo: (user: Models.User<Models.Preferences> | null) => void,
+    getUserInfo: () => Promise<void>
 }
 
 const useAuthStore = create<useAuthStoreType>((set, get) => ({
     authFormState: 'SIGN_IN',
     setAuthFormState: (state) => set({ authFormState: state }),
+    userInfo: null,
     user: null,
     setUser: (user) => set({ user }),
+    setUserInfo: (userInfo) => set({ userInfo }),
     getUser: async () => {
         try {
             const { user } = get();
@@ -36,6 +41,14 @@ const useAuthStore = create<useAuthStoreType>((set, get) => ({
                 }
 
             }
+        } catch (e) {
+
+        }
+    },
+    getUserInfo: async () => {
+        try {
+            const userInfo = await account.get();
+            set({ userInfo });
         } catch (e) {
 
         }
