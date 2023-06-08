@@ -105,9 +105,9 @@ const Categories = () => {
       <div className="mx-auto max-w-[1200px] px-4 w-full">
         {isLoading ?
           <CategoryLoading /> : <> <Title className="py-10 text-center">Category</Title>
-            <Flex className="items-baseline mb-10">
+            <Flex className="flex-col md:flex-row items-baseline mb-10">
               <Text className="text-slate-600">Date Range</Text>
-              <div className="ml-auto">
+              <div className="mt-2 md:mt-0 md:ml-auto w-full md:w-auto">
                 <DateRangePicker onValueChange={setDates} value={dates} />
               </div>
             </Flex>
