@@ -312,6 +312,9 @@ module.exports = {
           500: "rgba(112, 144, 176, 0.08)",
         },
       }),
+      spacing: {
+        "navigation-height": "var(--navigation-height)",
+      }
     },
     keyframes: {
       shimmer: {
@@ -319,6 +322,28 @@ module.exports = {
           transform: 'translateX(100%)',
         },
       },
+      slideUpAndFade: {
+        from: { opacity: 0, transform: 'translateY(2px)' },
+        to: { opacity: 1, transform: 'translateY(0)' },
+      },
+      slideRightAndFade: {
+        from: { opacity: 0, transform: 'translateX(-2px)' },
+        to: { opacity: 1, transform: 'translateX(0)' },
+      },
+      slideDownAndFade: {
+        from: { opacity: 0, transform: 'translateY(-2px)' },
+        to: { opacity: 1, transform: 'translateY(0)' },
+      },
+      slideLeftAndFade: {
+        from: { opacity: 0, transform: 'translateX(2px)' },
+        to: { opacity: 1, transform: 'translateX(0)' },
+      },
+    },
+    animation: {
+      slideUpAndFade: 'slideUpAndFade 400ms cubic-bezier(0.16, 1, 0.3, 1)',
+      slideRightAndFade: 'slideRightAndFade 400ms cubic-bezier(0.16, 1, 0.3, 1)',
+      slideDownAndFade: 'slideDownAndFade 400ms cubic-bezier(0.16, 1, 0.3, 1)',
+      slideLeftAndFade: 'slideLeftAndFade 400ms cubic-bezier(0.16, 1, 0.3, 1)',
     },
     screens: {
       sm: "576px",
