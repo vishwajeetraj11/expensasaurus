@@ -109,7 +109,7 @@ const IncomeForm = () => {
         >
           {({ errors, handleSubmit }) => {
             return (
-              <div className="w-[800px] flex flex-col gap-4">
+              <div className="flex flex-col gap-4">
                 <form onSubmit={handleSubmit}>
                   <Field
                     name="title"
