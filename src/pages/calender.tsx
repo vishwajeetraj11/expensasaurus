@@ -31,7 +31,7 @@ const Calender = () => {
           <div className="md:grid md:grid-cols-[392px_1fr] md:divide-x md:divide-gray-200">
             <div className="md:pr-14 md:max-w-md">
               <div className="flex items-center">
-                <h2 className="flex-auto font-semibold text-gray-900">
+                <h2 className="flex-auto font-semibold dark:text-slate-300 text-gray-900">
                   {format(firstDayCurrentMonth, "MMMM yyyy")}
                 </h2>
                 <button
@@ -66,6 +66,7 @@ const Calender = () => {
                 <div>F</div>
                 <div>S</div>
               </div>
+              {/* Mapped Days */}
               <div className="grid grid-cols-7 mt-2 text-sm">
                 {days.map((day, dayIdx) => (
                   <div
@@ -99,10 +100,10 @@ const Calender = () => {
                         isEqual(day, selectedDay) &&
                         !isToday(day) &&
                         "bg-gray-900",
-                        !isEqual(day, selectedDay) && "hover:bg-gray-200",
+                        !isEqual(day, selectedDay) && "hover:bg-gray-200 dark:hover:bg-slate-600",
                         (isEqual(day, selectedDay) || isToday(day)) &&
                         "font-semibold",
-                        "mx-auto flex h-8 w-8 items-center justify-center rounded-full"
+                        "mx-auto flex h-8 w-8 items-center justify-center dark:text-white rounded-full"
                       )}
                     >
                       <time dateTime={format(day, "yyyy-MM-dd")}>
@@ -112,14 +113,7 @@ const Calender = () => {
 
                     <div className="w-1 h-1 mx-auto mt-1">
                       {thisMonthExpenses?.documents?.some((expense) => {
-                        // console.log({
-                        //   date: expense.date,
-                        //   day: day.toISOString(),
-                        //   bool: isSameDay(
-                        //     parseISO(expense.date),
-                        //     parseISO(day.toISOString())
-                        //   ),
-                        // });
+
                         return isSameDay(parseISO(expense.date), day);
                       }) && (
                           <div className="w-1 h-1 rounded-full bg-blue-500">

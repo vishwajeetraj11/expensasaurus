@@ -35,7 +35,7 @@ function ExpenseCalCard(props: Props) {
 
   return (
     // <Link href={`/expenses/${expense.$id}`}>
-    <li className="flex px-4 py-2 items-center rounded-xl transition-all duration-300 hover:bg-slate-100/80 relative">
+    <li className="flex px-4 py-2 items-center rounded-xl transition-all duration-300 dark:hover:bg-slate-600/20 hover:bg-slate-100/80 relative">
       <div className="py-2 flex flex-1">
         {SelectedIcon && (
           <div
@@ -49,15 +49,15 @@ function ExpenseCalCard(props: Props) {
         )}
 
         <div className="w-[80%]">
-          <p className="text-stone-700 font-semibold text-md">
+          <p className="text-stone-700 dark:text-stone-50/60 font-semibold text-md">
             {expense.title}
           </p>
-          <p className="text-stone-600 text-xs font-medium line-clamp-1">
+          <p className="text-stone-600 dark:text-stone-100/50 text-xs font-medium line-clamp-1">
             {expense.description}
           </p>
         </div>
         <div className="ml-auto self-center flex flex-col">
-          <p className="text-md text-slate-500 font-semibold text-right">
+          <p className="text-md text-slate-500 dark:text-white font-semibold text-right">
             {formatCurrency(expense.currency, expense.amount)}
           </p>
           {/* <div className="flex gap-4 mt-2 ml-auto"><DeleteButton size="sm" onClick={(e) => onDelete(expense.$id)} />

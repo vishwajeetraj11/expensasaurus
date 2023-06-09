@@ -74,7 +74,7 @@ const ExpenseList = (props: Props) => {
             height={'auto'}
             width={'auto'}
           />
-          <Subtitle className='text-slate-700 text-center ml-[-30px]'>No Expenses Listed</Subtitle>
+          <Subtitle className='text-slate-700 dark:text-slate-400 text-center ml-[-30px]'>No Expenses Listed</Subtitle>
         </div>
         // return <p>
         //   No expenses listed for{" "}
@@ -91,7 +91,7 @@ const ExpenseList = (props: Props) => {
 
   return (
     <>
-      <h2 className="font-semibold text-gray-900">
+      <h2 className="font-semibold dark:text-stone-300 text-gray-900">
         Expenses for{" "}
         <time dateTime={format(selectedDay, "yyyy-MM-dd")}>
           {format(selectedDay, "MMM dd, yyy")}
