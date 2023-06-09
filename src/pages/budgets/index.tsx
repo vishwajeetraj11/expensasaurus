@@ -10,9 +10,10 @@ const EmptyStateBudgets = dynamic(() => import("expensasaures/components/budgets
 const index = () => {
   const { data } = useBudgets();
   const emptyState = data?.total === 0;
+  // const emptyState = true
   return (
     <Layout>
-      <div className="mx-auto max-w-[1200px] w-full">
+      <div className="mx-auto max-w-[1200px] w-full px-4">
         <div className={clsx("flex items-center", emptyState ? 'justify-center' : 'justify-between')}>
           &nbsp;
           <Title className="text-center py-10">Budgets</Title>
