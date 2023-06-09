@@ -50,7 +50,7 @@ const ExpenseByCategory = (props: Props) => {
                 && <Text className="text-xs hidden group-hover:block text-slate-600">{Math.ceil(value.budgetPercent)}%</Text>}
               <SelectedIcon className={clsx("w-5 h-5", budgetDefined ? 'group-hover:hidden' : '')} />
             </div>
-            {budgetDefined && value.budgetPercent && <CircularProgress thickness={2} itemProp="" color="inherit" size="lg" variant="determinate" value={value.budgetPercent > 100 ? 100 : value.budgetPercent} className={clsx("h-11 w-11 absolute top-[-2px] left-[-2px]", categoryInfo.className.split(' ')[1])} />}
+            {budgetDefined && typeof value.budgetPercent === 'number' && <CircularProgress thickness={2} itemProp="" color="inherit" size="lg" variant="determinate" value={value.budgetPercent > 100 ? 100 : value.budgetPercent} className={clsx("h-11 w-11 absolute top-[-2px] left-[-2px]", categoryInfo.className.split(' ')[1])} />}
           </div>
         )}
         <div className="flex flex-col flex-1">
