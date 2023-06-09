@@ -46,6 +46,7 @@ const id = () => {
   );
 
   const isLoading = isDocLoading || isBDELoading;
+  // const isLoading = true;
   const isSuccess = isDocSuccess && isBDESuccess;
 
   const budgetByCategory: { [key: string]: number } = {
@@ -101,9 +102,10 @@ const id = () => {
             budgetPercent:
               val === 0 && expensesByCategory[key].amount === 0
                 ? 0
-                : val > expensesByCategory[key].amount
-                  ? (expensesByCategory[key].amount / val) * 100
-                  : 100,
+                : (expensesByCategory[key].amount / val) * 100
+            // : val > expensesByCategory[key].amount
+            //   ? (expensesByCategory[key].amount / val) * 100
+            //   : 100,
           },
         ];
       })
@@ -159,12 +161,12 @@ const id = () => {
               );
             })}</div>
 
-          <Callout
+          {Object.entries(match().result).filter(([category, value]) => !value.budget).length !== 0 && <Callout
             className="h-12 my-6"
             title="You seem to have spending in categories with no budget"
             icon={ExclamationIcon}
             color="red"
-          />
+          />}
 
           <div className="grid grid-cols-3 gap-4">
             {Object.entries(match().result).filter(([category, value]) => !value.budget).map(([category, value], i) => {
