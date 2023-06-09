@@ -43,10 +43,13 @@ const Navigation = () => {
     }
   }, [user])
 
+  const anchorClasses = clsx(
+    'text-md text-grey transition-colors h-navigation-height w-full flex items-center'
+  )
 
   return <header className="fixed top-0 left-0 z-10 w-full border-transparent-white backdrop-blur-[12px]">
     <div className="max-w-[1200px] mx-auto sm:px-0 px-8 flex h-navigation-height items-center">
-      <Link href={"/"} className="flex items-center text-md">
+      <Link href={"/dashboard"} className="flex items-center text-md">
         <Logo className="w-[1.8rem] h-[1.8rem] mr-4" />
         <p className="text-[14px]">Expensasaures</p>
       </Link>
@@ -58,32 +61,32 @@ const Navigation = () => {
       >
         <nav
           className={clsx(
-            "md:opacity-100 h-[calc(100vh_-_var(--navigation-height))] md:block w-full fixed md:relative top-navigation-height md:top-0 left-0 overflow-auto bg-slate-200 md:h-auto md:w-auto md:bg-transparent transform transition-[opacity] duration-500 md:translate-x-0",
+            "md:opacity-100 h-[calc(100vh_-_var(--navigation-height))] md:block w-full fixed md:relative top-navigation-height md:top-0 left-0 overflow-auto bg-white md:h-auto md:w-auto md:bg-transparent transform transition-[opacity] duration-500 md:translate-x-0",
             hamburgerMenuIsOpen ? "opacity-100" : "opacity-0"
           )}
         >
           <ul
             className={clsx(
               "ease-in flex flex-col md:flex-row md:items-center h-full md:text-sm",
-              "[&_a]:text-md [&_a:hover]:text-grey md:[&_a]:transition-colors [&_li]:ml-6 [&_li]:border-bottom [&_li]:border-b [&_li]:border-grey-dark md:[&_li]:border-none",
+              "[&_a]:text-md dark:[&_a:hover]:text-gray-200 dark:text-slate-200 md:[&_a]:transition-colors [&_li]:ml-6 [&_li]:border-bottom [&_li]:border-b [&_li]:border-grey-dark md:[&_li]:border-none",
               "[&_a]:h-navigation-height [&_a]:w-full [&_a]:flex [&_a]:items-center",
               hamburgerMenuIsOpen ? "[&_a]:!translate-y-0" : "", // not working
               "[&_a]:duration-300 [&_a]:translate-y-8 md:[&_a]:translate-y-0 [&_a]:transition-[color,transform]"
             )}
           >
             <li>
-              <Link href="/dashboard">Dashboard</Link>
+              <Link className='text-gray' href="/dashboard">Dashboard</Link>
             </li>
             <li>
               <Link href="/expenses">Expense</Link>
             </li>
-            <li className="md:hidden lg:block">
+            <li className="">
               <Link href="/incomes">Incomes</Link>
             </li>
-            <li className="md:hidden lg:block">
+            <li className="">
               <Link href="/category">Category</Link>
             </li>
-            <li className="md:hidden lg:block">
+            <li className="">
               <Link href="/calender">Calender</Link>
             </li>
             <li>
@@ -105,7 +108,7 @@ const Navigation = () => {
           </Popover.Trigger>
           <Popover.Portal>
             <Popover.Content
-              className="z-[9999] rounded p-5 w-[200px] bg-white shadow-[0_10px_38px_-10px_hsla(206,22%,7%,.35),0_10px_20px_-15px_hsla(206,22%,7%,.2)] focus:shadow-[0_10px_38px_-10px_hsla(206,22%,7%,.35),0_10px_20px_-15px_hsla(206,22%,7%,.2),0_0_0_2px_theme(colors.violet7)] will-change-[transform,opacity] data-[state=open]:data-[side=top]:animate-slideDownAndFade data-[state=open]:data-[side=right]:animate-slideLeftAndFade data-[state=open]:data-[side=bottom]:animate-slideUpAndFade data-[state=open]:data-[side=left]:animate-slideRightAndFade"
+              className="z-[9999] rounded p-5 w-[200px] bg-white dark:bg-slate-500 shadow-[0_10px_38px_-10px_hsla(206,22%,7%,.35),0_10px_20px_-15px_hsla(206,22%,7%,.2)] focus:shadow-[0_10px_38px_-10px_hsla(206,22%,7%,.35),0_10px_20px_-15px_hsla(206,22%,7%,.2),0_0_0_2px_theme(colors.violet7)] will-change-[transform,opacity] data-[state=open]:data-[side=top]:animate-slideDownAndFade data-[state=open]:data-[side=right]:animate-slideLeftAndFade data-[state=open]:data-[side=bottom]:animate-slideUpAndFade data-[state=open]:data-[side=left]:animate-slideRightAndFade"
               sideOffset={5}
             >
               <div className="flex flex-col gap-2.5">
