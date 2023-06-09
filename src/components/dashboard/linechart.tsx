@@ -117,7 +117,7 @@ const LineChartTabs = () => {
 }
 
 export const LineChartTabsLoading = () => {
-  return <div className="relative p-6 w-full mb-5 overflow-hidden rounded-2xl bg-white/10 shadow-xl shadow-black/5 before:absolute before:inset-0 before:-translate-x-full before:animate-[shimmer_2s_infinite] before:border-t before:border-slate-100 before:bg-gradient-to-r before:from-transparent before:via-slate-50/50 before:to-transparent">
+  return <div className="relative p-6 w-full mb-5 overflow-hidden rounded-2xl bg-white/10 shadow-xl shadow-black/5 before:absolute before:inset-0 before:-translate-x-full before:animate-[shimmer_2s_infinite] before:border-t before:border-slate-100 before:bg-gradient-to-r before:from-transparent before:via-slate-50/50 dark:before:via-slate-50/10  before:to-transparent">
     <div className="h-[20px] bg-slate-500/20 rounded-full w-[100px] mb-2">&nbsp;</div>
     <div className="h-[12px] bg-slate-500/20 rounded-full w-[100px]">&nbsp;</div>
     <LineChart
