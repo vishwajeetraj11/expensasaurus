@@ -16,7 +16,7 @@ const dashboard = () => {
   // const isLoading = true;
   return (
     <Layout>
-      <main className="dark:bg-navy-900">
+      <main>
         <div className="max-w-[1200px] mx-auto pt-10">
           {isLoading ? <DashboardStatisticsLoading /> : <DashboardStatistics stats={statistics} />}
 
