@@ -16,29 +16,29 @@ const dashboard = () => {
   // const isLoading = true;
   return (
     <Layout>
-      <main>
-        <div className="max-w-[1200px] mx-auto pt-10">
-          {isLoading ? <DashboardStatisticsLoading /> : <DashboardStatistics stats={statistics} />}
+      <main className="max-w-[1200px] w-full mx-auto pt-10 px-4">
 
-          <div className="flex justify-between gap-4 mt-8">
-            <div className="w-[66%]">
-              {isLoading ? <>
-                <LineChartTabsLoading />
-              </> : <LineChartTabs />}
+        {isLoading ? <DashboardStatisticsLoading /> : <DashboardStatistics stats={statistics} />}
 
-            </div>
-            <div className="w-[32%]">
+        <div className="flex justify-between gap-4 mt-8">
+          <div className="w-[66%]">
+            {isLoading ? <>
+              <LineChartTabsLoading />
+            </> : <LineChartTabs />}
 
-              {isLoading ? <CategoriesPieChartLoading /> : <CategoriesPieChart
-                incomeThisMonth={incomeThisMonth}
-                expensesAndPercentByCategoryThisMonth={
-                  expensesAndPercentByCategoryThisMonth
-                }
-                expenseThisMonth={expenseThisMonth}
-              />}
-            </div>
+          </div>
+          <div className="w-[32%]">
+
+            {isLoading ? <CategoriesPieChartLoading /> : <CategoriesPieChart
+              incomeThisMonth={incomeThisMonth}
+              expensesAndPercentByCategoryThisMonth={
+                expensesAndPercentByCategoryThisMonth
+              }
+              expenseThisMonth={expenseThisMonth}
+            />}
           </div>
         </div>
+
       </main>
     </Layout>
   );
