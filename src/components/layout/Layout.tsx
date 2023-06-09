@@ -4,6 +4,7 @@ import { useRouter } from "next/router";
 import React, { useEffect } from "react";
 import { shallow } from "zustand/shallow";
 import Navigation from "../Navigation";
+import DarkMode from "../ui/DarkMode";
 
 interface Props {
   children: React.ReactNode;
@@ -27,9 +28,9 @@ const Layout = (props: Props) => {
   }, [user]);
 
   return (
-    user ? <div className={clsx("flex flex-col min-h-screen pt-navigation-height", !disablePadding && 'pb-10')}>
+    user ? <div className={clsx("flex flex-col min-h-screen pt-navigation-height dark:bg-navy-900", !disablePadding && 'pb-10')}>
       <Navigation />
-      {/* <DarkMode /> */}
+      <DarkMode />
       {children}
     </div> : null
   );
