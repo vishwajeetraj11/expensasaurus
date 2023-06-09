@@ -1,20 +1,34 @@
 import LoginForm from "expensasaures/components/forms/auth/LoginForm";
 import AuthLayout from "expensasaures/components/layout/AuthLayout";
 import { account } from "expensasaures/shared/services/appwrite";
+import { useRouter } from "next/router";
+import { useEffect } from "react";
 import { BsGithub } from "react-icons/bs";
 import { shallow } from "zustand/shallow";
 import { useAuthStore } from "../shared/stores/useAuthStore";
 
 export default function SignIn() {
-  const { setAuthFormState } = useAuthStore(
+  const { setAuthFormState, authFormState, user } = useAuthStore(
     (state) => ({
       setAuthFormState: state.setAuthFormState,
+      authFormState: state.authFormState,
+      user: state.user
     }),
     shallow
   );
 
+  const router = useRouter();
+  useEffect(() => {
+    if (user) {
+      router.push('/dashboard')
+    }
+  }, [user])
+
+  const isLogin = authFormState === "SIGN_IN";
+  const isSignup = authFormState === "SIGN_UP";
+
   const onCreateAnAccount = () => {
-    setAuthFormState("SIGN_UP");
+    setAuthFormState(authFormState === "SIGN_UP" ? 'SIGN_IN' : 'SIGN_UP');
   };
   // set currency in user prefs.on signup
   return (
@@ -23,20 +37,20 @@ export default function SignIn() {
         {/* Sign in section */}
         <div className="mt-[10vh] w-full max-w-full flex-col items-center md:pl-4 lg:pl-0 xl:max-w-[420px]">
           <h4 className="mb-2.5 text-4xl font-bold text-navy-700 dark:text-white">
-            Sign In
+            {isSignup ? 'Create an account' : 'Sign Up'}
           </h4>
           <p className="mb-9 ml-1 text-base text-gray-600">
-            Enter your email and password to sign in!
+            {isSignup ? 'Securely access your Expense Tracker account.' : 'Create an account to start tracking your expenses like a pro!'}
           </p>
 
-          <div className="mb-6 flex h-[50px] w-full items-center justify-center gap-2 rounded-xl bg-lightPrimary hover:cursor-pointer dark:bg-navy-800">
+          <div className="mb-6 flex h-[50px] w-full items-center justify-center gap-2 rounded-xl bg-lightPrimary hover:cursor-pointer dark:bg-navy-700">
             <div className="rounded-full text-xl">
-              <BsGithub />
+              <BsGithub className="dark:text-white" />
             </div>
             <h5 onClick={() => {
               account.createOAuth2Session('github', `${window.location.origin}/dashboard`, `${window.location.origin}/`);
             }} className="text-sm font-medium text-navy-700 dark:text-white">
-              Sign In with Github
+              Continue with Github
             </h5>
           </div>
           <div className="mb-6 flex items-center  gap-3">
@@ -64,13 +78,13 @@ export default function SignIn() {
 
           <div className="mt-4">
             <span className=" text-sm font-medium text-navy-700 dark:text-gray-600">
-              Not registered yet?
+              {isSignup ? 'Already have an account?' : 'Not registered yet?'}
             </span>
             <button
               onClick={onCreateAnAccount}
               className="ml-1 text-sm font-medium text-brand-500 hover:text-brand-600 dark:text-white"
             >
-              Create an account
+              {isSignup ? 'Sign In' : 'Create an account'}
             </button>
           </div>
         </div>
