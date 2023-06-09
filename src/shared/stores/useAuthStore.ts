@@ -59,7 +59,7 @@ const useAuthStore = create<useAuthStoreType>((set, get) => ({
 
             }
         } catch (e) {
-
+            localStorage.removeItem("sessionId");
         }
     },
     getUserInfo: async () => {
