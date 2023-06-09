@@ -28,7 +28,7 @@ const Layout = (props: Props) => {
   }, [user]);
 
   return (
-    user ? <div className={clsx("flex flex-col min-h-screen pt-navigation-height dark:bg-navy-900", !disablePadding && 'pb-10')}>
+    user ? <div className={clsx("flex flex-col min-h-screen pt-navigation-height dark:bg-[#02040F]", !disablePadding && 'pb-10')}>
       <Navigation />
       <DarkMode />
       {children}
