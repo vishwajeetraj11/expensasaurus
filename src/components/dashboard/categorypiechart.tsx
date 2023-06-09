@@ -10,16 +10,19 @@ import {
   List,
   ListItem,
   Metric,
+  Tab,
+  TabGroup,
+  TabList,
+  TabPanel,
+  TabPanels,
   Text,
-  Title,
-  Toggle,
-  ToggleItem,
+  Title
 } from "@tremor/react";
 
-import { ChartPieIcon, ViewListIcon } from "@heroicons/react/outline";
 
 import { ArrowNarrowRightIcon } from "@heroicons/react/solid";
 
+import { ChartPieIcon, ViewListIcon } from "@heroicons/react/outline";
 import { categories } from "expensasaures/shared/constants/categories";
 import { CategoryData } from "expensasaures/shared/utils/calculation";
 import Link from "next/link";
@@ -79,56 +82,58 @@ const CategoriesPieChart = (props: Props) => {
 
   return (
     <Card className="box-shadow-card">
-      <Flex className="space-x-8" justifyContent="between" alignItems="center">
-        <Title>Overview</Title>
-        <Toggle
-          defaultValue="chart"
-          color="gray"
-          onValueChange={(value) => setSelectedView(value)}
-        >
-          <ToggleItem value="chart" icon={ChartPieIcon} />
-          <ToggleItem value="list" icon={ViewListIcon} />
-        </Toggle>
-      </Flex>
-      <Text className="mt-8">Savings</Text>
-      <Metric>₹ {incomeThisMonth - expenseThisMonth}</Metric>
-      <Divider />
+      <TabGroup className="">
+        <Flex className="space-x-8" justifyContent="between" alignItems="center">
+          <Title>Overview</Title>
 
-      {selectedView === "chart" ? (
-        <DonutChart
-          data={categoryExpense}
-          variant="pie"
-          showAnimation={false}
-          category="value"
-          index="name"
-          valueFormatter={valueFormatter}
-          className="mt-6"
-        />
-      ) : (
-        <>
-          <Flex className="mt-8" justifyContent="between">
-            <Text className="truncate">
-              <Bold>Category</Bold>
-            </Text>
-            <Text>**</Text>
-          </Flex>
-          <List className="mt-4">
-            {categoryExpense.map((stock) => (
-              <ListItem key={stock.name}>
-                <Text className="font-medium text-stone-500">{stock.name}</Text>
-                <Flex justifyContent="end" className="space-x-2">
-                  <Text className="font-medium text-stone-700">
-                    ₹ {Intl.NumberFormat("us").format(stock.value).toString()}
-                  </Text>
-                  <BadgeDelta deltaType={stock.deltaType} size="xs">
-                    {stock.performance}
-                  </BadgeDelta>
-                </Flex>
-              </ListItem>
-            ))}
-          </List>
-        </>
-      )}
+          <TabList>
+            <Tab icon={ChartPieIcon}></Tab>
+            <Tab icon={ViewListIcon}></Tab>
+          </TabList>
+
+        </Flex>
+        <Text className="mt-8">Savings</Text>
+        <Metric>₹ {incomeThisMonth - expenseThisMonth}</Metric>
+        <Divider />
+
+        <TabPanels>
+          <TabPanel>
+
+            <DonutChart
+              data={categoryExpense}
+              variant="pie"
+              showAnimation={false}
+              category="value"
+              index="name"
+              valueFormatter={valueFormatter}
+              className="mt-6"
+            />
+          </TabPanel>
+          <TabPanel>
+            <Flex className="mt-8" justifyContent="between">
+              <Text className="truncate">
+                <Bold>Category</Bold>
+              </Text>
+              <Text>**</Text>
+            </Flex>
+            <List className="mt-4">
+              {categoryExpense.map((stock) => (
+                <ListItem key={stock.name}>
+                  <Text className="font-medium text-stone-500">{stock.name}</Text>
+                  <Flex justifyContent="end" className="space-x-2">
+                    <Text className="font-medium text-stone-700">
+                      ₹ {Intl.NumberFormat("us").format(stock.value).toString()}
+                    </Text>
+                    <BadgeDelta deltaType={stock.deltaType} size="xs">
+                      {stock.performance}
+                    </BadgeDelta>
+                  </Flex>
+                </ListItem>
+              ))}
+            </List>
+          </TabPanel>
+        </TabPanels>
+      </TabGroup>
       <Flex className="mt-6 pt-4 border-t">
         <Link href={'/category'} shallow>
           <Button

@@ -4,8 +4,8 @@ import {
   Button,
   DateRangePicker,
   DateRangePickerValue,
-  SelectBox,
-  SelectBoxItem,
+  Select,
+  SelectItem,
   Subtitle,
   Text,
   TextInput,
@@ -46,7 +46,7 @@ const index = () => {
       ?.toLowerCase()
     : false;
 
-  const [dates, setDates] = useState<DateRangePickerValue>([]);
+  const [dates, setDates] = useState<DateRangePickerValue>({});
   const [query, setQuery] = useState("");
   const [minAmount, setMinAmount] = useState("");
   const [maxAmount, setMaxAmount] = useState("");
@@ -93,7 +93,7 @@ const index = () => {
   useEffect(() => { }, []);
 
   const onClearFilters = () => {
-    setDates([]);
+    setDates({});
     setMaxAmount("");
     setMinAmount("");
     setQuery("");
@@ -168,7 +168,7 @@ const index = () => {
             </div>
             <div className="mt-4">
               <Text className="my-2">Category</Text>
-              <SelectBox
+              <Select
                 value={category}
                 disabled={disableFilters}
                 onValueChange={(value) => setCategory(value)}
@@ -176,15 +176,16 @@ const index = () => {
                 {categories.map((category) => {
                   const CIcon = () => <CategoryIcon category={category} />;
                   return (
-                    <SelectBoxItem
+                    <SelectItem
                       key={category.id}
                       value={category.key}
-                      text={category.category}
                       icon={CIcon}
-                    />
+                    >
+                      {category.category}
+                    </SelectItem>
                   );
                 })}
-              </SelectBox>
+              </Select>
             </div>
             <div className="mt-4">
               <Text className="my-2">Tag</Text>

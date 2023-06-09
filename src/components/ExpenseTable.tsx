@@ -248,7 +248,7 @@ function Table({
               className="border p-1 rounded w-10"
             />
           </span>
-          {/* <SelectBox
+          {/* <Select
             onValueChange={(value) =>
               table.setPageSize(Number(value))
             }
@@ -257,7 +257,7 @@ function Table({
           >
             {['10', '20', '30', '40', '50'].map((size, index) => {
               return (
-                <SelectBoxItem
+                <SelectItem
                   key={size}
                   value={size}
                   text={size}
@@ -265,7 +265,7 @@ function Table({
                 />
               );
             })}
-          </SelectBox> */}
+          </Select> */}
         </div>
       </div>
     </div>

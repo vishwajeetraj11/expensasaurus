@@ -5,8 +5,8 @@ import {
   DateRangePickerValue,
   Flex,
   LineChart,
-  SelectBox,
-  SelectBoxItem,
+  Select,
+  SelectItem,
   Subtitle,
   Text,
   Title
@@ -31,17 +31,17 @@ import { shallow } from "zustand/shallow";
 
 const Categories = () => {
   const { endOfThisMonth, startOfThisMonth } = useDates();
-  const [dates, setDates] = useState<DateRangePickerValue>([
-    new Date(startOfThisMonth),
-    new Date(endOfThisMonth),
-  ]);
+  const [dates, setDates] = useState<DateRangePickerValue>({
+    from: new Date(startOfThisMonth),
+    to: new Date(endOfThisMonth),
+  });
 
   const { user } = useAuthStore((state) => ({ user: state.user }), shallow) as {
     user: Models.Session;
   };
   const [selectedCategory, setSelectedCategory] = useState("");
   const { data: thisMonthExpenses, isLoading } = getAllLists<Transaction>(
-    ["Expenses", "Stats this month", user?.userId, dates[0], dates[1]],
+    ["Expenses", "Stats this month", user?.userId, dates.from, dates.to],
     [
       ENVS.DB_ID,
       "6467f98b8e8fe5ffa576",
@@ -145,7 +145,7 @@ const Categories = () => {
             </div>
             <div className="flex justify-between items-center my-10">
               <Text className="text-slate-600">Category wise transactions</Text>
-              <SelectBox
+              <Select
                 className="w-[300px]"
                 onValueChange={(value) => setSelectedCategory(value as string)}
                 value={selectedCategory}
@@ -153,15 +153,16 @@ const Categories = () => {
                 {categories.map((category, index) => {
                   const CIcon = () => <CategoryIcon category={category} />;
                   return (
-                    <SelectBoxItem
+                    <SelectItem
                       key={category.id}
                       value={category.key}
-                      text={category.category}
                       icon={CIcon}
-                    />
+                    >
+                      {category.category}
+                    </SelectItem>
                   );
                 })}
-              </SelectBox>
+              </Select>
             </div>
             {txnsByCategory.length !== 0 ? (
               <Card className="box-shadow-card">

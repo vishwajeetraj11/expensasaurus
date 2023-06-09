@@ -52,7 +52,7 @@ const id = () => {
       ENVS.DB_ID,
       ENVS.COLLECTIONS.INCOMES,
       getQueryForExpenses({
-        dates: [],
+        dates: {},
         limit: 3,
         orderByDesc: "date",
         user,

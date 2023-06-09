@@ -1,6 +1,6 @@
 import { DesktopDatePicker, LocalizationProvider } from "@mui/x-date-pickers";
 import { AdapterDateFns } from "@mui/x-date-pickers/AdapterDateFns";
-import { Button, SelectBox, SelectBoxItem } from "@tremor/react";
+import { Button, Select, SelectItem } from "@tremor/react";
 import { Models, Role } from "appwrite";
 import { categories } from "expensasaures/shared/constants/categories";
 import { ENVS } from "expensasaures/shared/constants/constants";
@@ -215,7 +215,7 @@ const ExpenseForm = () => {
                     <Field name="category">
                       {({ meta, input }) => (
                         <>
-                          <SelectBox
+                          <Select
                             onValueChange={(value) =>
                               input.onChange(value as string)
                             }
@@ -227,15 +227,16 @@ const ExpenseForm = () => {
                                 <CategoryIcon category={category} />
                               );
                               return (
-                                <SelectBoxItem
+                                <SelectItem
                                   key={category.id}
                                   value={category.key}
-                                  text={category.category}
                                   icon={CIcon}
-                                />
+                                >
+                                  {category.category}
+                                </SelectItem>
                               );
                             })}
-                          </SelectBox>
+                          </Select>
                           {meta.touched && meta.error && <p>{meta.error}</p>}
                         </>
                       )}

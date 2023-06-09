@@ -1,8 +1,8 @@
 import {
   Button,
   Flex,
-  SelectBox,
-  SelectBoxItem,
+  Select,
+  SelectItem,
   Text,
   TextInput,
 } from "@tremor/react";
@@ -49,7 +49,7 @@ const SpendingLimitPerCategory = () => {
             return (
               <>
                 <div className="flex items-center gap-4 justify-between">
-                  <SelectBox
+                  <Select
                     onValueChange={(value) => {
                       const res = { ...category };
                       const valueOfKey = res[key];
@@ -63,15 +63,16 @@ const SpendingLimitPerCategory = () => {
                     {categories.map((category) => {
                       const CIcon = () => <CategoryIcon category={category} />;
                       return (
-                        <SelectBoxItem
+                        <SelectItem
                           key={category.id}
                           value={category.key}
-                          text={category.category}
                           icon={CIcon}
-                        />
+                        >
+                          {category.category}
+                        </SelectItem>
                       );
                     })}
-                  </SelectBox>
+                  </Select>
 
                   <TextInput
                     value={value.toString()}

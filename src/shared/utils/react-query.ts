@@ -24,7 +24,7 @@ export const getQueryForExpenses = ({
     const result = [];
     const userId = user?.userId;
 
-    const validDates = dates.filter((date) => {
+    const validDates = Object.values(dates).filter((date) => {
         return isValid(date)
     }) as Date[];
 
@@ -84,7 +84,7 @@ export const getQueryForCategoryPage = ({
     user, dates, limit
 }: categoryParams) => {
     const result = [];
-    const validDates = dates.filter((date) => {
+    const validDates = Object.values(dates).filter((date) => {
         return isValid(date)
     }) as Date[];
 

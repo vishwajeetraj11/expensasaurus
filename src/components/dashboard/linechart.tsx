@@ -42,6 +42,7 @@ const LineChartTabs = () => {
           return {
             date: dateResult,
             amount: item.amount,
+            category: item.category,
           };
         }
       );
@@ -106,8 +107,9 @@ const LineChartTabs = () => {
           colors={["blue"]}
           valueFormatter={dataFormatter}
           showLegend={false}
-          yAxisWidth={60}
+          yAxisWidth={80}
           showXAxis
+
         />
       )}
     </Card>
