@@ -1,4 +1,5 @@
-import { Metric, Subtitle, Title } from "@tremor/react";
+import { ExclamationIcon } from "@heroicons/react/outline";
+import { Callout, Metric, Subtitle, Title } from "@tremor/react";
 import { Models, Query } from "appwrite";
 import EBarChart from "expensasaures/components/budgets/BudgetBarChart";
 import ExpenseByCategory from "expensasaures/components/category/ExpenseByCategory";
@@ -157,7 +158,14 @@ const id = () => {
                 />
               );
             })}</div>
-          <Subtitle className="my-6 text-slate-600">Spending in categories with no budget</Subtitle>
+
+          <Callout
+            className="h-12 my-6"
+            title="You seem to have spending in categories with no budget"
+            icon={ExclamationIcon}
+            color="red"
+          />
+
           <div className="grid grid-cols-3 gap-4">
             {Object.entries(match().result).filter(([category, value]) => !value.budget).map(([category, value], i) => {
               const categoryInfo = categories.find(
