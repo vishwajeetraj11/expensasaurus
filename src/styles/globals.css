@@ -5,6 +5,10 @@
 @tailwind utilities;
 
 
+:root {
+  --navigation-height: 4.8rem;
+}
+
 body {
   font-family: "DM Sans", sans-serif;
 }
