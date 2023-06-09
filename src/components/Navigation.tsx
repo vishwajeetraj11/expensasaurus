@@ -1,6 +1,4 @@
 import * as Popover from '@radix-ui/react-popover';
-import { Models } from "appwrite";
-import { account } from 'expensasaures/shared/services/appwrite';
 import { useAuthStore } from "expensasaures/shared/stores/useAuthStore";
 import { clsx } from "expensasaures/shared/utils/common";
 import Link from "next/link";
@@ -29,15 +27,12 @@ const Navigation = () => {
     };
   }, []);
 
-  const { userInfo, getUserInfo, user } = useAuthStore((state) => ({
+  const { userInfo, getUserInfo, user, logout } = useAuthStore((state) => ({
     user: state.user,
     userInfo: state.userInfo,
     getUserInfo: state.getUserInfo,
-  }), shallow) as {
-    user: Models.Session;
-    userInfo: Models.User<Models.Preferences>;
-    getUserInfo: () => Promise<void>,
-  };
+    logout: state.logout
+  }), shallow);
 
   const router = useRouter();
 
@@ -115,14 +110,7 @@ const Navigation = () => {
             >
               <div className="flex flex-col gap-2.5">
                 <Link href={'/profile'} className='text-base'>Profile</Link>
-                <Link href='/login' onClick={async () => {
-                  try {
-                    await account.deleteSession(user.$id);
-                    // setUser(null)
-                  } catch (e) {
-                    console.log(e)
-                  }
-                }} className='text-base'>Logout</Link>
+                <button type='button' onClick={() => logout(router)} className='text-base'>Logout</button>
               </div>
               {/* <Popover.Close
                 className="rounded-full h-[25px] w-[25px] inline-flex items-center justify-center text-violet11 absolute top-[5px] right-[5px] hover:bg-violet4 focus:shadow-[0_0_0_2px] focus:shadow-violet7 outline-none cursor-default"
