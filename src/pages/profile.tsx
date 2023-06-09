@@ -8,6 +8,8 @@ import loadingProfile from '../lottie/loadingProfile.json'
 
 const profile = () => {
     const { userInfo, user } = useAuthStore(store => ({ userInfo: store.userInfo, user: store.user }), shallow)
+
+
     return (
         <Layout>
             <div className="pt-16 px-4 max-w-[1200px] mx-auto w-full">
@@ -30,6 +32,7 @@ const profile = () => {
                                 {userInfo.name}
                             </Title>
                         </div>
+                        {/* {JSON.stringify(locale.listCurrencies())} */}
                     </div>
                 </div>}
             </div>

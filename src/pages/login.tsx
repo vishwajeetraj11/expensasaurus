@@ -16,7 +16,7 @@ export default function SignIn() {
   const onCreateAnAccount = () => {
     setAuthFormState("SIGN_UP");
   };
-
+  // set currency in user prefs.on signup
   return (
     <AuthLayout>
       <div className="mt-16 mb-16 flex h-full w-full items-center justify-center px-2 md:mx-0 md:px-0 lg:mb-10 lg:items-center lg:justify-start">
