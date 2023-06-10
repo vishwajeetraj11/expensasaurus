@@ -9,22 +9,22 @@ interface TextAreaProps extends HTMLProps<HTMLTextAreaElement> {
 const TextArea = (props: TextAreaProps) => {
   const { message, error, ...rest } = props;
   const defaultClasses = clsx(
-    "block w-full focus:outline-none rounded-md border-0 py-1.5 px-3 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
+    'tremor-TextInput-input w-full focus:outline-none focus:ring-0 border-none bg-transparent text-tremor-default text-tremor-content-emphasis dark:text-dark-tremor-content-emphasis pl-4 pr-4 py-2 placeholder:text-tremor-content dark:placeholder:text-dark-tremor-content'
   );
 
   return (
-    <div>
+    <div className={clsx(
+      'tremor-TextInput-root relative w-full flex items-center min-w-[10rem] outline-none rounded-tremor-default shadow-tremor-input dark:shadow-dark-tremor-input bg-tremor-background dark:bg-dark-tremor-background hover:bg-tremor-background-muted dark:hover:bg-dark-tremor-background-muted text-tremor-content-emphasis dark:text-dark-tremor-content-emphasis border-tremor-border dark:border-dark-tremor-border border'
+    )}>
       <textarea
         className={defaultClasses}
         rows={3}
         {...rest}
-      // message={meta.touched && meta.error}
-      // state={meta.error && meta.touched ? "error" : "idle"}
       />
       {message && (
-        <span className={clsx(error ? "text-red-600" : "text-stone-700")}>
+        <p className="text-red-600 dark:text-red-400 text-xs mt-1.5 tracking-normal">
           {message}
-        </span>
+        </p>
       )}
     </div>
   );
