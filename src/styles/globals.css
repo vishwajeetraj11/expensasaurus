@@ -87,3 +87,7 @@ input:checked.defaultCheckbox::before {
   --gradient-color-4: #6366f1;
   z-index:0;
 }
+
+.tremor-TextInput-errorMessage {
+  @apply text-red-600 dark:text-red-400 text-xs mt-1.5 tracking-normal;
+}
