@@ -1,3 +1,6 @@
+// tremor v3 requires all these classes in safelist via a pattern in tailwind.config.js which makes hot reload very slow.
+// so this is a workaround to avoid that.
+
 const tailwindBgColorClasses = [
     "bg-slate-50",
     "hover:bg-slate-50",
