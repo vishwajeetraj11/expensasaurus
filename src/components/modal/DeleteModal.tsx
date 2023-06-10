@@ -3,7 +3,7 @@ import EModal from ".";
 
 interface Props {
   isOpen: boolean;
-  resource: "expense";
+  resource: "expense" | 'budget';
   onClose: () => void;
   action: "delete";
   onAction: () => void;
