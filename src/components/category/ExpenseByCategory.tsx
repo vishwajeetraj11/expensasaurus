@@ -32,7 +32,7 @@ const ExpenseByCategory = (props: Props) => {
       onClick={() => {
         router.push(`/expenses?category=${encodeURIComponent(category)}`);
       }}
-      className="box-shadow-card border-none ring-0 cursor-pointer group"
+      className={clsx("box-shadow-card border-none ring-0 cursor-pointer", value.transactionsCount !== 0 && 'group')}
       key={i}
     >
       <div className="flex">
