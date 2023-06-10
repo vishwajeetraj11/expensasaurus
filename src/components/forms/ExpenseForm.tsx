@@ -35,7 +35,7 @@ const ExpenseForm = () => {
   const router = useRouter();
   const { id } = router.query;
 
-  const { data } = getDoc<Transaction>(
+  const { data, refetch } = getDoc<Transaction>(
     ["Expenses by ID", id, user?.userId],
     [ENVS.DB_ID, ENVS.COLLECTIONS.EXPENSES, id as string],
     { enabled: false }
@@ -113,8 +113,8 @@ const ExpenseForm = () => {
       toast.success(toastMessage);
       queryClient.invalidateQueries(["Expenses by ID", id, user?.userId]);
       router.push(`/expenses/${upsertedExpense.$id}`);
+      if (isUpdateRoute && upsertedExpense) { refetch() };
     } catch (error) {
-      console.log(error);
       toast.error(toastFailureMessage);
     }
     finally {
