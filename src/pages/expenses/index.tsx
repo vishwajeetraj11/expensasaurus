@@ -21,7 +21,7 @@ import {
   categories,
   categoryNames,
 } from "expensasaures/shared/constants/categories";
-import { ENVS } from "expensasaures/shared/constants/constants";
+import { ENVS, regex } from "expensasaures/shared/constants/constants";
 import { getAllLists } from "expensasaures/shared/services/query";
 import { useAuthStore } from "expensasaures/shared/stores/useAuthStore";
 import { Transaction } from "expensasaures/shared/types/transaction";
@@ -52,6 +52,7 @@ const index = () => {
   const [maxAmount, setMaxAmount] = useState("");
   const [category, setCategory] = useState(validQuery || "");
   const [tag, setTag] = useState("");
+  const [filter, setFilters] = useState<any[]>([])
 
   const [pagination, setPagination] = useState<PaginationState>({
     pageIndex: 0,
@@ -59,16 +60,11 @@ const index = () => {
   });
   const fetchDataOptions = pagination;
 
-  const { data, isLoading, } = getAllLists<Transaction>(
+  const { data, isLoading, isFetching } = getAllLists<Transaction>(
     [
       "Expenses",
       user?.userId,
-      dates,
-      query,
-      maxAmount,
-      minAmount,
-      category,
-      tag,
+      ...filter,
       fetchDataOptions,
     ],
     [
@@ -99,13 +95,25 @@ const index = () => {
     setQuery("");
     setTag("");
     setCategory("");
+    setFilters([])
   };
 
-  const disableFilters = isLoading
+  const onFilter = () => {
+    setFilters([
+      dates,
+      query,
+      maxAmount,
+      minAmount,
+      category,
+      tag
+    ])
+  }
+
+  const disableFilters = isLoading || isFetching
 
   return (
     <Layout>
-      <div className="dark:bg-navy-900 flex flex-col flex-1 w-full max-w-[1200px] mx-auto">
+      <div className="flex flex-col flex-1 w-full max-w-[1200px] mx-auto">
         <div className="flex items-center justify-between">
           &nbsp;
           <Title className="text-center py-10">Expenses</Title>
@@ -116,7 +124,7 @@ const index = () => {
         <div className="flex gap-8 flex-1">
           <div className="w-[30%] pl-3">
             <div className="flex items-center justify-between">
-              <Button>Filter</Button>
+              <Button onClick={onFilter}>Filter</Button>
               <Button variant="light" onClick={onClearFilters}>
                 <XCircleIcon className="w-5 h-5" />
               </Button>
@@ -133,36 +141,43 @@ const index = () => {
             <div className="mt-4">
               <Text className="my-2">Search</Text>
               <TextInput
-                defaultValue={query}
                 disabled={disableFilters}
-                onKeyDown={(e) => {
-                  if (e.code === "Enter") {
-                    setQuery(e.currentTarget.value);
-                  }
+                value={query}
+                onChange={(e) => {
+                  setQuery(e.target.value)
                 }}
               />
             </div>
             <div className="mt-4">
               <Text className="my-2">Min Amount</Text>
               <TextInput
-                defaultValue={minAmount}
+                value={minAmount === '0' ? '' : minAmount}
                 disabled={disableFilters}
-                onKeyDown={(e) => {
-                  if (e.code === "Enter") {
-                    setMinAmount(e.currentTarget.value);
+                onChange={(e) => {
+                  if (e.target.value === '') {
+                    setMinAmount('0')
                   }
+                  if (!regex.number.test(e.target.value)) {
+                    return;
+                  }
+                  setMinAmount(e.target.value)
+
                 }}
               />
             </div>
             <div className="mt-4">
               <Text className="my-2">Max Amount</Text>
               <TextInput
-                defaultValue={maxAmount}
+                value={maxAmount === '0' ? '' : maxAmount}
                 disabled={disableFilters}
-                onKeyDown={(e) => {
-                  if (e.code === "Enter") {
-                    setMaxAmount(e.currentTarget.value);
+                onChange={(e) => {
+                  if (e.target.value === '') {
+                    setMaxAmount('0')
                   }
+                  if (!regex.number.test(e.target.value)) {
+                    return;
+                  }
+                  setMaxAmount(e.target.value)
                 }}
               />
             </div>
@@ -191,12 +206,7 @@ const index = () => {
               <Text className="my-2">Tag</Text>
               <TextInput
                 disabled={disableFilters}
-                defaultValue={tag}
-                onKeyDown={(e) => {
-                  if (e.code === "Enter") {
-                    setTag(e.currentTarget.value);
-                  }
-                }}
+                value={tag}
               />
             </div>
           </div>

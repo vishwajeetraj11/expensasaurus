@@ -220,6 +220,9 @@ const id = () => {
         action="delete"
         onAction={() => {
           try {
+            if (fileDelete.length !== 0) {
+              toast('deleting expense...');
+            }
             fileDelete.forEach((query) => {
               setTimeout(() => {
                 query.refetch({ throwOnError: true }).catch((err) => {
