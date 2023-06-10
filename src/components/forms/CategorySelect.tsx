@@ -1,8 +1,8 @@
 import clsx from "clsx";
-import { categories } from "expensasaures/shared/constants/categories";
+import { categories, incomeCategories } from "expensasaures/shared/constants/categories";
 
 interface Props {
-  category: (typeof categories)[number];
+  category: (typeof categories)[number] | (typeof incomeCategories)[number];
 }
 
 const CategoryIcon = (props: Props) => {
