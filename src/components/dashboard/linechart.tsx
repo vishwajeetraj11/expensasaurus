@@ -1,5 +1,6 @@
-import { Card, LineChart, Text, Title } from "@tremor/react";
+import { Card, LineChart, Subtitle, Text, Title } from "@tremor/react";
 import { Models } from "appwrite";
+import clsx from "clsx";
 
 import { startOfYear, subDays } from "date-fns";
 import { dataFormatter, dataFormatterLoading } from "expensasaures/hooks/useDates";
@@ -116,12 +117,21 @@ const LineChartTabs = () => {
   );
 }
 
-export const LineChartTabsLoading = () => {
-  return <div className="relative p-6 w-full mb-5 overflow-hidden rounded-2xl bg-white/10 shadow-xl shadow-black/5 before:absolute before:inset-0 before:-translate-x-full before:animate-[shimmer_2s_infinite] before:border-t before:border-slate-100 before:bg-gradient-to-r before:from-transparent before:via-slate-50/50 dark:before:via-slate-50/10  before:to-transparent">
-    <div className="h-[20px] bg-slate-500/20 rounded-full w-[100px] mb-2">&nbsp;</div>
-    <div className="h-[12px] bg-slate-500/20 rounded-full w-[100px]">&nbsp;</div>
+interface PropsL {
+  animate?: boolean
+}
+
+export const LineChartTabsLoading = (props: PropsL) => {
+  const { animate = true } = props;
+  return <div className={clsx(animate && "before:animate-[shimmer_2s_infinite]", "relative p-6 w-full mb-5 overflow-hidden rounded-2xl bg-white/10 shadow-xl shadow-black/5 before:absolute before:inset-0 before:-translate-x-full before:border-t before:border-slate-100 before:bg-gradient-to-r before:from-transparent before:via-slate-50/50 dark:before:via-slate-50/10  before:to-transparent")}>
+    <div className={clsx("h-[20px] bg-slate-500/20 rounded-full w-[100px] mb-2", animate ? 'opacity-40' : 'opacity-5')}>&nbsp;</div>
+    <div className={clsx("h-[12px] bg-slate-500/20 rounded-full w-[100px]", animate ? 'opacity-40' : 'opacity-5')}>&nbsp;</div>
+    {!animate && <div className="absolute inset-0 flex items-center justify-center flex-col">
+      <Title className="mb-5 mt-[-100px]">Select a Category</Title>
+      <Subtitle className="w-[80%] sm:w-[40%] text-center">No category selected. Please choose a category from the dropdown to view the corresponding chart.</Subtitle>
+    </div>}
     <LineChart
-      className="h-80 mt-8 opacity-40 z-[-1] relative"
+      className={clsx("h-80 mt-8 z-[-1] relative", animate ? 'opacity-40' : 'opacity-5')}
       data={demoDashboardLineChart}
       curveType="natural"
       index="date"
