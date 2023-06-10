@@ -8,6 +8,7 @@ import DeleteButton from "expensasaures/components/icons/DeleteButton";
 import EditButton from "expensasaures/components/icons/EditButton";
 
 import Layout from "expensasaures/components/layout/Layout";
+import EmptyTwoDocs from "expensasaures/components/lottie/emptyTwoDocs";
 import NotFound from "expensasaures/components/lottie/notFound";
 import Searching from "expensasaures/components/lottie/searching";
 import DeleteModal from "expensasaures/components/modal/DeleteModal";
@@ -67,21 +68,7 @@ const id = () => {
     { enabled: !!user && !!data }
   );
 
-  // const { endOfThisMonth, startOfThisMonth } = useDates();
 
-  //   const { data: expensesThisMonth } = getAllLists<Transaction>(
-  //     ["Expenses", user?.userId, endOfThisMonth, startOfThisMonth],
-  //     [
-  //       ENVS.DB_ID,
-  //       ENVS.COLLECTIONS.EXPENSES,
-  //       getQueryForExpenses({
-  //         dates: [new Date(startOfThisMonth), new Date(endOfThisMonth)],
-  //         orderByDesc: "date",
-  //         user,
-  //       }),
-  //     ],
-  //     { enabled: !!user && !!data }
-  //   );
 
   const categoryInfo = categories.find((cat) => cat.key === data?.category);
   const SelectedIcon = categoryInfo?.Icon;
@@ -97,6 +84,9 @@ const id = () => {
     },
     enabled: false
   })));
+
+  const moreExpensesInCategoryRender = moreExpensesInCategory?.documents
+    ?.filter((doc) => doc.$id !== id)
 
   if (error && error.code === 404) {
     return <Layout>
@@ -174,9 +164,9 @@ const id = () => {
               <div className="md:w-[40%] w-full">
                 <Text className="mb-3">More expenses in this category</Text>
                 <div className="flex flex-col gap-3">
-                  {moreExpensesInCategory?.documents
-                    ?.filter((doc) => doc.$id !== id)
-                    .map((doc) => {
+                  {moreExpensesInCategoryRender?.length !== 0 ?
+                    <EmptyTwoDocs subtitle="No More Expenses in this category" />
+                    : moreExpensesInCategoryRender.map((doc) => {
                       const categoryInfo = categories.find(
                         (cat) => cat.key === doc?.category
                       );
