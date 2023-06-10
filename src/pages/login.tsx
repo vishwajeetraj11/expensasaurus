@@ -37,10 +37,10 @@ export default function SignIn() {
         {/* Sign in section */}
         <div className="mt-[10vh] w-full max-w-full flex-col items-center md:pl-4 lg:pl-0 xl:max-w-[420px]">
           <h4 className="mb-2.5 text-4xl font-bold text-navy-700 dark:text-white">
-            {isSignup ? 'Create an account' : 'Sign Up'}
+            {isSignup ? 'Create an account' : 'Sign In'}
           </h4>
           <p className="mb-9 ml-1 text-base text-gray-600">
-            {isSignup ? 'Securely access your Expense Tracker account.' : 'Create an account to start tracking your expenses like a pro!'}
+            {isSignup ? 'Create an account to start tracking your expenses like a pro!' : 'Securely access your Expense Tracker account.'}
           </p>
 
           <div className="mb-6 flex h-[50px] w-full items-center justify-center gap-2 rounded-xl bg-lightPrimary hover:cursor-pointer dark:bg-navy-700">
