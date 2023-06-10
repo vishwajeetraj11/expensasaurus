@@ -1,9 +1,9 @@
 import { DesktopDatePicker, LocalizationProvider } from "@mui/x-date-pickers";
 import { AdapterDateFns } from "@mui/x-date-pickers/AdapterDateFns";
-import { Button, Select, SelectItem } from "@tremor/react";
+import { Button, Select, SelectItem, TextInput } from "@tremor/react";
 import { Models, Role } from "appwrite";
 import { incomeCategories } from "expensasaures/shared/constants/categories";
-import { ENVS } from "expensasaures/shared/constants/constants";
+import { ENVS, regex } from "expensasaures/shared/constants/constants";
 import {
   ID,
   Permission,
@@ -12,16 +12,15 @@ import {
 import { getDoc } from "expensasaures/shared/services/query";
 import { useAuthStore } from "expensasaures/shared/stores/useAuthStore";
 import { Transaction } from "expensasaures/shared/types/transaction";
-import { validateExpenseForm } from "expensasaures/shared/utils/form";
+import { defaultMutators, validateExpenseForm } from "expensasaures/shared/utils/form";
 import dynamic from "next/dynamic";
-import Link from "next/link";
 import { useRouter } from "next/router";
 import { Field, Form } from "react-final-form";
 import { useQueryClient } from "react-query";
 import { toast } from "sonner";
 import { shallow } from "zustand/shallow";
+import ErrorMessage from "../ui/ErrorMessage";
 import FormInputLabel from "../ui/FormInputLabel";
-import InputField from "../ui/InputField";
 import TextArea from "../ui/TextArea";
 
 const IncomeForm = () => {
@@ -75,8 +74,10 @@ const IncomeForm = () => {
         : await database.createDocument(...dbIds, formValues, permissionsArray);
 
       toast.success(toastMessage);
-      queryClient.invalidateQueries(["Income by ID", id, user?.userId]);
       router.push(`/incomes/${upsertedIncome.$id}`)
+      if (isUpdateRoute) {
+        queryClient.invalidateQueries(["Income by ID", id, user?.userId]);
+      }
     } catch (error) {
       console.log(error);
       toast.error(toastFailureMessage);
@@ -86,31 +87,33 @@ const IncomeForm = () => {
 
   return (
     <div>
-      <Link href={"/income"}>Income</Link>
+
       <LocalizationProvider dateAdapter={AdapterDateFns}>
-        {(isUpdateRoute && data) || !isUpdateRoute ? <Form
-          validate={validateExpenseForm}
-          onSubmit={handleSubmit}
-          initialValues={
-            isUpdateRoute
-              ? { ...data, date: new Date(data?.date as string) }
-              :
-              {
-                title: "",
-                description: "",
-                amount: 0,
-                category: "",
-                tag: "",
-                date: new Date(),
-                attachments: [],
-                currency: "INR",
-              }
-          }
-        >
-          {({ errors, handleSubmit }) => {
-            return (
-              <div className="flex flex-col gap-4">
-                <form onSubmit={handleSubmit}>
+        {(isUpdateRoute && data) || !isUpdateRoute ?
+          <Form
+            validate={validateExpenseForm}
+            onSubmit={handleSubmit}
+            mutators={defaultMutators}
+            initialValues={
+              isUpdateRoute
+                ? { ...data, date: new Date(data?.date as string) }
+                :
+                {
+                  title: "",
+                  description: "",
+                  amount: 0,
+                  category: "",
+                  tag: "",
+                  date: new Date(),
+                  attachments: [],
+                  currency: "INR",
+                }
+            }
+          >
+            {({ errors, handleSubmit, submitting, form }) => {
+              return (
+
+                <form className="flex flex-col gap-4" onSubmit={handleSubmit}>
                   <Field
                     name="title"
                     label="Title"
@@ -118,18 +121,20 @@ const IncomeForm = () => {
                     placeholder="Enter title"
                   >
                     {({ meta, input }) => (
-                      <InputField
-                        extra="mb-3"
-                        label="Title*"
-                        placeholder="Auto to College"
-                        id="title"
-                        type="text"
-                        message={meta.touched && meta.error}
-                        state={meta.error && meta.touched ? "error" : "idle"}
-                        {...input}
-                      />
+                      <div>
+                        <FormInputLabel htmlFor="title">Title</FormInputLabel>
+                        <TextInput
+                          {...input}
+                          type='text'
+                          id="title"
+                          disabled={submitting}
+                          placeholder={`Enter Title`}
+                          error={Boolean(meta.touched && meta.error)}
+                          errorMessage={meta.touched && meta.error}
+                        /></div>
                     )}
                   </Field>
+
                   <Field
                     name="description"
                     label="Description"
@@ -138,17 +143,18 @@ const IncomeForm = () => {
                     placeholder="Enter description"
                   >
                     {({ meta, input }) => (
-                      <>
+                      <div>
                         <FormInputLabel htmlFor="description">
                           Description
                         </FormInputLabel>
                         <TextArea
+                          disabled={submitting}
                           id="description"
                           {...input}
                           message={meta.touched && meta.error}
                           error={Boolean(meta.error && meta.touched)}
                         />
-                      </>
+                      </div>
                     )}
                   </Field>
                   <Field
@@ -158,23 +164,45 @@ const IncomeForm = () => {
                     placeholder="Enter amount"
                   >
                     {({ meta, input }) => (
-                      <InputField
-                        extra="mb-3"
-                        label="Amount*"
-                        placeholder="50"
-                        id="amount"
-                        type="number"
-                        message={meta.touched && meta.error}
-                        state={meta.error && meta.touched ? "error" : "idle"}
-                        {...input}
-                      />
+                      <div>
+                        <FormInputLabel htmlFor="amount">
+                          Amount
+                        </FormInputLabel>
+                        <TextInput
+                          disabled={submitting}
+                          id="amount"
+                          placeholder="Enter Amount"
+                          {...input}
+                          value={input.value.toString()}
+                          onChange={(e) => {
+                            if (e.target.value === "") {
+                              form.mutators.setFieldValue(`amount`, 0);
+                              return;
+                            }
+                            if (!regex.number.test(e.target.value)) {
+                              return;
+                            }
+                            form.mutators.setFieldValue(
+                              `amount`,
+                              e.target.value === "" ? "" : parseInt(e.target.value)
+                            );
+                          }}
+                          type='text'
+                          errorMessage={meta.touched && meta.error}
+                          error={Boolean(meta.error && meta.touched)}
+                        />
+                      </div>
                     )}
                   </Field>
 
                   <Field name="category">
                     {({ meta, input }) => (
-                      <>
+                      <div>
+                        <FormInputLabel htmlFor="category">
+                          Category
+                        </FormInputLabel>
                         <Select
+                          placeholder="Select Category"
                           onValueChange={(value) =>
                             input.onChange(value as string)
                           }
@@ -192,8 +220,8 @@ const IncomeForm = () => {
                             );
                           })}
                         </Select>
-                        {meta.touched && meta.error && <p>{meta.error}</p>}
-                      </>
+                        {meta.touched && meta.error && <ErrorMessage>{meta.error}</ErrorMessage>}
+                      </div>
                     )}
                   </Field>
                   <Field
@@ -203,16 +231,19 @@ const IncomeForm = () => {
                     placeholder="Enter tag"
                   >
                     {({ meta, input }) => (
-                      <InputField
-                        extra="mb-3"
-                        label="Tag*"
-                        placeholder="Vacation"
-                        id="tag"
-                        type="text"
-                        message={meta.touched && meta.error}
-                        state={meta.error && meta.touched ? "error" : "idle"}
-                        {...input}
-                      />
+                      <div>
+                        <FormInputLabel htmlFor="tag">
+                          Tag
+                        </FormInputLabel>
+                        <TextInput
+                          placeholder="Make your category."
+                          id="tag"
+                          error={Boolean(meta.touched && meta.error)}
+                          errorMessage={meta.touched && meta.error}
+                          {...input}
+                          type="text"
+                        />
+                      </div>
                     )}
                   </Field>
 
@@ -223,8 +254,10 @@ const IncomeForm = () => {
                     type="date"
                   >
                     {({ meta, input }) => (
-                      <>
-
+                      <div>
+                        <FormInputLabel htmlFor="date">
+                          Date
+                        </FormInputLabel>
                         <DesktopDatePicker
                           className="w-full"
                           onChange={(value) =>
@@ -232,16 +265,10 @@ const IncomeForm = () => {
                           }
                           defaultValue={input.value}
                         />
-                      </>
+                      </div>
                     )}
                   </Field>
-                  {/* <Field name="attachments">
-                    {() => (
-                      <>
-                        <FileUpload />
-                      </>
-                    )}
-                  </Field> */}
+
                   <Button
                     size="lg"
                     className="w-full"
@@ -251,10 +278,10 @@ const IncomeForm = () => {
                     Submit
                   </Button>
                 </form>
-              </div>
-            );
-          }}
-        </Form> : null}
+
+              );
+            }}
+          </Form> : null}
       </LocalizationProvider>
     </div>
   );
