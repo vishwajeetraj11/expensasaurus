@@ -117,15 +117,15 @@ const CategoriesPieChart = (props: Props) => {
               <Text>**</Text>
             </Flex>
             <List className="mt-4">
-              {categoryExpense.map((stock) => (
-                <ListItem key={stock.name}>
-                  <Text className="font-medium text-stone-500">{stock.name}</Text>
+              {categoryExpense.map((category) => (
+                <ListItem key={category.name}>
+                  <Text className="font-medium text-stone-500">{category.name}</Text>
                   <Flex justifyContent="end" className="space-x-2">
                     <Text className="font-medium text-stone-700">
-                      ₹ {Intl.NumberFormat("us").format(stock.value).toString()}
+                      ₹ {Intl.NumberFormat("us").format(category.value).toString()}
                     </Text>
-                    <BadgeDelta deltaType={stock.deltaType} size="xs">
-                      {stock.performance}
+                    <BadgeDelta deltaType={category.deltaType} size="xs">
+                      {category.performance}
                     </BadgeDelta>
                   </Flex>
                 </ListItem>
