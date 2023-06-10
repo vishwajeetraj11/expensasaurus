@@ -1,5 +1,6 @@
 import LoginForm from "expensasaures/components/forms/auth/LoginForm";
 import AuthLayout from "expensasaures/components/layout/AuthLayout";
+import MainLayout from "expensasaures/components/layout/MainLayout";
 import { account } from "expensasaures/shared/services/appwrite";
 import { useRouter } from "next/router";
 import { useEffect } from "react";
@@ -18,12 +19,10 @@ const Login = () => {
     );
 
     const router = useRouter();
+
     useEffect(() => {
-        if (user) {
-            router.push('/dashboard')
-        }
         setAuthFormState('SIGN_UP')
-    }, [user])
+    }, [])
 
     const isLogin = authFormState === "SIGN_IN";
     const isSignup = authFormState === "SIGN_UP";
@@ -33,36 +32,37 @@ const Login = () => {
     };
     // set currency in user prefs.on signup
     return (
-        <AuthLayout>
-            <div className="mt-16 mb-16 flex h-full w-full items-center justify-center px-2 md:mx-0 md:px-0 lg:mb-10 lg:items-center lg:justify-start">
-                {/* Sign in section */}
-                <div className="mt-[10vh] w-full max-w-full flex-col items-center md:pl-4 lg:pl-0 xl:max-w-[420px]">
-                    <h4 className="mb-2.5 text-4xl font-bold text-navy-700 dark:text-white">
-                        {isSignup ? 'Create an account' : 'Sign In'}
-                    </h4>
-                    <p className="mb-9 ml-1 text-base text-gray-600">
-                        {isSignup ? 'Create an account to start tracking your expenses like a pro!' : 'Securely access your Expense Tracker account.'}
-                    </p>
+        <MainLayout>
+            <AuthLayout>
+                <div className="mt-16 mb-16 flex h-full w-full items-center justify-center px-2 md:mx-0 md:px-0 lg:mb-10 lg:items-center lg:justify-start">
+                    {/* Sign in section */}
+                    <div className="mt-[10vh] w-full max-w-full flex-col items-center md:pl-4 lg:pl-0 xl:max-w-[420px]">
+                        <h4 className="mb-2.5 text-4xl font-bold text-navy-700 dark:text-white">
+                            {isSignup ? 'Create an account' : 'Sign In'}
+                        </h4>
+                        <p className="mb-9 ml-1 text-base text-gray-600">
+                            {isSignup ? 'Create an account to start tracking your expenses like a pro!' : 'Securely access your Expense Tracker account.'}
+                        </p>
 
-                    <div className="mb-6 flex h-[50px] w-full items-center justify-center gap-2 rounded-xl bg-lightPrimary hover:cursor-pointer dark:bg-navy-700">
-                        <div className="rounded-full text-xl">
-                            <BsGithub className="dark:text-white" />
+                        <div className="mb-6 flex h-[50px] w-full items-center justify-center gap-2 rounded-xl bg-lightPrimary hover:cursor-pointer dark:bg-navy-700">
+                            <div className="rounded-full text-xl">
+                                <BsGithub className="dark:text-white" />
+                            </div>
+                            <h5 onClick={() => {
+                                account.createOAuth2Session('github', `${window.location.origin}/dashboard`, `${window.location.origin}/`);
+                            }} className="text-sm font-medium text-navy-700 dark:text-white">
+                                Continue with Github
+                            </h5>
                         </div>
-                        <h5 onClick={() => {
-                            account.createOAuth2Session('github', `${window.location.origin}/dashboard`, `${window.location.origin}/`);
-                        }} className="text-sm font-medium text-navy-700 dark:text-white">
-                            Continue with Github
-                        </h5>
-                    </div>
-                    <div className="mb-6 flex items-center  gap-3">
-                        <div className="h-px w-full bg-gray-200 dark:bg-navy-700" />
-                        <p className="text-base text-gray-600 dark:text-white"> or </p>
-                        <div className="h-px w-full bg-gray-200 dark:bg-navy-700" />
-                    </div>
-                    <LoginForm />
+                        <div className="mb-6 flex items-center  gap-3">
+                            <div className="h-px w-full bg-gray-200 dark:bg-navy-700" />
+                            <p className="text-base text-gray-600 dark:text-white"> or </p>
+                            <div className="h-px w-full bg-gray-200 dark:bg-navy-700" />
+                        </div>
+                        <LoginForm />
 
-                    {/* Checkbox */}
-                    {/* <div className="mb-4 flex items-center justify-between px-2">
+                        {/* Checkbox */}
+                        {/* <div className="mb-4 flex items-center justify-between px-2">
             <div className="flex items-center">
               <Checkbox />
               <p className="ml-2 text-sm font-medium text-navy-700 dark:text-white">
@@ -77,20 +77,21 @@ const Login = () => {
             </a>
           </div> */}
 
-                    <div className="mt-4">
-                        <span className=" text-sm font-medium text-navy-700 dark:text-gray-600">
-                            {isSignup ? 'Already have an account?' : 'Not registered yet?'}
-                        </span>
-                        <button
-                            onClick={onCreateAnAccount}
-                            className="ml-1 text-sm font-medium text-brand-500 hover:text-brand-600 dark:text-white"
-                        >
-                            {isSignup ? 'Sign In' : 'Create an account'}
-                        </button>
+                        <div className="mt-4">
+                            <span className=" text-sm font-medium text-navy-700 dark:text-gray-600">
+                                {isSignup ? 'Already have an account?' : 'Not registered yet?'}
+                            </span>
+                            <button
+                                onClick={onCreateAnAccount}
+                                className="ml-1 text-sm font-medium text-brand-500 hover:text-brand-600 dark:text-white"
+                            >
+                                {isSignup ? 'Sign In' : 'Create an account'}
+                            </button>
+                        </div>
                     </div>
                 </div>
-            </div>
-        </AuthLayout>
+            </AuthLayout>
+        </MainLayout>
     );
 }
 
