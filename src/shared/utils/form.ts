@@ -1,3 +1,4 @@
+import { DateRangePickerValue } from '@tremor/react';
 import { isSameDay, isValid } from 'date-fns';
 import { MutableState, Tools } from 'final-form';
 
@@ -58,32 +59,33 @@ export const validateExpenseForm = (values: any) => {
 
 export const validateBudgetForm = (values: any) => {
     const errors: any = {};
+    if (values) {
 
-    // Validate dates
-    const dates = values.dates;
+        // Validate dates
+        const dates: DateRangePickerValue = values.dates;
 
-    if (!isValid(dates[0]) || !isValid(dates[1])) {
-        errors['dates'] = 'Please select starting and ending dates.';
-    } else {
-        errors.dates = undefined;
-    }
-    if (isSameDay(dates[0], dates[1])) {
-        errors['dates'] = 'Please select different dates.';
-    }
+        if (!isValid(dates?.from) || !isValid(dates?.to)) {
+            errors['dates'] = 'Please select starting and ending dates.';
+        } else if (isSameDay(dates.from || new Date(), dates.to || new Date())) {
+            errors['dates'] = 'Please select different dates.';
+        } else {
+            errors.dates = undefined;
+        }
 
-    // Validate title
-    if (values.title.trim() === "") {
-        errors['title'] = 'Title cannot be empty.';
-    }
+        // Validate title
+        if (!values.title || values.title.trim() === "") {
+            errors['title'] = 'Title cannot be empty.';
+        }
 
-    // Validate amount
-    if (Number(values.amount) <= 0) {
-        errors['amount'] = ("Amount must be a positive number.");
-    }
+        // Validate amount
+        if (Number(values.amount) <= 0) {
+            errors['amount'] = ("Amount must be a positive number.");
+        }
 
-    // Validate categories
-    if (Object.keys(values.categories).length === 0) {
-        errors['categories'] = "All selected categories must sum to 100% of the amount.";
+        // Validate categories
+        if (Object.keys(values.categories).length === 0) {
+            errors['categories'] = "All selected categories must sum to 100% of the amount.";
+        }
     }
     return errors;
 }

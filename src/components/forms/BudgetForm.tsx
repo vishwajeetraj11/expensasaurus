@@ -1,25 +1,29 @@
 import { LocalizationProvider } from "@mui/x-date-pickers";
 import { AdapterDateFns } from "@mui/x-date-pickers/AdapterDateFns";
-import { Button, DateRangePicker } from "@tremor/react";
+import { Button, DateRangePicker, TextInput } from "@tremor/react";
 import { Models, Role } from "appwrite";
-import { ENVS } from "expensasaures/shared/constants/constants";
+import { currentMonth } from "expensasaures/hooks/useDates";
+import { ENVS, regex } from "expensasaures/shared/constants/constants";
 import {
   ID,
   Permission,
   database,
 } from "expensasaures/shared/services/appwrite";
+import { getDoc } from "expensasaures/shared/services/query";
 import { useAuthStore } from "expensasaures/shared/stores/useAuthStore";
+import { Budget } from "expensasaures/shared/types/budget";
 import {
   defaultMutators,
   validateBudgetForm,
 } from "expensasaures/shared/utils/form";
 import dynamic from "next/dynamic";
+import { useRouter } from "next/router";
 import { Field, Form } from "react-final-form";
+import { useQueryClient } from "react-query";
 import { toast } from "sonner";
 import { shallow } from "zustand/shallow";
 import SpendingLimitPerCategory from "../budgets/SpendingLimitPerCategory";
 import FormInputLabel from "../ui/FormInputLabel";
-import InputField from "../ui/InputField";
 import TextArea from "../ui/TextArea";
 
 const BudgetForm = () => {
@@ -27,10 +31,43 @@ const BudgetForm = () => {
     user: Models.Session;
   };
 
+  const router = useRouter();
+  const { id } = router.query;
+  const queryClient = useQueryClient();
+  const { data, refetch } = getDoc<Budget>(
+    ["Budget by ID", id, user?.userId],
+    [ENVS.DB_ID, ENVS.COLLECTIONS.BUDGETS, id as string],
+    { enabled: false }
+  );
+
+  const isUpdateRoute = router.route === "/budgets/[id]/edit";
+
+
   const handleSubmit = async (values: Record<string, any>) => {
+
+    const toastMessage = isUpdateRoute
+      ? "Budget updated successfully"
+      : "Budget created successfully";
+    const toastFailureMessage = isUpdateRoute
+      ? "Budget updation failed"
+      : "Budget creation failed";
+
+    const permissionsArray = isUpdateRoute
+      ? undefined
+      : [
+        Permission.read(Role.user(user.userId)),
+        Permission.update(Role.user(user.userId)),
+        Permission.delete(Role.user(user.userId)),
+      ];
+
+    const dbIds: [string, string, string] = [
+      ENVS.DB_ID,
+      ENVS.COLLECTIONS.BUDGETS,
+      isUpdateRoute ? (id as string) : ID.unique(),
+    ];
     try {
       if (values.categories && values.amount) {
-        const categorySumsArray = Object.entries(values.categories).map(
+        const categorySumsArray = Object.entries(values.categories).filter(([key, value]) => key !== 'category').map(
           ([_, value]) => value
         ) as number[];
 
@@ -40,55 +77,99 @@ const BudgetForm = () => {
         );
 
         if (totalCategoriesSum > values.amount) {
-          // return toast.error("Total category sum cannot be greater than amount");
           return;
+        } else if (totalCategoriesSum < values.amount) {
+          // return
         }
       }
 
       const categoriesNum = Object.fromEntries(
-        Object.entries(values.categories).map(([key, value]) => [
+        Object.entries({
+          ...values.categories,
+          ...{
+            business: values.categories?.business || null,
+            entertainment: values.categories?.entertainment || null,
+            food: values.categories?.food || null,
+            healthcare: values.categories?.healthcare || null,
+            education: values.categories?.education || null,
+            travel: values.categories?.travel || null,
+            other: values.categories?.other || null,
+            savings: values.categories?.savings || null,
+            housing: values.categories?.housing || null,
+            insurance: values.categories?.insurance || null,
+            utilities: values.categories?.utilities || null,
+            investments: values.categories?.investments || null,
+            personal: values.categories?.personal || null,
+            transportation: values.categories?.transportation || null,
+          }
+        }).map(([key, value]) => [
           key,
-          Number(value),
+          Boolean(Number(value)) ? Number(value) : null,
         ])
       );
 
-      const createdBudget = await database.createDocument(
-        ENVS.DB_ID,
-        ENVS.COLLECTIONS.BUDGETS,
-        ID.unique(),
-        {
-          title: values.title,
-          description: values.description,
-          userId: user?.userId,
-          startingDate: values.dates[0],
-          endDate: values.dates[1],
-          amount: Number(values.amount),
-          currency: values.currency,
-          ...categoriesNum,
-        },
-        [
-          Permission.read(Role.user(user.userId)),
-          Permission.update(Role.user(user.userId)),
-          Permission.delete(Role.user(user.userId)),
-        ]
-      );
+      const formValues = {
+        title: values.title,
+        description: values.description,
+        userId: user?.userId,
+        startingDate: values.dates?.from,
+        endDate: values.dates?.to,
+        amount: Number(values.amount),
+        currency: values.currency,
+        ...categoriesNum,
+      }
 
-      toast.success("Budget created successfully");
+      const upsertedBudget = isUpdateRoute
+        ? await database.updateDocument(...dbIds, formValues, permissionsArray)
+        : await database.createDocument(...dbIds, formValues, permissionsArray);
+
+      toast.success(toastMessage);
+      queryClient.invalidateQueries({ queryKey: ["Budgets", user?.userId] })
+      router.push('/budgets')
+      if (isUpdateRoute && upsertedBudget) {
+        refetch()
+      };
     } catch (error) {
-      console.log(error);
-      toast.error("Budget creation failed");
+      toast.error(toastFailureMessage);
     }
   };
 
   return (
     <div>
       <LocalizationProvider dateAdapter={AdapterDateFns}>
-        <Form
+        {(isUpdateRoute && data) || !isUpdateRoute ? <Form
           validate={validateBudgetForm}
           onSubmit={handleSubmit}
           mutators={defaultMutators}
-          initialValues={{
-            dates: [],
+          initialValues={isUpdateRoute ? {
+            ...data
+            ,
+            dates: {
+              to: new Date(data?.startingDate || new Date()),
+              from: new Date(data?.endDate || new Date())
+            }, categories: Object.entries({
+              business: data?.business,
+              entertainment: data?.entertainment,
+              food: data?.food,
+              healthcare: data?.healthcare,
+              education: data?.education,
+              travel: data?.travel,
+              other: data?.other,
+              savings: data?.savings,
+              housing: data?.housing,
+              insurance: data?.insurance,
+              utilities: data?.utilities,
+              investments: data?.investments,
+              personal: data?.personal,
+              transportation: data?.transportation,
+            }).reduce<any>((acc, [key, value]) => {
+              if (value !== null) {
+                acc[key] = value;
+              }
+              return acc;
+            }, {})
+          } : {
+            dates: {},
             title: "",
             description: "",
             amount: "",
@@ -96,10 +177,10 @@ const BudgetForm = () => {
             categories: {},
           }}
         >
-          {({ errors, values, handleSubmit }) => {
+          {({ errors, values, form, handleSubmit, submitting }) => {
             return (
               <div className="max-w-[500px] mx-auto flex flex-col gap-4">
-                <form onSubmit={handleSubmit}>
+                <form className="flex flex-col gap-4" onSubmit={handleSubmit}>
                   <Field
                     name="dates"
                     component={"input"}
@@ -107,8 +188,9 @@ const BudgetForm = () => {
                     type="date"
                   >
                     {({ meta, input }) => (
-                      <>
+                      <div>
                         <DateRangePicker
+                          disabled={submitting}
                           // minDate={new Date()}
                           value={input.value}
                           onValueChange={(value) => {
@@ -120,9 +202,10 @@ const BudgetForm = () => {
                             {meta.error}
                           </p>
                         )}
-                      </>
+                      </div>
                     )}
                   </Field>
+
                   <Field
                     name="title"
                     label="Title"
@@ -130,16 +213,17 @@ const BudgetForm = () => {
                     placeholder="Enter title"
                   >
                     {({ meta, input }) => (
-                      <InputField
-                        extra="mb-3"
-                        label="Title*"
-                        placeholder="Auto to College"
-                        id="title"
-                        type="text"
-                        message={meta.touched && meta.error}
-                        state={meta.error && meta.touched ? "error" : "idle"}
-                        {...input}
-                      />
+                      <div>
+                        <FormInputLabel htmlFor="title">Title</FormInputLabel>
+                        <TextInput
+                          {...input}
+                          type='text'
+                          id="title"
+                          disabled={submitting}
+                          placeholder={`${currentMonth} Budget`}
+                          error={Boolean(meta.touched && meta.error)}
+                          errorMessage={meta.touched && meta.error}
+                        /></div>
                     )}
                   </Field>
                   <Field
@@ -150,17 +234,18 @@ const BudgetForm = () => {
                     placeholder="Enter description"
                   >
                     {({ meta, input }) => (
-                      <>
+                      <div>
                         <FormInputLabel htmlFor="description">
                           Description
                         </FormInputLabel>
                         <TextArea
+                          disabled={submitting}
                           id="description"
                           {...input}
                           message={meta.touched && meta.error}
                           error={Boolean(meta.error && meta.touched)}
                         />
-                      </>
+                      </div>
                     )}
                   </Field>
                   <Field
@@ -170,28 +255,52 @@ const BudgetForm = () => {
                     placeholder="Enter amount"
                   >
                     {({ meta, input }) => (
-                      <InputField
-                        extra="mb-3"
-                        label="Amount*"
-                        placeholder="₹ 1.00"
-                        id="amount"
-                        type="number"
-                        message={meta.touched && meta.error}
-                        state={meta.error && meta.touched ? "error" : "idle"}
-                        {...input}
-                      />
+                      <div>
+                        <FormInputLabel htmlFor="amount">
+                          Amount
+                        </FormInputLabel>
+                        <TextInput
+                          disabled={submitting}
+                          id="amount"
+                          placeholder="Enter Amount"
+                          {...input}
+                          value={input.value.toString()}
+                          onChange={(e) => {
+                            if (e.target.value === "") {
+                              form.mutators.setFieldValue(`amount`, 0);
+                              return;
+                            }
+                            if (!regex.number.test(e.target.value)) {
+                              return;
+                            }
+                            form.mutators.setFieldValue(
+                              `amount`,
+                              e.target.value === "" ? "" : parseInt(e.target.value)
+                            );
+                          }}
+                          type='text'
+                          errorMessage={meta.touched && meta.error}
+                          error={Boolean(meta.error && meta.touched)}
+                        />
+                      </div>
+                      // <InputField
+                      //   extra="mb-3"
+                      //   label="Amount*"
+                      //   placeholder="₹ 1.00"
+                      //   disabled={submitting}
+                      //   id="amount"
+                      //   type="number"
+                      //   message={meta.touched && meta.error}
+                      //   state={meta.error && meta.touched ? "error" : "idle"}
+                      //   {...input}
+                      // />
                     )}
                   </Field>
 
                   <Field name="categories">
-                    {({ meta }) => (
+                    {() => (
                       <>
                         <SpendingLimitPerCategory />
-                        {meta.touched && meta.error && (
-                          <p className="text-xs text-red-500 mt-2">
-                            {meta.error}
-                          </p>
-                        )}
                       </>
                     )}
                   </Field>
@@ -201,6 +310,7 @@ const BudgetForm = () => {
                     className="w-full mt-10"
                     variant="primary"
                     type="submit"
+                    disabled={submitting}
                   >
                     Submit
                   </Button>
@@ -208,9 +318,9 @@ const BudgetForm = () => {
               </div>
             );
           }}
-        </Form>
+        </Form> : null}
       </LocalizationProvider>
-    </div>
+    </div >
   );
 };
 

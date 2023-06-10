@@ -9,7 +9,7 @@ export type Budget = {
     housing?: number;
     healthcare?: number;
     education?: number;
-    personalcare?: number;
+    personal?: number;
     insurance?: number;
     savings?: number;
     investments?: number;
