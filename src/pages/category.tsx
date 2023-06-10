@@ -12,7 +12,6 @@ import {
   Title
 } from "@tremor/react";
 import { Models } from "appwrite";
-import ESCategoryChart from "expensasaures/components/category/ESCategoryChart";
 import ExpenseByCategory from "expensasaures/components/category/ExpenseByCategory";
 import { LineChartTabsLoading } from "expensasaures/components/dashboard/linechart";
 import CategoryIcon from "expensasaures/components/forms/CategorySelect";
@@ -182,7 +181,10 @@ const Categories = () => {
                 />
               </Card>
             ) : (
-              <ESCategoryChart />
+              <>
+                <LineChartTabsLoading animate={false} />
+              </>
+
             )}</>}
 
       </div>
