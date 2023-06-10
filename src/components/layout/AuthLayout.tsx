@@ -51,10 +51,10 @@ export default function AuthLayout({ children }: AuthLayoutProps) {
                     className="absolute flex flex-col h-full w-full px-10 justify-center bg-cover bg-center lg:rounded-bl-[120px] xl:rounded-bl-[200px]"
                     style={{ backgroundImage: `url(/img/auth/auth.png)` }}
                   >
-                    <p className="text-white font-thin text-[50px]">
+                    <p className="text-white font-thin text-[40px]">
                       {isSignup ? `Elevate Your Financial Lifestyle` : 'Welcome Back to Your Financial Kingdom'}
                     </p>
-                    <p className="text-[#f4f4f4] text-[28px] pt-20 max-w-[80%]">
+                    <p className="text-[#f4f4f4] text-[22px] pt-20 max-w-[80%]">
                       {isSignup ? `Seamlessly track your expenses, optimize your spending, and make informed financial decisions like never before.
                       Take control of your wealth and embark on a journey towards unparalleled financial freedom!`: `
                       Step into your financial kingdom with ease and convenience.
