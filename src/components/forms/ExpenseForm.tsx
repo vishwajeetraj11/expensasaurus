@@ -1,9 +1,9 @@
 import { DesktopDatePicker, LocalizationProvider } from "@mui/x-date-pickers";
 import { AdapterDateFns } from "@mui/x-date-pickers/AdapterDateFns";
-import { Button, Select, SelectItem } from "@tremor/react";
+import { Button, Select, SelectItem, TextInput } from "@tremor/react";
 import { Models, Role } from "appwrite";
 import { categories } from "expensasaures/shared/constants/categories";
-import { ENVS } from "expensasaures/shared/constants/constants";
+import { ENVS, regex } from "expensasaures/shared/constants/constants";
 import {
   ID,
   Permission,
@@ -13,7 +13,7 @@ import {
 import { getDoc } from "expensasaures/shared/services/query";
 import { useAuthStore } from "expensasaures/shared/stores/useAuthStore";
 import { Transaction } from "expensasaures/shared/types/transaction";
-import { validateExpenseForm } from "expensasaures/shared/utils/form";
+import { defaultMutators, validateExpenseForm } from "expensasaures/shared/utils/form";
 import dynamic from "next/dynamic";
 import { useRouter } from "next/router";
 import { useState } from "react";
@@ -22,8 +22,8 @@ import { useQueries, useQueryClient } from "react-query";
 import { toast } from "sonner";
 import { shallow } from "zustand/shallow";
 import FileUpload from "../FileUpload";
+import ErrorMessage from "../ui/ErrorMessage";
 import FormInputLabel from "../ui/FormInputLabel";
-import InputField from "../ui/InputField";
 import TextArea from "../ui/TextArea";
 import CategoryIcon from "./CategorySelect";
 
@@ -127,6 +127,7 @@ const ExpenseForm = () => {
       <LocalizationProvider dateAdapter={AdapterDateFns}>
         {(isUpdateRoute && data) || !isUpdateRoute ? (
           <Form
+            mutators={defaultMutators}
             validate={validateExpenseForm}
             onSubmit={handleSubmit}
             initialValues={
@@ -145,159 +146,186 @@ const ExpenseForm = () => {
                 }
             }
           >
-            {({ errors, handleSubmit, submitting }) => {
+            {({ errors, handleSubmit, submitting, form }) => {
               return (
-                <div className="flex flex-col gap-4">
-                  <form onSubmit={handleSubmit}>
-                    <Field
-                      name="title"
-                      label="Title"
-                      type="text"
-                      placeholder="Enter title"
-                    >
-                      {({ meta, input }) => (
-                        <InputField
-                          disabled={submitting}
-                          extra="mb-3"
-                          label="Title*"
-                          placeholder="Auto to College"
+
+                <form className="flex flex-col gap-4" onSubmit={handleSubmit}>
+                  <Field
+                    name="title"
+                    label="Title"
+                    type="text"
+                    placeholder="Enter title"
+                  >
+                    {({ meta, input }) => (
+                      <div>
+                        <FormInputLabel htmlFor="title">Title</FormInputLabel>
+                        <TextInput
+                          {...input}
+                          type='text'
                           id="title"
-                          type="text"
-                          message={meta.touched && meta.error}
-                          state={meta.error && meta.touched ? "error" : "idle"}
-                          {...input}
-                        />
-                      )}
-                    </Field>
-                    <Field
-                      name="description"
-                      label="Description"
-                      type="textarea"
-                      component={"textarea"}
-                      placeholder="Enter description"
-                    >
-                      {({ meta, input }) => (
-                        <>
-                          <FormInputLabel className="ml-3 font-bold text-sm text-navy-700 dark:text-white" htmlFor="description">
-                            Description
-                          </FormInputLabel>
-                          <TextArea
-                            id="description"
-                            disabled={submitting}
-                            {...input}
-                            message={meta.touched && meta.error}
-                            error={Boolean(meta.error && meta.touched)}
-                          />
-                        </>
-                      )}
-                    </Field>
-                    <Field
-                      name="amount"
-                      label="Amount"
-                      type="number"
-                      placeholder="Enter amount"
-                    >
-                      {({ meta, input }) => (
-                        <InputField
                           disabled={submitting}
-                          extra="mb-3"
-                          label="Amount*"
-                          placeholder="50"
+                          placeholder={`Enter Title`}
+                          error={Boolean(meta.touched && meta.error)}
+                          errorMessage={meta.touched && meta.error}
+                        /></div>
+                    )}
+                  </Field>
+
+                  <Field
+                    name="description"
+                    label="Description"
+                    type="textarea"
+                    component={"textarea"}
+                    placeholder="Enter description"
+                  >
+                    {({ meta, input }) => (
+                      <div>
+                        <FormInputLabel htmlFor="description">
+                          Description
+                        </FormInputLabel>
+                        <TextArea
+                          disabled={submitting}
+                          id="description"
+                          {...input}
+                          message={meta.touched && meta.error}
+                          error={Boolean(meta.error && meta.touched)}
+                        />
+                      </div>
+                    )}
+                  </Field>
+                  <Field
+                    name="amount"
+                    label="Amount"
+                    type="number"
+                    placeholder="Enter amount"
+                  >
+                    {({ meta, input }) => (
+                      <div>
+                        <FormInputLabel htmlFor="amount">
+                          Amount
+                        </FormInputLabel>
+                        <TextInput
+                          disabled={submitting}
                           id="amount"
-                          type="number"
-                          message={meta.touched && meta.error}
-                          state={meta.error && meta.touched ? "error" : "idle"}
+                          placeholder="Enter Amount"
                           {...input}
-                        />
-                      )}
-                    </Field>
-
-                    <Field name="category">
-                      {({ meta, input }) => (
-                        <>
-                          <Select
-                            onValueChange={(value) =>
-                              input.onChange(value as string)
+                          value={input.value === 0 ? '' : input.value.toString()}
+                          onChange={(e) => {
+                            if (e.target.value === "") {
+                              form.mutators.setFieldValue(`amount`, 0);
+                              return;
                             }
-                            disabled={submitting}
-                            value={input.value}
-                          >
-                            {categories.map((category, index) => {
-                              const CIcon = () => (
-                                <CategoryIcon category={category} />
-                              );
-                              return (
-                                <SelectItem
-                                  key={category.id}
-                                  value={category.key}
-                                  icon={CIcon}
-                                >
-                                  {category.category}
-                                </SelectItem>
-                              );
-                            })}
-                          </Select>
-                          {meta.touched && meta.error && <p>{meta.error}</p>}
-                        </>
-                      )}
-                    </Field>
-                    <Field
-                      name="tag"
-                      label="Tag"
-                      type="text"
-                      placeholder="Enter tag"
-                    >
-                      {({ meta, input }) => (
-                        <InputField
+                            if (!regex.number.test(e.target.value)) {
+                              return;
+                            }
+                            form.mutators.setFieldValue(
+                              `amount`,
+                              e.target.value === "" ? "" : parseInt(e.target.value)
+                            );
+                          }}
+                          type='text'
+                          errorMessage={meta.touched && meta.error}
+                          error={Boolean(meta.error && meta.touched)}
+                        />
+                      </div>
+                    )}
+                  </Field>
+
+                  <Field name="category">
+                    {({ meta, input }) => (
+                      <div>
+                        <FormInputLabel htmlFor="category">
+                          Category
+                        </FormInputLabel>
+                        <Select
+                          onValueChange={(value) =>
+                            input.onChange(value as string)
+                          }
                           disabled={submitting}
-                          extra="mb-3"
-                          label="Tag"
-                          placeholder="Vacation"
+                          value={input.value}
+                        >
+                          {categories.map((category, index) => {
+                            const CIcon = () => (
+                              <CategoryIcon category={category} />
+                            );
+                            return (
+                              <SelectItem
+                                key={category.id}
+                                value={category.key}
+                                icon={CIcon}
+                              >
+                                {category.category}
+                              </SelectItem>
+                            );
+                          })}
+                        </Select>
+                        {meta.touched && meta.error && <ErrorMessage>{meta.error}</ErrorMessage>}
+                      </div>
+                    )}
+                  </Field>
+                  <Field
+                    name="tag"
+                    label="Tag"
+                    type="text"
+                    placeholder="Enter tag"
+                  >
+                    {({ meta, input }) => (
+                      <div>
+                        <FormInputLabel htmlFor="tag">
+                          Tag
+                        </FormInputLabel>
+                        <TextInput
+                          placeholder="Make your category."
                           id="tag"
-                          type="text"
-                          message={meta.touched && meta.error}
-                          state={meta.error && meta.touched ? "error" : "idle"}
+                          error={Boolean(meta.touched && meta.error)}
+                          errorMessage={meta.touched && meta.error}
                           {...input}
+                          type="text"
                         />
-                      )}
-                    </Field>
+                      </div>
+                    )}
+                  </Field>
 
-                    <Field
-                      name="date"
-                      component={"input"}
-                      label="Date"
-                      type="date"
-                    >
-                      {({ meta, input }) => (
-                        <>
-                          <DesktopDatePicker
-                            disabled={submitting}
-                            className="w-full"
-                            onChange={(value) =>
-                              input.onChange(value?.toISOString())
-                            }
-                            defaultValue={input.value}
-                          />
-                        </>
-                      )}
-                    </Field>
-                    <Field name="attachments">
-                      {() => (
-                        <>
-                          <FileUpload />
-                        </>
-                      )}
-                    </Field>
-                    <Button
-                      size="lg"
-                      className="w-full mt-4"
-                      variant="primary"
-                      type="submit"
-                    >
-                      Submit
-                    </Button>
-                  </form>
-                </div>
+                  <Field
+                    name="date"
+                    component={"input"}
+                    label="Date"
+                    type="date"
+                  >
+                    {({ meta, input }) => (
+                      <div className="">
+                        <FormInputLabel htmlFor="category">
+                          Category
+                        </FormInputLabel>
+                        <DesktopDatePicker
+                          disabled={submitting}
+                          className="w-full "
+                          onChange={(value) =>
+                            input.onChange(value?.toISOString())
+                          }
+                          defaultValue={input.value}
+                        />
+                      </div>
+                    )}
+                  </Field>
+                  <Field name="attachments">
+                    {() => (
+                      <>
+                        <FileUpload />
+                      </>
+                    )}
+                  </Field>
+                  <Button
+                    size="lg"
+                    className="w-full mt-4"
+                    variant="primary"
+                    type="submit"
+                    disabled={submitting}
+                  >
+                    Submit
+                  </Button>
+                </form>
+
               );
             }}
           </Form>

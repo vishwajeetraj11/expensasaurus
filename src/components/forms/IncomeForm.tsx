@@ -202,6 +202,7 @@ const IncomeForm = () => {
                           Category
                         </FormInputLabel>
                         <Select
+                          disabled={submitting}
                           placeholder="Select Category"
                           onValueChange={(value) =>
                             input.onChange(value as string)
@@ -236,6 +237,7 @@ const IncomeForm = () => {
                           Tag
                         </FormInputLabel>
                         <TextInput
+                          disabled={submitting}
                           placeholder="Make your category."
                           id="tag"
                           error={Boolean(meta.touched && meta.error)}
@@ -259,7 +261,8 @@ const IncomeForm = () => {
                           Date
                         </FormInputLabel>
                         <DesktopDatePicker
-                          className="w-full"
+                          disabled={submitting}
+                          className="w-full dark:bg-gray-700 rounded-md"
                           onChange={(value) =>
                             input.onChange(value?.toISOString())
                           }
@@ -274,6 +277,7 @@ const IncomeForm = () => {
                     className="w-full"
                     variant="primary"
                     type="submit"
+                    disabled={submitting}
                   >
                     Submit
                   </Button>
