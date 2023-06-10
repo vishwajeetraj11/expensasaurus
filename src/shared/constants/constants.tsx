@@ -9,7 +9,13 @@ export const dashboardStatColors: { [key: string]: Color } = {
 };
 
 export const regex = {
-  number: /^[0-9\b]+$/,
+  // number: /^[0-9\b]+$/,
+  // number: /^\d+(\.\d{1,2})?$/,
+  // number: /^(?!$)\d{0,3}(,\d{3})*(\.\d+)?$/,
+  number: /^(?!$)(\d{0,12}|\d{1,12}\.\d{1,2})$/,
+  // /^(?!$)\d{0,3}(,\d{3})*(\.\d*)?$/
+  // amount: /^\d+(\.\d{1,2})?$/,
+  numberAndDot: /^[0-9.]+$/
 };
 
 export const ENVS = {

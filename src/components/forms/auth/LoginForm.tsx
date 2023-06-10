@@ -1,5 +1,8 @@
+import { SearchSelect, SearchSelectItem } from "@tremor/react";
 import Button from "expensasaures/components/ui/Button";
+import { useLocaleStore } from "expensasaures/shared/stores/useLocaleStore";
 import { useRouter } from "next/router";
+import { useEffect } from "react";
 import { Field, Form } from "react-final-form";
 import { toast } from "sonner";
 import { shallow } from "zustand/shallow";
@@ -15,31 +18,59 @@ function LoginForm() {
     shallow
   );
 
+  const { currencies, getCurrencies } = useLocaleStore(
+    (state) => ({
+      currencies: state.currencies,
+      getCurrencies: state.getCurrencies
+    })
+  )
   const isLogin = authFormState === "SIGN_IN";
   const isSignup = authFormState === "SIGN_UP";
+
+  useEffect(() => {
+    if (isSignup) {
+      getCurrencies()
+    };
+  }, [isSignup])
+
+
   const router = useRouter();
+
   const onSubmit = async (values: any) => {
     try {
       if (isSignup) {
+        // create account
         const response = await account.create(
           ID.unique(),
           values.email,
           values.password,
           values.name
         );
+        // create session
+        const session = await account.createEmailSession(
+          values.email,
+          values.password
+        );
+        // session ID will be available in the response object
+        localStorage.setItem("sessionId", session.$id);
+
+        // add currency
+        const updateUser = await account.updatePrefs({ currency: values.currency })
+        toast.success(`Welcome to Expensasaurus`);
+        router.push("/dashboard");
       } else if (isLogin) {
         const response = await account.createEmailSession(
           values.email,
           values.password
         );
+
         const rest = await account.getSession(response.$id);
         // session ID will be available in the response object
         localStorage.setItem("sessionId", rest.$id);
-        // TODO: handle successful sign in
-        // route to dashboard
-        // show toast.
-        toast.success(`Welcome to Expensasaurus`);
-        router.push("/dashboard");
+
+
+        // toast.success(`Welcome to Expensasaurus`);
+        // router.push("/dashboard");
       }
     } catch (error) {
       console.error(error);
@@ -95,7 +126,7 @@ function LoginForm() {
                 variant="auth"
                 extra="mb-3"
                 label="Email*"
-                placeholder="mail@simmmple.com"
+                placeholder="user@expensasaures.com"
                 id="email"
                 type="text"
                 message={meta.touched && meta.error}
@@ -104,6 +135,28 @@ function LoginForm() {
               />
             )}
           </Field>
+
+          {isSignup && currencies && <div className="mb-3">
+            <label
+              htmlFor={'select-currency'}
+              className={`text-sm text-navy-700 dark:text-white "ml-1.5 font-medium mb-3 block`}
+            >
+              {'Select Currency*'}
+            </label>
+            <Field name="currency">
+              {({ meta, input }) => (
+                <SearchSelect
+                  placeholder="Select Currency"
+                  value={input.value}
+                  onChange={input.onChange} id='select-currency'>
+                  {currencies?.currencies.map((currency, index) => (
+                    <SearchSelectItem value={currency.code} key={index}>{currency.name} ({currency.code})</SearchSelectItem>
+                  ))}
+                </SearchSelect>
+              )}
+            </Field>
+
+          </div>}
 
           <Field name="password">
             {({ meta, input }) => (

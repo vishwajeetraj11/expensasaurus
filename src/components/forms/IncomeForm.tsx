@@ -12,7 +12,8 @@ import {
 import { getDoc } from "expensasaures/shared/services/query";
 import { useAuthStore } from "expensasaures/shared/stores/useAuthStore";
 import { Transaction } from "expensasaures/shared/types/transaction";
-import { defaultMutators, validateExpenseForm } from "expensasaures/shared/utils/form";
+import { formatCurrency } from "expensasaures/shared/utils/currency";
+import { defaultMutators, validateAmount, validateExpenseForm } from "expensasaures/shared/utils/form";
 import dynamic from "next/dynamic";
 import { useRouter } from "next/router";
 import { Field, Form } from "react-final-form";
@@ -24,8 +25,9 @@ import FormInputLabel from "../ui/FormInputLabel";
 import TextArea from "../ui/TextArea";
 
 const IncomeForm = () => {
-  const { user } = useAuthStore((state) => ({ user: state.user }), shallow) as {
+  const { user, userInfo } = useAuthStore((state) => ({ user: state.user, userInfo: state.userInfo }), shallow) as {
     user: Models.Session;
+    userInfo: Models.User<Models.Preferences>
   };
   const router = useRouter()
   const { id } = router.query;
@@ -162,6 +164,7 @@ const IncomeForm = () => {
                     label="Amount"
                     type="number"
                     placeholder="Enter amount"
+                    validate={validateAmount}
                   >
                     {({ meta, input }) => (
                       <div>
@@ -171,21 +174,14 @@ const IncomeForm = () => {
                         <TextInput
                           disabled={submitting}
                           id="amount"
+                          icon={() => <span className="pl-2">{formatCurrency(userInfo?.prefs?.currency, 0).split('0')[0]}</span>}
                           placeholder="Enter Amount"
                           {...input}
-                          value={input.value.toString()}
                           onChange={(e) => {
-                            if (e.target.value === "") {
-                              form.mutators.setFieldValue(`amount`, 0);
+                            if (e.target.value !== '' && !regex.numberAndDot.test(e.target.value)) {
                               return;
                             }
-                            if (!regex.number.test(e.target.value)) {
-                              return;
-                            }
-                            form.mutators.setFieldValue(
-                              `amount`,
-                              e.target.value === "" ? "" : parseInt(e.target.value)
-                            );
+                            input.onChange(e)
                           }}
                           type='text'
                           errorMessage={meta.touched && meta.error}

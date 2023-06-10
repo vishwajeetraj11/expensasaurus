@@ -6,14 +6,16 @@ import { getAllLists } from 'expensasaures/shared/services/query';
 import { useAuthStore } from 'expensasaures/shared/stores/useAuthStore';
 import { DashboardStat, Transaction } from 'expensasaures/shared/types/transaction';
 import { calcExpenseStats, calculateTotalExpensesByCategory, calculateTotalExpensesWithPercentageChange, calculateTransactionChange } from 'expensasaures/shared/utils/calculation';
+import { formatCurrency } from 'expensasaures/shared/utils/currency';
 import { shallow } from 'zustand/shallow';
 import useDates from './useDates';
 
 const useDashboard = () => {
     const { endOfEarlierMonth, endOfThisMonth, startOfEarlierMonth, startOfThisMonth } = useDates()
 
-    const { user } = useAuthStore((state) => ({ user: state.user }), shallow) as {
+    const { user, userInfo } = useAuthStore((state) => ({ user: state.user, userInfo: state.userInfo }), shallow) as {
         user: Models.Session;
+        userInfo: Models.User<Models.Preferences>;
     };
 
     // const { earlierMonthExpenses, earlierMonthIncomes, thisMonthExpenses, thisMonthIncomes } = demo;
@@ -101,22 +103,22 @@ const useDashboard = () => {
     const statistics: DashboardStat[] = [
         {
             title: "Savings",
-            metric: `₹ ${savingsThisMonth}`,
-            metricPrev: `₹ ${savingsEarlierMonth}`,
+            metric: formatCurrency(userInfo?.prefs?.currency, savingsThisMonth),
+            metricPrev: formatCurrency(userInfo?.prefs?.currency, savingsEarlierMonth),
             delta: savingsChange.percentage ? savingsChange.percentage.toFixed(2) + '%' : "0%",
             deltaType: savingsChange.transactionChange,
         },
         {
             title: "Expenses",
-            metric: `₹ ${expenseStatsThisMonth.sum}`,
-            metricPrev: `₹ ${expenseStatsEarlierMonth.sum}`,
+            metric: formatCurrency(userInfo?.prefs?.currency, expenseStatsThisMonth.sum),
+            metricPrev: formatCurrency(userInfo?.prefs?.currency, expenseStatsEarlierMonth.sum),
             delta: expenseChange.percentage ? expenseChange.percentage.toFixed(2) + '%' : "0%",
             deltaType: expenseChange.transactionChange,
         },
         {
             title: "Income",
-            metric: `₹ ${incomeStatsThisMonth.sum}`,
-            metricPrev: `₹ ${incomeStatsEarlierMonth.sum}`,
+            metric: formatCurrency(userInfo?.prefs?.currency, incomeStatsThisMonth.sum),
+            metricPrev: formatCurrency(userInfo?.prefs?.currency, incomeStatsEarlierMonth.sum),
             delta: incomeChange.percentage ? incomeChange.percentage.toFixed(2) + '%' : "0%",
             deltaType: incomeChange.transactionChange,
         },

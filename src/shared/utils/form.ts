@@ -1,6 +1,7 @@
 import { DateRangePickerValue } from '@tremor/react';
 import { isSameDay, isValid } from 'date-fns';
 import { MutableState, Tools } from 'final-form';
+import { regex } from '../constants/constants';
 
 type mutatorsType = (
     [name, value]: any,
@@ -88,4 +89,13 @@ export const validateBudgetForm = (values: any) => {
         }
     }
     return errors;
+}
+
+export const validateAmount = (value: string) => {
+    if (!value) {
+        return 'Amount is required'
+    }
+    if (!regex.number.test(value)) {
+        return 'Please enter valid amount'
+    }
 }

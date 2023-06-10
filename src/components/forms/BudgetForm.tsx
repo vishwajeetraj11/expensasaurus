@@ -12,8 +12,10 @@ import {
 import { getDoc } from "expensasaures/shared/services/query";
 import { useAuthStore } from "expensasaures/shared/stores/useAuthStore";
 import { Budget } from "expensasaures/shared/types/budget";
+import { formatCurrency } from "expensasaures/shared/utils/currency";
 import {
   defaultMutators,
+  validateAmount,
   validateBudgetForm,
 } from "expensasaures/shared/utils/form";
 import dynamic from "next/dynamic";
@@ -27,8 +29,9 @@ import FormInputLabel from "../ui/FormInputLabel";
 import TextArea from "../ui/TextArea";
 
 const BudgetForm = () => {
-  const { user } = useAuthStore((state) => ({ user: state.user }), shallow) as {
+  const { user, userInfo } = useAuthStore((state) => ({ user: state.user, userInfo: state.userInfo }), shallow) as {
     user: Models.Session;
+    userInfo: Models.User<Models.Preferences>
   };
 
   const router = useRouter();
@@ -253,6 +256,7 @@ const BudgetForm = () => {
                     label="Amount"
                     type="number"
                     placeholder="Enter amount"
+                    validate={validateAmount}
                   >
                     {({ meta, input }) => (
                       <div>
@@ -262,38 +266,20 @@ const BudgetForm = () => {
                         <TextInput
                           disabled={submitting}
                           id="amount"
+                          icon={() => <span className="pl-2">{formatCurrency(userInfo?.prefs?.currency, 0).split('0')[0]}</span>}
                           placeholder="Enter Amount"
                           {...input}
-                          value={input.value.toString()}
                           onChange={(e) => {
-                            if (e.target.value === "") {
-                              form.mutators.setFieldValue(`amount`, 0);
+                            if (e.target.value !== '' && !regex.numberAndDot.test(e.target.value)) {
                               return;
                             }
-                            if (!regex.number.test(e.target.value)) {
-                              return;
-                            }
-                            form.mutators.setFieldValue(
-                              `amount`,
-                              e.target.value === "" ? "" : parseInt(e.target.value)
-                            );
+                            input.onChange(e)
                           }}
                           type='text'
                           errorMessage={meta.touched && meta.error}
                           error={Boolean(meta.error && meta.touched)}
                         />
                       </div>
-                      // <InputField
-                      //   extra="mb-3"
-                      //   label="Amount*"
-                      //   placeholder="₹ 1.00"
-                      //   disabled={submitting}
-                      //   id="amount"
-                      //   type="number"
-                      //   message={meta.touched && meta.error}
-                      //   state={meta.error && meta.touched ? "error" : "idle"}
-                      //   {...input}
-                      // />
                     )}
                   </Field>
 

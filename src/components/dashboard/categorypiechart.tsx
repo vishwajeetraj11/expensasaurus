@@ -24,9 +24,12 @@ import { ArrowNarrowRightIcon } from "@heroicons/react/solid";
 
 import { ChartPieIcon, ViewListIcon } from "@heroicons/react/outline";
 import { categories } from "expensasaures/shared/constants/categories";
+import { useAuthStore } from "expensasaures/shared/stores/useAuthStore";
 import { CategoryData } from "expensasaures/shared/utils/calculation";
+import { formatCurrency } from "expensasaures/shared/utils/currency";
 import Link from "next/link";
 import { useEffect, useState } from "react";
+import { shallow } from "zustand/shallow";
 
 interface StockData {
   name: string;
@@ -35,8 +38,7 @@ interface StockData {
   deltaType: DeltaType;
 }
 
-const valueFormatter = (number: number) =>
-  `₹ ${Intl.NumberFormat("us").format(number).toString()}`;
+
 
 interface Props {
   expensesAndPercentByCategoryThisMonth: Record<string, CategoryData>;
@@ -52,6 +54,10 @@ const CategoriesPieChart = (props: Props) => {
   } = props;
   const [selectedView, setSelectedView] = useState("chart");
   const [categoryExpense, setCategoryExpense] = useState<StockData[] | []>([]);
+
+  const { userInfo } = useAuthStore((store) => ({ userInfo: store.userInfo }), shallow)
+
+  const valueFormatter = (number: number) => formatCurrency(userInfo?.prefs.currency, number);
 
   useEffect(() => {
     const stocks: StockData[] = [];
@@ -93,7 +99,7 @@ const CategoriesPieChart = (props: Props) => {
 
         </Flex>
         <Text className="mt-8">Savings</Text>
-        <Metric>₹ {incomeThisMonth - expenseThisMonth}</Metric>
+        <Metric>{formatCurrency(userInfo?.prefs?.currency, incomeThisMonth - expenseThisMonth)}</Metric>
         <Divider />
 
         <TabPanels>
@@ -122,7 +128,7 @@ const CategoriesPieChart = (props: Props) => {
                   <Text className="font-medium text-stone-500">{category.name}</Text>
                   <Flex justifyContent="end" className="space-x-2">
                     <Text className="font-medium text-stone-700">
-                      ₹ {Intl.NumberFormat("us").format(category.value).toString()}
+                      {formatCurrency(userInfo?.prefs?.currency, category.value)}
                     </Text>
                     <BadgeDelta deltaType={category.deltaType} size="xs">
                       {category.performance}

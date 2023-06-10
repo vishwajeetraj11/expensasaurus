@@ -16,7 +16,7 @@ import ExpenseByCategory from "expensasaures/components/category/ExpenseByCatego
 import { LineChartTabsLoading } from "expensasaures/components/dashboard/linechart";
 import CategoryIcon from "expensasaures/components/forms/CategorySelect";
 import Layout from "expensasaures/components/layout/Layout";
-import useDates, { dataFormatter } from "expensasaures/hooks/useDates";
+import useDates from "expensasaures/hooks/useDates";
 import { categories } from "expensasaures/shared/constants/categories";
 import { ENVS } from "expensasaures/shared/constants/constants";
 import { getAllLists } from "expensasaures/shared/services/query";
@@ -24,6 +24,7 @@ import { useAuthStore } from "expensasaures/shared/stores/useAuthStore";
 import { Transaction } from "expensasaures/shared/types/transaction";
 import { calculateTotalExpensesByCategory } from "expensasaures/shared/utils/calculation";
 import { capitalize } from "expensasaures/shared/utils/common";
+import { formatCurrency } from "expensasaures/shared/utils/currency";
 import { getQueryForCategoryPage } from "expensasaures/shared/utils/react-query";
 import { Fragment, useState } from "react";
 import { shallow } from "zustand/shallow";
@@ -35,8 +36,9 @@ const Categories = () => {
     to: new Date(endOfThisMonth),
   });
 
-  const { user } = useAuthStore((state) => ({ user: state.user }), shallow) as {
+  const { user, userInfo } = useAuthStore((state) => ({ user: state.user, userInfo: state.userInfo }), shallow) as {
     user: Models.Session;
+    userInfo: Models.User<Models.Preferences>
   };
   const [selectedCategory, setSelectedCategory] = useState("");
   const { data: thisMonthExpenses,
@@ -61,6 +63,10 @@ const Categories = () => {
   const expensesByCategoriesThisMonth = calculateTotalExpensesByCategory(
     thisMonthExpenses?.documents || []
   );
+
+  const dataFormatter = (number: number) => {
+    return formatCurrency(userInfo?.prefs?.currency, number)
+  };
 
   // const categoryBarInfo = () => {
   //   const percentageArray = Object.entries(expensesByCategoriesThisMonth).map(
@@ -146,23 +152,30 @@ const Categories = () => {
             </div>
             <div className="flex justify-between items-center my-10">
               <Text className="text-slate-600">Category wise transactions</Text>
+
               <Select
                 className="w-[300px]"
                 onValueChange={(value) => setSelectedCategory(value as string)}
                 value={selectedCategory}
               >
-                {categories.map((category, index) => {
-                  const CIcon = () => <CategoryIcon category={category} />;
-                  return (
-                    <SelectItem
-                      key={category.id}
-                      value={category.key}
-                      icon={CIcon}
-                    >
-                      {category.category}
-                    </SelectItem>
-                  );
-                })}
+                {Object.entries(expensesByCategoriesThisMonth).map(
+                  ([category, value], i) => {
+                    const categoryInfo = categories.find(
+                      (c) => c.category === capitalize(category)
+                    );
+                    if (!categoryInfo) return <Fragment key={i}></Fragment>;
+                    const SelectedIcon = () => <CategoryIcon category={categoryInfo} />;
+                    return (
+                      <SelectItem
+                        key={categoryInfo.id}
+                        value={categoryInfo.key}
+                        icon={SelectedIcon}
+                      >
+                        {categoryInfo.category}
+                      </SelectItem>
+                    )
+                  }
+                )}
               </Select>
             </div>
             {txnsByCategory.length !== 0 ? (
@@ -221,6 +234,7 @@ const CategoryLoading = () => {
           )
         )}
       </div>
+
       <div className="flex justify-between items-center my-10">
         <Text className="text-slate-600">Category wise transactions</Text>
         <div className="h-[38px] w-[300px] flex items-center justify-center p-6 relative overflow-hidden rounded-md bg-white/10 shadow-xl shadow-black/5 before:absolute before:inset-0 before:-translate-x-full before:animate-[shimmer_2s_infinite] before:border-t before:border-slate-100 before:bg-gradient-to-r before:from-transparent before:via-slate-50/50 dark:before:via-slate-50/10 before:to-transparent">

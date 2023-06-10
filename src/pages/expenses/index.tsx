@@ -235,7 +235,7 @@ const index = () => {
                 ?
                 <div className="w-full">
                   <Lottie options={defaultOptions(emptyDocsAnimation)}
-                    height={'auto'}
+                    height={500}
                     width={'auto'}
                   />
                   <Subtitle className='text-slate-700 text-center ml-[-30px]'>No Expenses Listed</Subtitle>

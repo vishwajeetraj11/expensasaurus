@@ -1,4 +1,7 @@
 import { BarChart, Card, Title } from "@tremor/react";
+import { useAuthStore } from "expensasaures/shared/stores/useAuthStore";
+import { formatCurrency } from "expensasaures/shared/utils/currency";
+import { shallow } from "zustand/shallow";
 
 const chartdata2 = [
   {
@@ -13,9 +16,7 @@ const chartdata2 = [
   },
 ];
 
-const dataFormatter = (number: number) => {
-  return "₹ " + Intl.NumberFormat("us").format(number).toString();
-};
+
 
 interface Props {
   data: {
@@ -27,6 +28,10 @@ interface Props {
 
 const EBarChart = (props: Props) => {
   const { data } = props;
+  const { userInfo } = useAuthStore((store) => ({ userInfo: store.userInfo }), shallow)
+  const dataFormatter = (number: number) => {
+    return formatCurrency(userInfo?.prefs?.currency, number)
+  };
   return (
     <Card className="mt-10">
       <Title>Budget Graph</Title>

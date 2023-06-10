@@ -3,12 +3,13 @@ import { Models } from "appwrite";
 import clsx from "clsx";
 
 import { startOfYear, subDays } from "date-fns";
-import { dataFormatter, dataFormatterLoading } from "expensasaures/hooks/useDates";
+import { dataFormatterLoading } from "expensasaures/hooks/useDates";
 import { ENVS } from "expensasaures/shared/constants/constants";
 import { demoDashboardLineChart } from "expensasaures/shared/constants/loadingData";
 import { getAllLists } from "expensasaures/shared/services/query";
 import { useAuthStore } from "expensasaures/shared/stores/useAuthStore";
 import { Transaction } from "expensasaures/shared/types/transaction";
+import { formatCurrency } from "expensasaures/shared/utils/currency";
 import { useEffect, useState } from "react";
 
 import { shallow } from "zustand/shallow";
@@ -17,8 +18,9 @@ const LineChartTabs = () => {
   const [selectedPeriod, setSelectedPeriod] = useState("Max");
   const [data, setData] = useState<{ date: string; amount: number }[] | []>([]);
 
-  const { user } = useAuthStore((state) => ({ user: state.user }), shallow) as {
+  const { user, userInfo } = useAuthStore((state) => ({ user: state.user, userInfo: state.userInfo }), shallow) as {
     user: Models.Session;
+    userInfo: Models.User<Models.Preferences>
   };
   const { data: thisMonthExpenses, isSuccess } = getAllLists<Transaction>(
     ["Expenses", "Stats this month", user?.userId],
@@ -91,6 +93,9 @@ const LineChartTabs = () => {
           return data;
       }
     }
+  };
+  const dataFormatter = (number: number) => {
+    return formatCurrency(userInfo?.prefs?.currency, number)
   };
   return (
     <Card
