@@ -38,7 +38,7 @@ const id = () => {
   };
   const router = useRouter();
   const { id } = router.query;
-  const [startDelete, setStartDelete] = useState(false);
+
 
   const { data, error, isLoading, isSuccess } = getDoc<Transaction>(
     ["Expenses by ID", id, user?.userId],
