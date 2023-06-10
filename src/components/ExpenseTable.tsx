@@ -143,59 +143,63 @@ function Table({
   });
 
   return (
-    <div className="p-2 flex flex-col flex-1">
-      <table className="w-full">
-        <thead>
-          {table.getHeaderGroups().map((headerGroup) => (
-            <tr key={headerGroup.id} className="">
-              {headerGroup.headers.map((header) => {
-                return (
-                  <th
-                    className="min-w-[100px] pl-4 first:pl-0 font-semibold text-slate-700"
-                    key={header.id}
-                    colSpan={header.colSpan}
-                  >
-                    {header.isPlaceholder ? null : (
-                      <div className="text-left mb-3">
-                        {flexRender(
-                          header.column.columnDef.header,
-                          header.getContext()
-                        )}
-                        {header.column.getCanFilter() ? (
-                          <div>
-                            {/* <Filter column={header.column} table={table} /> */}
-                          </div>
-                        ) : null}
-                      </div>
-                    )}
-                  </th>
-                );
-              })}
-            </tr>
-          ))}
-        </thead>
-        <tbody>
-          {table.getRowModel().rows.map((row) => {
-            return (
-              <tr className="border-b" key={row.id}>
-                {row.getVisibleCells().map((cell) => {
+    <div className="flex flex-col flex-1">
+
+      <div className="p-2 flex flex-col flex-1 overflow-x-scroll">
+        <table className="w-full">
+          <thead>
+            {table.getHeaderGroups().map((headerGroup) => (
+              <tr key={headerGroup.id} className="">
+                {headerGroup.headers.map((header) => {
                   return (
-                    <td
-                      className="min-w-[100px] pl-4 first:pl-0 h-[50px] text-slate-700"
-                      key={cell.id}
+                    <th
+                      className="min-w-[100px] pl-4 first:pl-0 font-semibold text-slate-700"
+                      key={header.id}
+                      colSpan={header.colSpan}
                     >
-                      {flexRender(
-                        cell.column.columnDef.cell,
-                        cell.getContext()
+                      {header.isPlaceholder ? null : (
+                        <div className="text-left mb-3">
+                          {flexRender(
+                            header.column.columnDef.header,
+                            header.getContext()
+                          )}
+                          {header.column.getCanFilter() ? (
+                            <div>
+                              {/* <Filter column={header.column} table={table} /> */}
+                            </div>
+                          ) : null}
+                        </div>
                       )}
-                    </td>
+                    </th>
                   );
                 })}
               </tr>
-            );
-          })}
-        </tbody>
-      </table>
+            ))}
+          </thead>
+          <tbody>
+            {table.getRowModel().rows.map((row) => {
+              return (
+                <tr className="border-b" key={row.id}>
+                  {row.getVisibleCells().map((cell) => {
+                    return (
+                      <td
+                        className="min-w-[100px] pl-4 first:pl-0 h-[50px] text-slate-700"
+                        key={cell.id}
+                      >
+                        {flexRender(
+                          cell.column.columnDef.cell,
+                          cell.getContext()
+                        )}
+                      </td>
+                    );
+                  })}
+                </tr>
+              );
+            })}
+          </tbody>
+        </table>
+
+      </div>
       <hr className="my-4 mt-auto" />
       <div className="flex items-center justify-between gap-2">
         <span className="flex items-center gap-1">
@@ -207,28 +211,32 @@ function Table({
         </span>
         <div className="flex items-center gap-2">
           <Button
-            className="border px-3 rounded"
+            size="xs"
+            className="border rounded"
             onClick={() => table.setPageIndex(0)}
             disabled={!table.getCanPreviousPage()}
           >
             {"<<"}
           </Button>
           <Button
-            className="border rounded px-3"
+            size="xs"
+            className="border rounded"
             onClick={() => table.previousPage()}
             disabled={!table.getCanPreviousPage()}
           >
             {"<"}
           </Button>
           <Button
-            className="border rounded px-3"
+            size="xs"
+            className="border rounded"
             onClick={() => table.nextPage()}
             disabled={!table.getCanNextPage()}
           >
             {">"}
           </Button>
           <Button
-            className="border rounded px-3"
+            size="xs"
+            className="border rounded"
             onClick={() => table.setPageIndex(table.getPageCount() - 1)}
             disabled={!table.getCanNextPage()}
           >
@@ -237,7 +245,7 @@ function Table({
         </div>
         <div className="flex items-center gap-4">
           <span className="flex items-center gap-1">
-            Go to page:
+            page:
             <input
               type="number"
               defaultValue={table.getState().pagination.pageIndex + 1}
@@ -249,23 +257,23 @@ function Table({
             />
           </span>
           {/* <Select
-            onValueChange={(value) =>
-              table.setPageSize(Number(value))
-            }
-            className="min-w-[100px] w-8"
-            value={table.getState().pagination.pageSize.toString()}
-          >
-            {['10', '20', '30', '40', '50'].map((size, index) => {
-              return (
-                <SelectItem
-                  key={size}
-                  value={size}
-                  text={size}
+          onValueChange={(value) =>
+            table.setPageSize(Number(value))
+          }
+          className="min-w-[100px] w-8"
+          value={table.getState().pagination.pageSize.toString()}
+        >
+          {['10', '20', '30', '40', '50'].map((size, index) => {
+            return (
+              <SelectItem
+                key={size}
+                value={size}
+                text={size}
 
-                />
-              );
-            })}
-          </Select> */}
+              />
+            );
+          })}
+        </Select> */}
         </div>
       </div>
     </div>

@@ -164,9 +164,9 @@ const id = () => {
               <div className="md:w-[40%] w-full">
                 <Text className="mb-3">More expenses in this category</Text>
                 <div className="flex flex-col gap-3">
-                  {moreExpensesInCategoryRender?.length !== 0 ?
+                  {moreExpensesInCategoryRender?.length === 0 ?
                     <EmptyTwoDocs subtitle="No More Expenses in this category" />
-                    : moreExpensesInCategoryRender.map((doc) => {
+                    : moreExpensesInCategoryRender?.map((doc) => {
                       const categoryInfo = categories.find(
                         (cat) => cat.key === doc?.category
                       );

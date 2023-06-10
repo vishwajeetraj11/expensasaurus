@@ -46,7 +46,7 @@ const Navigation = () => {
 
 
   return <header className="fixed top-0 left-0 z-10 w-full border-transparent-white backdrop-blur-[12px]">
-    <div className="max-w-[1200px] mx-auto sm:px-0 px-8 flex h-navigation-height items-center">
+    <div className="max-w-[1200px] mx-auto lg:px-0 px-8 flex h-navigation-height items-center">
       <Link href={"/dashboard"} className="flex items-center text-md">
         <Logo className="w-[1.8rem] h-[1.8rem] mr-4 dark:fill-white" />
         <p className="text-[14px] dark:text-white">Expensasaures</p>

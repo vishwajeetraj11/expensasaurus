@@ -21,15 +21,14 @@ const dashboard = () => {
         <Title className="font-thin text-center mb-10">Monthly Performance Dashboard</Title>
         {isLoading ? <DashboardStatisticsLoading /> : <DashboardStatistics stats={statistics} />}
 
-        <div className="flex justify-between gap-4 mt-8">
-          <div className="w-[66%]">
+        <div className="flex flex-col md:flex-row justify-between gap-4 mt-8">
+          <div className="w-full md:w-[66%]">
             {isLoading ? <>
               <LineChartTabsLoading />
             </> : <LineChartTabs />}
 
           </div>
-          <div className="w-[32%]">
-
+          <div className="w-full md:w-[32%]">
             {isLoading ? <CategoriesPieChartLoading /> : <CategoriesPieChart
               incomeThisMonth={incomeThisMonth}
               expensesAndPercentByCategoryThisMonth={

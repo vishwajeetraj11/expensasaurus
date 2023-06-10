@@ -1,4 +1,4 @@
-import { XCircleIcon } from "@heroicons/react/outline";
+import { FilterIcon, XCircleIcon } from "@heroicons/react/outline";
 import { PaginationState } from "@tanstack/react-table";
 import {
     Button,
@@ -15,6 +15,7 @@ import { Models } from "appwrite";
 import ExpenseTable from "expensasaures/components/ExpenseTable";
 import CategoryIcon from "expensasaures/components/forms/CategorySelect";
 import Layout from "expensasaures/components/layout/Layout";
+import LeftSidebar from "expensasaures/components/ui/LeftSidebar";
 import emptyDocsAnimation from "expensasaures/lottie/emptyDocs.json";
 import animationData from "expensasaures/lottie/searchingDocs.json";
 import {
@@ -30,7 +31,7 @@ import { defaultOptions } from "expensasaures/shared/utils/lottie";
 import { getQueryForExpenses } from "expensasaures/shared/utils/react-query";
 import dynamic from "next/dynamic";
 import Link from "next/link";
-import { useState } from "react";
+import { useCallback, useMemo, useState } from "react";
 import Lottie from "react-lottie";
 import { shallow } from "zustand/shallow";
 
@@ -89,6 +90,7 @@ const index = () => {
         { enabled: !!user, keepPreviousData: true, staleTime: 2000, cacheTime: 2000 }
     );
 
+    const [isOpen, setIsOpen] = useState(false)
 
     const onClearFilters = () => {
         setDates({});
@@ -98,9 +100,10 @@ const index = () => {
         setTag("");
         setCategory("");
         setFilters([])
+        setIsOpen(false)
     };
 
-    const onFilter = () => {
+    const onFilter = useCallback(() => {
         setFilters([
             dates,
             query,
@@ -109,122 +112,132 @@ const index = () => {
             category,
             tag
         ])
-    }
+        setIsOpen(false)
+    }, [category, dates, maxAmount, minAmount, query, tag])
 
     const disableFilters = isLoading || isFetching
 
+    const filterElements = useMemo(() => {
+        return <><div className="flex items-center justify-between">
+            <Button onClick={onFilter}>Filter</Button>
+            <Button variant="light" onClick={onClearFilters}>
+                <XCircleIcon className="w-5 h-5" />
+            </Button>
+        </div>
+            <Text className="my-2">Date</Text>
+            <DateRangePicker
+                disabled={disableFilters}
+                className="max-w-md mx-auto"
+                value={dates}
+                onValueChange={(value) => {
+                    setDates(value);
+                }}
+            />
+            <div className="mt-4">
+                <Text className="my-2">Search</Text>
+                <TextInput
+                    id="search-filter-income"
+                    disabled={disableFilters}
+                    value={query}
+                    onChange={(e) => {
+                        setQuery(e.target.value)
+                    }}
+
+                />
+            </div>
+            <div className="mt-4">
+                <Text className="my-2">Min Amount</Text>
+                <TextInput
+                    id="min-amount-income"
+                    disabled={disableFilters}
+
+                    value={minAmount === '0' ? '' : minAmount}
+                    onChange={(e) => {
+                        if (e.target.value === '') {
+                            setMinAmount('0')
+                        }
+                        if (!regex.number.test(e.target.value)) {
+                            return;
+                        }
+                        setMinAmount(e.target.value)
+
+                    }}
+
+                />
+            </div>
+            <div className="mt-4">
+                <Text className="my-2">Max Amount</Text>
+                <TextInput
+                    id="max-amount-filter"
+                    disabled={disableFilters}
+                    value={maxAmount === '0' ? '' : maxAmount}
+                    onChange={(e) => {
+                        if (e.target.value === '') {
+                            setMaxAmount('0')
+                        }
+                        if (!regex.number.test(e.target.value)) {
+                            return;
+                        }
+                        setMaxAmount(e.target.value)
+                    }}
+
+                />
+            </div>
+            <div className="mt-4">
+                <Text className="my-2">Category</Text>
+                <Select
+                    disabled={disableFilters}
+                    value={category}
+                    onValueChange={(value) => setCategory(value)}
+                >
+                    {incomeCategories.map((category) => {
+                        const CIcon = () => <CategoryIcon category={category} />;
+                        return (
+                            <SelectItem
+                                key={category.id}
+                                value={category.key}
+                                icon={CIcon}
+                            >
+                                {category.category}
+                            </SelectItem>
+                        );
+                    })}
+                </Select>
+            </div>
+            <div className="mt-4">
+                <Text className="my-2">Tag</Text>
+                <TextInput
+                    disabled={disableFilters}
+                    defaultValue={tag}
+                    onChange={(e) => {
+                        setTag(e.target.value)
+                    }}
+                />
+            </div>
+        </>
+    }, [category, dates, disableFilters, maxAmount, minAmount, onFilter, query, tag])
+
     return (
         <Layout>
-            <div className="flex flex-col flex-1 w-full max-w-[1200px] mx-auto">
+            <div className="flex flex-col flex-1 w-full max-w-[1200px] mx-auto px-4">
                 <div className="flex items-center justify-between">
-                    &nbsp;
+                    <button className="visible opacity-100 lg:invisible lg:opacity-0 cursor-pointer w-8 h-8 bg-blue-500 rounded-full flex items-center justify-center" onClick={() => setIsOpen(true)}>
+                        <FilterIcon className="w-4 h-4 text-white" />
+                    </button>
                     <Title className="text-center py-10">Incomes</Title>
                     <Link href={"/incomes/create"}>
                         <Button>Add Income</Button>
                     </Link>
                 </div>
                 <div className="flex gap-8 flex-1">
-                    <div className="w-[30%] pl-3">
-                        <div className="flex items-center justify-between">
-                            <Button onClick={onFilter}>Filter</Button>
-                            <Button variant="light" onClick={onClearFilters}>
-                                <XCircleIcon className="w-5 h-5" />
-                            </Button>
-                        </div>
-                        <Text className="my-2">Date</Text>
-                        <DateRangePicker
-                            disabled={disableFilters}
-                            className="max-w-md mx-auto"
-                            value={dates}
-                            onValueChange={(value) => {
-                                setDates(value);
-                            }}
-                        />
-                        <div className="mt-4">
-                            <Text className="my-2">Search</Text>
-                            <TextInput
-                                id="search-filter-income"
-                                disabled={disableFilters}
-                                value={query}
-                                onChange={(e) => {
-                                    setQuery(e.target.value)
-                                }}
-
-                            />
-                        </div>
-                        <div className="mt-4">
-                            <Text className="my-2">Min Amount</Text>
-                            <TextInput
-                                id="min-amount-income"
-                                disabled={disableFilters}
-
-                                value={minAmount === '0' ? '' : minAmount}
-                                onChange={(e) => {
-                                    if (e.target.value === '') {
-                                        setMinAmount('0')
-                                    }
-                                    if (!regex.number.test(e.target.value)) {
-                                        return;
-                                    }
-                                    setMinAmount(e.target.value)
-
-                                }}
-
-                            />
-                        </div>
-                        <div className="mt-4">
-                            <Text className="my-2">Max Amount</Text>
-                            <TextInput
-                                id="max-amount-filter"
-                                disabled={disableFilters}
-                                value={maxAmount === '0' ? '' : maxAmount}
-                                onChange={(e) => {
-                                    if (e.target.value === '') {
-                                        setMaxAmount('0')
-                                    }
-                                    if (!regex.number.test(e.target.value)) {
-                                        return;
-                                    }
-                                    setMaxAmount(e.target.value)
-                                }}
-
-                            />
-                        </div>
-                        <div className="mt-4">
-                            <Text className="my-2">Category</Text>
-                            <Select
-                                disabled={disableFilters}
-                                value={category}
-                                onValueChange={(value) => setCategory(value)}
-                            >
-                                {incomeCategories.map((category) => {
-                                    const CIcon = () => <CategoryIcon category={category} />;
-                                    return (
-                                        <SelectItem
-                                            key={category.id}
-                                            value={category.key}
-                                            icon={CIcon}
-                                        >
-                                            {category.category}
-                                        </SelectItem>
-                                    );
-                                })}
-                            </Select>
-                        </div>
-                        <div className="mt-4">
-                            <Text className="my-2">Tag</Text>
-                            <TextInput
-                                disabled={disableFilters}
-                                defaultValue={tag}
-                                onChange={(e) => {
-                                    setTag(e.target.value)
-                                }}
-                            />
-                        </div>
+                    <LeftSidebar showMenu={isOpen} onCloseMenu={() => { setIsOpen(false) }}>
+                        {filterElements}
+                    </LeftSidebar>
+                    {/* <div className="hidden md:block md:w-[30%] pl-3">
 
 
-                    </div>
-                    <div className="w-[70%] flex flex-1 flex-col">
+                    </div> */}
+                    <div className="w-full md:w-[70%] flex flex-1 flex-col">
                         {isLoading ? <>
                             <div className="w-full">
                                 <Lottie options={defaultOptions(animationData)}
