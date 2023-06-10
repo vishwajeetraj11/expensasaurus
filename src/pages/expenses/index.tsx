@@ -87,7 +87,7 @@ const index = () => {
         fetchDataOptions,
       }),
     ],
-    { enabled: !!user, keepPreviousData: true }
+    { enabled: !!user, keepPreviousData: true, staleTime: 2000, cacheTime: 2000 }
   );
 
   useEffect(() => { }, []);

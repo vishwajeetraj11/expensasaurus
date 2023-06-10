@@ -30,7 +30,7 @@ import { defaultOptions } from "expensasaures/shared/utils/lottie";
 import { getQueryForExpenses } from "expensasaures/shared/utils/react-query";
 import dynamic from "next/dynamic";
 import Link from "next/link";
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import Lottie from "react-lottie";
 import { shallow } from "zustand/shallow";
 
@@ -89,10 +89,9 @@ const index = () => {
                 fetchDataOptions
             }),
         ],
-        { enabled: !!user, keepPreviousData: true }
+        { enabled: !!user, keepPreviousData: true, staleTime: 2000, cacheTime: 2000 }
     );
 
-    useEffect(() => { }, []);
 
     const onClearFilters = () => {
         setDates({});
