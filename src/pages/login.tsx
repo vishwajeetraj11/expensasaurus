@@ -2,8 +2,6 @@ import LoginForm from "expensasaures/components/forms/auth/LoginForm";
 import AuthLayout from "expensasaures/components/layout/AuthLayout";
 import MainLayout from "expensasaures/components/layout/MainLayout";
 import { account } from "expensasaures/shared/services/appwrite";
-import { useRouter } from "next/router";
-import { useEffect } from "react";
 import { BsGithub } from "react-icons/bs";
 import { shallow } from "zustand/shallow";
 import { useAuthStore } from "../shared/stores/useAuthStore";
@@ -18,12 +16,6 @@ const Login = () => {
     shallow
   );
 
-  const router = useRouter();
-  useEffect(() => {
-    if (user) {
-      router.push('/dashboard')
-    }
-  }, [user])
 
   const isLogin = authFormState === "SIGN_IN";
   const isSignup = authFormState === "SIGN_UP";
