@@ -1,3 +1,4 @@
+import { format } from "date-fns";
 
 const useDates = () => {
     const today = new Date();
@@ -36,6 +37,8 @@ export const dataFormatter = (number: number) =>
 
 export const dataFormatterLoading = (number: number) =>
     `$ ${Intl.NumberFormat("us").format(number).toString()}`;
+
+export const currentMonth = format(new Date(), "MMMM");
 
 
 export default useDates
