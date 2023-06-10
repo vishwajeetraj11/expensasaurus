@@ -7,7 +7,7 @@ import { BsGithub } from "react-icons/bs";
 import { shallow } from "zustand/shallow";
 import { useAuthStore } from "../shared/stores/useAuthStore";
 
-export default function SignIn() {
+const Login = () => {
   const { setAuthFormState, authFormState, user } = useAuthStore(
     (state) => ({
       setAuthFormState: state.setAuthFormState,
@@ -92,3 +92,5 @@ export default function SignIn() {
     </AuthLayout>
   );
 }
+
+export default Login
