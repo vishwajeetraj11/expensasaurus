@@ -32,9 +32,9 @@ const profile = () => {
                                 {userInfo.name}
                             </Title>
                         </div>
-                        {/* {JSON.stringify(locale.listCurrencies())} */}
                     </div>
                 </div>}
+
             </div>
         </Layout >
     )
