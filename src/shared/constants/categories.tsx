@@ -13,6 +13,13 @@ import {
   TruckIcon,
   UserCircleIcon,
 } from "@heroicons/react/solid";
+import { AiOutlineGift } from 'react-icons/ai';
+import { BiBadgeCheck } from 'react-icons/bi';
+import { BsGraphUpArrow, BsLaptop } from "react-icons/bs";
+import { CgMathPercent } from 'react-icons/cg';
+import { CiBadgeDollar } from 'react-icons/ci';
+import { HiOutlineHomeModern } from "react-icons/hi2";
+import { MdMiscellaneousServices, MdOutlineElderlyWoman, MdPrecisionManufacturing } from "react-icons/md";
 
 export const categories = [
   {
@@ -137,107 +144,107 @@ export const categories = [
     category: "Other",
     key: "other",
     description: "Expenses that do not fit into any other category",
-    Icon: TruckIcon,
-    className: "bg-yellow-500 text-yellow-500",
+    Icon: MdMiscellaneousServices,
+    className: "bg-red-500 text-red-500",
   },
 ] as const;
 
 export const incomeCategories = [
   {
     id: 1,
-    Icon: TruckIcon,
+    Icon: CiBadgeDollar,
     key: "salary",
     category: "Salary",
-    className: "bg-yellow-500 text-yellow-500",
+    className: "bg-emerald-500 text-emerald-500",
     description: "Regular income earned from employment.",
   },
   {
     id: 2,
-    Icon: TruckIcon,
+    Icon: BsLaptop,
     key: "freelance",
     category: "Freelance/Contract Work",
-    className: "bg-yellow-500 text-yellow-500",
+    className: "bg-lime-500 text-lime-500",
     description: "Income earned from freelance projects or contract work.",
   },
   {
     id: 3,
-    Icon: TruckIcon,
+    Icon: BsGraphUpArrow,
     key: "investments",
     category: "Investments",
-    className: "bg-yellow-500 text-yellow-500",
+    className: "bg-teal-500 text-teal-500",
     description:
       "Income generated from investments such as stocks, bonds, or real estate.",
   },
   {
     id: 4,
-    Icon: TruckIcon,
+    Icon: HiOutlineHomeModern,
     key: "rental",
     category: "Rental Income",
-    className: "bg-yellow-500 text-yellow-500",
+    className: "bg-cyan-500 text-cyan-500",
     description: "Income received from renting out properties or assets.",
   },
   {
     id: 5,
-    Icon: TruckIcon,
+    Icon: BriefcaseIcon,
     key: "business",
     category: "Business Income",
-    className: "bg-yellow-500 text-yellow-500",
+    className: "bg-blue-500 text-blue-500",
     description: "Income generated from a business or self-employment.",
   },
   {
     id: 6,
-    Icon: TruckIcon,
+    Icon: CgMathPercent,
     key: "interest",
-    className: "bg-yellow-500 text-yellow-500",
+    className: "bg-sky-500 text-sky-500",
     category: "Interest/Dividends",
     description:
       "Income earned from interest on savings accounts or dividends from investments.",
   },
   {
     id: 7,
-    Icon: TruckIcon,
+    Icon: MdOutlineElderlyWoman,
     key: "pension",
     category: "Pension/Social Security",
-    className: "bg-yellow-500 text-yellow-500",
+    className: "bg-amber-500 text-amber-500",
     description:
       "Income received from retirement pensions or government social security programs.",
   },
   {
     id: 8,
-    Icon: TruckIcon,
+    Icon: AiOutlineGift,
     key: "gift",
     category: "Gifts/Inheritance",
-    className: "bg-yellow-500 text-yellow-500",
+    className: "bg-green-500 text-green-500",
     description:
       "Income received as gifts or inheritance from family or friends.",
   },
   {
     id: 9,
-    Icon: TruckIcon,
+    Icon: BiBadgeCheck,
     key: "royalties",
     category: "Royalties",
-    className: "bg-yellow-500 text-yellow-500",
+    className: "bg-indigo-500 text-indigo-500",
     description:
       "Income earned from the use of intellectual property, such as copyrights or patents.",
   },
   {
     id: 10,
-    Icon: TruckIcon,
+    Icon: MdPrecisionManufacturing,
     key: "sidehustle",
     category: "Side Hustle/Part-time Work",
-    className: "bg-yellow-500 text-yellow-500",
+    className: "bg-violet-500 text-violet-500",
     description: "Income earned from part-time jobs or side businesses.",
   },
   {
     id: 11,
-    Icon: TruckIcon,
+    Icon: MdMiscellaneousServices,
     key: "other",
     category: "Other",
-    className: "bg-yellow-500 text-yellow-500",
+    className: "bg-red-500 text-red-500",
     description:
       "A general category to cover any income source that does not fit into the predefined categories.",
   },
-];
+] as const;
 
 export const categoryNames: string[] = categories.map(
   (category) => category.category
