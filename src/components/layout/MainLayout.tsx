@@ -21,7 +21,7 @@ const MainLayout = (props: Props) => {
             if (!user) {
                 const userAfterFetch = await getUser();
                 if (!userAfterFetch) {
-                    router.push('/login')
+                    router.push(router.route === '/signup' ? router.route : '/login')
                 }
             } else {
                 router.push('/dashboard')
