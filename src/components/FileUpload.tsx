@@ -1,3 +1,4 @@
+
 import { Models } from "appwrite";
 import { ENVS } from "expensasaures/shared/constants/constants";
 import { storage } from "expensasaures/shared/services/appwrite";
@@ -15,6 +16,7 @@ import { toast } from "sonner";
 import { shallow } from "zustand/shallow";
 import { Attachment } from "./expense/Attachments";
 import { FIlePreview, ImageFilePreview } from "./expense/expenseForm/FilePreview";
+import FormInputLabel from "./ui/FormInputLabel";
 
 interface Props {
 
@@ -36,8 +38,15 @@ const FileUpload = (props: Props) => {
   const [files, setFiles] = useState<FileWPreview[]>([]);
 
   const [bond, state] = useDropArea({
-    onFiles: async (files) => {
-      const [file] = files;
+    onFiles: async (filesinput) => {
+      const [file] = filesinput;
+      const isSameFile = files.find((f) => f.file.name === file.name);
+
+      if (isSameFile) {
+
+        toast.error("File already available!");
+        return;
+      }
       const res = {} as FileWPreview;
       const maxSizeInBytes = 5 * 1024 * 1024
       if (disabled) return;
@@ -92,16 +101,12 @@ const FileUpload = (props: Props) => {
     }
   }
 
-
   return (
-    <>
+    <div>
 
-      <label
-        htmlFor="cover-photo"
-        className="ml-3 font-bold text-sm text-navy-700 dark:text-white mt-4"
-      >
+      <FormInputLabel htmlFor="cover-photo">
         Attachments
-      </label>
+      </FormInputLabel>
       <div className="flex gap-4 my-4 empty:my-0">
         {files.map((file, index) => {
           return file.preview ? <ImageFilePreview disabled={disabled} file={file} setFiles={setFiles} key={index} /> : <FIlePreview file={file} disabled={disabled} setFiles={setFiles} key={index} />
@@ -114,7 +119,7 @@ const FileUpload = (props: Props) => {
           return <Attachment disabled={disabled} onDelete={() => onDelete(fileId)} data={data as unknown as URL} key={index} />;
         })}
       </div>
-      <div {...bond} className="col-span-full mt-4">
+      <div {...bond} className="col-span-full mt-2">
         <div className="mt-2 flex justify-center rounded-lg border border-dashed border-gray-900/25 px-6 py-10">
           <div className="text-center flex items-center justify-center flex-col">
             <FcFile />
@@ -138,7 +143,7 @@ const FileUpload = (props: Props) => {
           </div>
         </div>
       </div>
-    </>
+    </div>
   );
 };
 
