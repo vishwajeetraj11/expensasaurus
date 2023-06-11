@@ -42,16 +42,16 @@ const Login = () => {
               {isSignup ? 'Create an account to start tracking your expenses like a pro!' : 'Securely access your Expense Tracker account.'}
             </p>
 
-            <div className="mb-6 flex h-[50px] w-full items-center justify-center gap-2 rounded-xl bg-lightPrimary hover:cursor-pointer dark:bg-navy-700">
+            <button type='button' onClick={() => {
+              account.createOAuth2Session('github', `${window.location.origin}/dashboard`, `${window.location.origin}/`);
+            }} className="mb-6 flex h-[50px] w-full items-center justify-center gap-2 rounded-xl bg-lightPrimary hover:cursor-pointer dark:bg-navy-700">
               <div className="rounded-full text-xl">
                 <BsGithub className="dark:text-white" />
               </div>
-              <h5 onClick={() => {
-                account.createOAuth2Session('github', `${window.location.origin}/dashboard`, `${window.location.origin}/`);
-              }} className="text-sm font-medium text-navy-700 dark:text-white">
+              <h5 className="text-sm font-medium text-navy-700 dark:text-white">
                 Continue with Github
               </h5>
-            </div>
+            </button>
             <div className="mb-6 flex items-center  gap-3">
               <div className="h-px w-full bg-gray-200 dark:bg-navy-700" />
               <p className="text-base text-gray-600 dark:text-white"> or </p>
