@@ -99,13 +99,13 @@ const Navigation = (props: Props) => {
 
             {landingPage && <>
               <li>
-                <Link href="/expenses">Features</Link>
+                {/* <Link href="/expenses">Features</Link> */}
               </li>
               <li className="">
-                <Link href="/incomes">How It Works</Link>
+                <Link href="#how-it-works">How It Works</Link>
               </li>
               <li className="">
-                <Link href="/category">Expense Tracking</Link>
+                {/* <Link href="/category">Expense Tracking</Link> */}
               </li>
               <li className="">
                 <Link href="#budget">Budget Management</Link>
@@ -155,7 +155,7 @@ const Navigation = (props: Props) => {
         <Link href='/login' className="mr-6 text-sm">
           Log in
         </Link>
-        <Link href='/signup' className="mr-6 text-sm">
+        <Link href='/signup' className="text-sm">
           <Button className='bg-blue-600' variant={"primary"}>
             Sign up
           </Button>

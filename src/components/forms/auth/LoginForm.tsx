@@ -1,6 +1,7 @@
 import { Button, SearchSelect, SearchSelectItem } from "@tremor/react";
 import { AppwriteException } from "appwrite";
 
+import ErrorMessage from "expensasaures/components/ui/ErrorMessage";
 import { useLocaleStore } from "expensasaures/shared/stores/useLocaleStore";
 import { useRouter } from "next/router";
 import { useEffect } from "react";
@@ -153,16 +154,23 @@ function LoginForm() {
             >
               {'Select Currency*'}
             </label>
-            <Field name="currency">
+            <Field validate={(value) => {
+              if (!value) {
+                return 'Currency is required'
+              }
+            }} name="currency">
               {({ meta, input }) => (
-                <SearchSelect
-                  placeholder="Select Currency"
-                  value={input.value}
-                  onChange={input.onChange} id='select-currency'>
-                  {currencies?.currencies.map((currency, index) => (
-                    <SearchSelectItem value={currency.code} key={index}>{currency.name} ({currency.code})</SearchSelectItem>
-                  ))}
-                </SearchSelect>
+                <>
+                  <SearchSelect
+                    placeholder="Select Currency"
+                    value={input.value}
+                    onChange={input.onChange} id='select-currency'>
+                    {currencies?.currencies.map((currency, index) => (
+                      <SearchSelectItem value={currency.code} key={index}>{currency.name} ({currency.code})</SearchSelectItem>
+                    ))}
+                  </SearchSelect>
+                  {meta.touched && meta.error && <ErrorMessage>{meta.error}</ErrorMessage>}
+                </>
               )}
             </Field>
 

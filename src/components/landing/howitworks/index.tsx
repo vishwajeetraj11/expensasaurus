@@ -2,7 +2,9 @@ import Image from "next/image"
 
 const HowItWorks = () => {
     return (
-        <div className="relative w-full">
+        <div id="how-it-works" style={{
+            scrollMargin: 100
+        }} className="relative w-full">
             <div className="w-full pl-4 lg:max-w-[1200px] mx-auto pt-8 md:py-10">
                 <h4 className="text-[28px] text-center">How it works</h4>
                 <div className="w-full pt-8 md:py-10 flex flex-col md:flex-row items-center justify-between">
