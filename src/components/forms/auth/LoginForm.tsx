@@ -1,5 +1,6 @@
-import { SearchSelect, SearchSelectItem } from "@tremor/react";
-import Button from "expensasaures/components/ui/Button";
+import { Button, SearchSelect, SearchSelectItem } from "@tremor/react";
+import { AppwriteException } from "appwrite";
+
 import { useLocaleStore } from "expensasaures/shared/stores/useLocaleStore";
 import { useRouter } from "next/router";
 import { useEffect } from "react";
@@ -9,6 +10,7 @@ import { shallow } from "zustand/shallow";
 import { ID, account } from "../../../shared/services/appwrite";
 import { useAuthStore } from "../../../shared/stores/useAuthStore";
 import InputField from "../../ui/InputField";
+
 
 function LoginForm() {
   const { authFormState } = useAuthStore(
@@ -69,13 +71,20 @@ function LoginForm() {
         localStorage.setItem("sessionId", rest.$id);
 
 
-        // toast.success(`Welcome to Expensasaurus`);
-        // router.push("/dashboard");
+        toast.success(`Welcome to Expensasaurus`);
+        router.push("/dashboard");
       }
-    } catch (error) {
-      console.error(error);
-    }
-  };
+    } catch (error: unknown) {
+      let appwriteError = error as AppwriteException
+      if (appwriteError.code === 401) {
+        toast.error('Invalid credentials')
+      } else if (appwriteError.code === 409) {
+        toast.error('Email already exists')
+      } else {
+        toast.error('Something went wrong')
+      }
+    };
+  }
 
   const validate = (values: any) => {
     const errors: any = {};
@@ -96,6 +105,7 @@ function LoginForm() {
     }
     return errors;
   };
+
 
   return (
     <Form
@@ -177,6 +187,7 @@ function LoginForm() {
           <Button
             type="submit"
             disabled={submitting}
+            loading={submitting}
             className="linear mt-2 w-full rounded-xl bg-brand-500 py-[12px] text-base font-medium text-white transition duration-200 hover:bg-brand-600 active:bg-brand-700 dark:bg-brand-400 dark:text-white dark:hover:bg-brand-300 dark:active:bg-brand-200"
           >
             {isSignup ? 'Sign up' : 'Sign In'}
