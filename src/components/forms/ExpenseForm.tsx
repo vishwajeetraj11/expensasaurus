@@ -2,6 +2,7 @@ import { DesktopDatePicker, LocalizationProvider } from "@mui/x-date-pickers";
 import { AdapterDateFns } from "@mui/x-date-pickers/AdapterDateFns";
 import { Button, Select, SelectItem, TextInput } from "@tremor/react";
 import { Models, Role } from "appwrite";
+import useDates from "expensasaures/hooks/useDates";
 import { categories } from "expensasaures/shared/constants/categories";
 import { ENVS, regex } from "expensasaures/shared/constants/constants";
 import {
@@ -36,7 +37,7 @@ const ExpenseForm = () => {
 
   const router = useRouter();
   const { id } = router.query;
-
+  const { startOfEarlierMonth, startOfThisMonth } = useDates()
   const { data, refetch } = getDoc<Transaction>(
     ["Expenses by ID", id, user?.userId],
     [ENVS.DB_ID, ENVS.COLLECTIONS.EXPENSES, id as string],
@@ -103,7 +104,7 @@ const ExpenseForm = () => {
         amount: values.amount,
         category: values.category,
         tag: values.tag,
-        date: values.date,
+        date: values.date?.toISOString(),
         userId: user?.userId,
         currency: values.currency,
         attachments: attachmentsIds.length > 0 ? attachmentsIds : undefined,
@@ -112,10 +113,25 @@ const ExpenseForm = () => {
       const upsertedExpense = isUpdateRoute
         ? await database.updateDocument(...dbIds, formValues, permissionsArray)
         : await database.createDocument(...dbIds, formValues, permissionsArray);
-      toast.success(toastMessage);
-      queryClient.invalidateQueries(["Expenses by ID", id, user?.userId]);
+
+      // dashboard page
+      if (new Date(startOfThisMonth) < new Date(values.date)) {
+        queryClient.invalidateQueries(["Expenses", "Stats this month", user?.userId]);
+      }
+      if (new Date(startOfEarlierMonth) < new Date(values.date) && new Date(values.date) < new Date(startOfThisMonth)) {
+        queryClient.invalidateQueries(["Expenses", "Stats earlier month", user?.userId]);
+      }
+      // category page
+      queryClient.invalidateQueries(["Expenses", user?.userId, values.date]);
+      // listing 
+      queryClient.invalidateQueries(["Expenses", "Listing"]);
       router.push(`/expenses/${upsertedExpense.$id}`);
-      if (isUpdateRoute && upsertedExpense) { refetch() };
+      toast.success(toastMessage);
+      if (isUpdateRoute && upsertedExpense) {
+        // indvidual expense page
+        queryClient.invalidateQueries(["Expenses by ID", id, user?.userId]);
+        refetch()
+      };
     } catch (error) {
       toast.error(toastFailureMessage);
     }
@@ -148,7 +164,7 @@ const ExpenseForm = () => {
                 }
             }
           >
-            {({ errors, handleSubmit, submitting, form }) => {
+            {({ errors, handleSubmit, submitting, form, values }) => {
               return (
 
                 <form className="flex flex-col gap-4" onSubmit={handleSubmit}>
@@ -297,13 +313,14 @@ const ExpenseForm = () => {
                           disabled={submitting}
                           className="w-full dark:bg-gray-700 rounded-md"
                           onChange={(value) =>
-                            input.onChange(value?.toISOString())
+                            input.onChange(value)
                           }
                           defaultValue={input.value}
                         />
                       </div>
                     )}
                   </Field>
+                  {JSON.stringify({ values: values.attachments })}
                   <Field name="attachments">
                     {() => (
                       <>
@@ -318,7 +335,7 @@ const ExpenseForm = () => {
                     type="submit"
                     disabled={submitting}
                   >
-                    Submit
+                    {isUpdateRoute ? 'Update' : ' Submit'}
                   </Button>
                 </form>
 

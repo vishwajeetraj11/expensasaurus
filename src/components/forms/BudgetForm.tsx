@@ -298,7 +298,7 @@ const BudgetForm = () => {
                     type="submit"
                     disabled={submitting}
                   >
-                    Submit
+                    {isUpdateRoute ? 'Update' : ' Submit'}
                   </Button>
                 </form>
               </div>

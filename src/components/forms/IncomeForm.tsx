@@ -2,6 +2,7 @@ import { DesktopDatePicker, LocalizationProvider } from "@mui/x-date-pickers";
 import { AdapterDateFns } from "@mui/x-date-pickers/AdapterDateFns";
 import { Button, Select, SelectItem, TextInput } from "@tremor/react";
 import { Models, Role } from "appwrite";
+import useDates from "expensasaures/hooks/useDates";
 import { incomeCategories } from "expensasaures/shared/constants/categories";
 import { ENVS, regex } from "expensasaures/shared/constants/constants";
 import {
@@ -30,6 +31,7 @@ const IncomeForm = () => {
     user: Models.Session;
     userInfo: Models.User<Models.Preferences>
   };
+  const { startOfEarlierMonth, startOfThisMonth } = useDates()
   const router = useRouter()
   const { id } = router.query;
   const queryClient = useQueryClient();
@@ -76,6 +78,17 @@ const IncomeForm = () => {
         ? await database.updateDocument(...dbIds, formValues, permissionsArray)
         : await database.createDocument(...dbIds, formValues, permissionsArray);
 
+
+
+      // dashboard query clear.
+      if (new Date(startOfThisMonth) < new Date(values.date)) {
+        queryClient.invalidateQueries(["Incomes", "Stats this month", user?.userId]);
+      }
+      if (new Date(startOfEarlierMonth) < new Date(values.date) && new Date(values.date) < new Date(startOfThisMonth)) {
+        queryClient.invalidateQueries(["Incomes", "Stats earlier month", user?.userId]);
+      }
+      // listing
+      queryClient.invalidateQueries(["Expenses", "Listing"]);
       toast.success(toastMessage);
       router.push(`/incomes/${upsertedIncome.$id}`)
       if (isUpdateRoute) {
@@ -278,7 +291,7 @@ const IncomeForm = () => {
                     type="submit"
                     disabled={submitting}
                   >
-                    Submit
+                    {isUpdateRoute ? 'Update' : ' Submit'}
                   </Button>
                 </form>
 
