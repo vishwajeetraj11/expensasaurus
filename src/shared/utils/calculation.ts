@@ -105,6 +105,7 @@ export function calcTotalExpByCategoryBuget(expenses: Transaction[]): Record<str
 export interface CategoryData {
     totalExpenses: number;
     percentageChange: number;
+    absolutePrevValue: number;
 }
 
 export function calculateTotalExpensesWithPercentageChange(expenses: Transaction[], previousMonthTotals: Record<string, { amount: number, transactionsCount: number, percentage: number }>): Record<string, CategoryData> {
@@ -117,6 +118,7 @@ export function calculateTotalExpensesWithPercentageChange(expenses: Transaction
             totalExpensesByCategory[category] = {
                 totalExpenses: 0,
                 percentageChange: 0,
+                absolutePrevValue: 0
             };
         }
 
@@ -128,6 +130,7 @@ export function calculateTotalExpensesWithPercentageChange(expenses: Transaction
             const change = currentMonthTotal - previousMonthTotal;
             const percentageChange = (change / previousMonthTotal) * 100;
             totalExpensesByCategory[category].percentageChange = percentageChange;
+            totalExpensesByCategory[category].absolutePrevValue = previousMonthTotal;
         } else {
             // TODO: if there was no expense in earlier month in this category and now there is, then the percentage change should be 100% ?? correct behaviour?
             totalExpensesByCategory[category].percentageChange = totalExpensesByCategory[category].totalExpenses;
