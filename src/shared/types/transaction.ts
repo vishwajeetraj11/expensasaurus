@@ -24,4 +24,5 @@ export interface DashboardStat {
     metricPrev?: string;
     delta: string;
     deltaType: DeltaType;
+    change: number,
 }

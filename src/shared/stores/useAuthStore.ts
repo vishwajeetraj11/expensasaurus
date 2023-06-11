@@ -64,8 +64,10 @@ const useAuthStore = create<useAuthStoreType>((set, get) => ({
     },
     getUserInfo: async () => {
         try {
-            const userInfo = await account.get();
-            set({ userInfo });
+            const { userInfo } = get();
+            if (userInfo) return
+            const userInfoAPI = await account.get();
+            set({ userInfo: userInfoAPI });
         } catch (e) {
 
         }

@@ -1,3 +1,4 @@
+import { DeltaType } from "@tremor/react"
 import { categories } from "../constants/categories"
 import { Transaction } from "../types/transaction"
 
@@ -20,21 +21,28 @@ export const calcExpenseStats = (expenses: Transaction[]) => {
     return expensesStats
 }
 
-export type TransactionChange = 'moderateIncrease' | 'moderateDecrease';
+export type TransactionChange = DeltaType;
+export type TransactionType = 'expense' | 'income' | 'saving';
 
-export function calculateTransactionChange(previousMonthTotal: number, currentMonthTotal: number): { percentage: number, transactionChange: TransactionChange } {
+export function calculateTransactionChange(resource: TransactionType, previousMonthTotal: number, currentMonthTotal: number): { percentage: number, transactionChange: TransactionChange, change: number } {
     const change = currentMonthTotal - previousMonthTotal;
-    let percentage = (change / previousMonthTotal) * 100;
+    let percentage = (change / Math.abs(previousMonthTotal)) * 100;
+    const isExpense = resource === 'expense';
 
-    const transactionChange: TransactionChange = change > 0 ? 'moderateIncrease' : 'moderateDecrease';
+    let transactionChange: TransactionChange = change > 0 ? 'moderateIncrease' : change < 0 ? 'moderateDecrease' : 'unchanged';
+    if (isExpense) {
+        transactionChange = change > 0 ? 'moderateDecrease' : 'moderateIncrease';
+    }
 
-    if (percentage === Infinity) {
+
+    if (isNaN(percentage) || !isFinite(percentage)) {
         percentage = 0;
     }
 
     return {
         percentage,
         transactionChange,
+        change,
     };
 }
 
@@ -106,6 +114,8 @@ export interface CategoryData {
     totalExpenses: number;
     percentageChange: number;
     absolutePrevValue: number;
+    absoluteCurrValue: number;
+    eitherMonthHasNoExpenses: boolean;
 }
 
 export function calculateTotalExpensesWithPercentageChange(expenses: Transaction[], previousMonthTotals: Record<string, { amount: number, transactionsCount: number, percentage: number }>): Record<string, CategoryData> {
@@ -118,11 +128,14 @@ export function calculateTotalExpensesWithPercentageChange(expenses: Transaction
             totalExpensesByCategory[category] = {
                 totalExpenses: 0,
                 percentageChange: 0,
-                absolutePrevValue: 0
+                absolutePrevValue: 0,
+                absoluteCurrValue: 0,
+                eitherMonthHasNoExpenses: false,
             };
         }
 
         totalExpensesByCategory[category].totalExpenses += amount;
+        totalExpensesByCategory[category].absoluteCurrValue = totalExpensesByCategory[category].totalExpenses;
 
         if (previousMonthTotals[category]) {
             const previousMonthTotal = previousMonthTotals[category].amount;
@@ -131,10 +144,12 @@ export function calculateTotalExpensesWithPercentageChange(expenses: Transaction
             const percentageChange = (change / previousMonthTotal) * 100;
             totalExpensesByCategory[category].percentageChange = percentageChange;
             totalExpensesByCategory[category].absolutePrevValue = previousMonthTotal;
+            // totalExpensesByCategory[category].eitherMonthHasNoExpenses = previousMonthTotal === 0 || currentMonthTotal === 0;
         } else {
             // TODO: if there was no expense in earlier month in this category and now there is, then the percentage change should be 100% ?? correct behaviour?
-            totalExpensesByCategory[category].percentageChange = totalExpensesByCategory[category].totalExpenses;
+            // totalExpensesByCategory[category].percentageChange = totalExpensesByCategory[category].totalExpenses;
         }
+
     }
 
     return totalExpensesByCategory;
