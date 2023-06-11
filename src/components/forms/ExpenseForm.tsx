@@ -291,11 +291,11 @@ const ExpenseForm = () => {
                     {({ meta, input }) => (
                       <div className="">
                         <FormInputLabel htmlFor="category">
-                          Category
+                          Date
                         </FormInputLabel>
                         <DesktopDatePicker
                           disabled={submitting}
-                          className="w-full "
+                          className="w-full dark:bg-gray-700 rounded-md"
                           onChange={(value) =>
                             input.onChange(value?.toISOString())
                           }
