@@ -11,7 +11,7 @@ export default function App({ Component, pageProps }: AppProps) {
     <>
       <QueryClientProvider client={queryClient}>
         <Hydrate state={pageProps.dehydratedState}>
-          <Toaster richColors closeButton />
+          <Toaster duration={3000} richColors closeButton />
           <Component {...pageProps} />
           <ReactQueryDevtools initialIsOpen={false} />
         </Hydrate>

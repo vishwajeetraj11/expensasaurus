@@ -384,6 +384,9 @@ module.exports = {
           500: "rgba(112, 144, 176, 0.08)",
         },
       }),
+      backgroundImage: {
+        "glass-gradient": "linear-gradient(rgba(255, 255, 255, 0) 0%, rgba(255, 255, 255, 0.05) 100%)",
+      },
       spacing: {
         "navigation-height": "var(--navigation-height)",
       },
