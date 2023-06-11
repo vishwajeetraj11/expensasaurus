@@ -63,7 +63,7 @@ const index = () => {
 
   const { data, isLoading, isFetching } = getAllLists<Transaction>(
     [
-      "Expenses",
+      "Expenses", "Listing",
       user?.userId,
       ...filter,
       fetchDataOptions,

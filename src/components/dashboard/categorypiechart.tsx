@@ -37,6 +37,7 @@ interface StockData {
   performance: number;
   deltaType: DeltaType;
   absValuePrev: number;
+  absValueCurr: number;
 }
 
 
@@ -68,11 +69,12 @@ const CategoriesPieChart = (props: Props) => {
           const percent = value.percentageChange;
           stats.push({
             absValuePrev: value.absolutePrevValue,
+            absValueCurr: value.absoluteCurrValue,
             name: categories.find((category) => category.key === key)?.category || "",
             value: value.totalExpenses,
             performance: value.percentageChange,
             deltaType:
-              percent > 30
+              percent === 0 && value.absolutePrevValue === 0 && value.absoluteCurrValue !== 0 ? 'increase' : percent > 30
                 ? "increase"
                 : percent < 30 && percent > 0
                   ? "moderateIncrease"
@@ -124,19 +126,24 @@ const CategoriesPieChart = (props: Props) => {
               <Text>**</Text>
             </Flex>
             <List className="mt-4">
-              {categoryExpense.map((category) => (
-                <ListItem key={category.name}>
-                  <Text className="font-medium text-stone-500">{category.name}</Text>
-                  <Flex justifyContent="end" className="space-x-2">
-                    <Text className="font-medium text-stone-700">
-                      {formatCurrency(userInfo?.prefs?.currency, category.value)}
-                    </Text>
-                    <BadgeDelta deltaType={category.deltaType} size="xs">
-                      {category.performance > 100 ? formatCurrency(userInfo?.prefs.currency, category.absValuePrev) : category.performance.toFixed(2) + "%"}
-                    </BadgeDelta>
-                  </Flex>
-                </ListItem>
-              ))}
+              {categoryExpense.map((category) => {
+                console.log({ absValuePrev: category.absValuePrev, absValueCurr: category.absValueCurr, performance: category.performance })
+                return (
+                  <ListItem key={category.name}>
+                    <Text className="font-medium text-stone-500">{category.name}</Text>
+                    <Flex justifyContent="end" className="space-x-2">
+                      <Text className="font-medium text-stone-700">
+                        {formatCurrency(userInfo?.prefs?.currency, category.value)}
+                      </Text>
+                      <BadgeDelta deltaType={category.deltaType} size="xs">
+                        {/* {category.performance > 100 ? formatCurrency(userInfo?.prefs.currency, category.absValuePrev) : category.performance.toFixed(2) + "%"} */}
+                        {category.absValuePrev === 0 ? formatCurrency(userInfo?.prefs.currency, category.absValueCurr) : category.performance.toFixed(2) + "%"}
+                        {/* {category.performance.toFixed(2) + "%"} */}
+                      </BadgeDelta>
+                    </Flex>
+                  </ListItem>
+                )
+              })}
             </List>
           </TabPanel>
         </TabPanels>

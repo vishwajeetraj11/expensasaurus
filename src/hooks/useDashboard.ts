@@ -18,8 +18,6 @@ const useDashboard = () => {
         userInfo: Models.User<Models.Preferences>;
     };
 
-    // const { earlierMonthExpenses, earlierMonthIncomes, thisMonthExpenses, thisMonthIncomes } = demo;
-
     const { data: thisMonthExpenses, isLoading: isThisMonthExpensesLoading, isFetching } = getAllLists<Transaction>(
         ["Expenses", "Stats this month", user?.userId],
         [
@@ -81,21 +79,17 @@ const useDashboard = () => {
 
     const expenseStatsThisMonth = calcExpenseStats(thisMonthExpenses?.documents || []);
     const expenseStatsEarlierMonth = calcExpenseStats(earlierMonthExpenses?.documents || []);
-    const expenseChange = calculateTransactionChange(expenseStatsEarlierMonth.sum, expenseStatsThisMonth.sum)
+    const expenseChange = calculateTransactionChange('expense', expenseStatsEarlierMonth.sum, expenseStatsThisMonth.sum)
 
     const incomeStatsThisMonth = calcExpenseStats(thisMonthIncomes?.documents || []);
     const incomeStatsEarlierMonth = calcExpenseStats(earlierMonthIncomes?.documents || []);
-    const incomeChange = calculateTransactionChange(incomeStatsEarlierMonth.sum, incomeStatsThisMonth.sum);
+    const incomeChange = calculateTransactionChange('income', incomeStatsEarlierMonth.sum, incomeStatsThisMonth.sum);
 
     const savingsThisMonth = incomeStatsThisMonth.sum - expenseStatsThisMonth.sum;
     const savingsEarlierMonth = incomeStatsEarlierMonth.sum - expenseStatsEarlierMonth.sum;
-    const savingsChange = calculateTransactionChange(savingsEarlierMonth, savingsThisMonth);
-    // console.log(savingsThisMonth)
-    // console.log(savingsEarlierMonth)
-    // console.log(savingsThisMonth - savingsEarlierMonth)
-    // console.log((savingsThisMonth - savingsEarlierMonth) / savingsEarlierMonth)
+    const savingsChange = calculateTransactionChange('saving', savingsEarlierMonth, savingsThisMonth);
 
-    // const expensesByCategoriesThisMonth = calculateTotalExpensesByCategory(thisMonthExpenses?.documents || []);
+
     const expensesByCategoriesEarlierMonth = calculateTotalExpensesByCategory(earlierMonthExpenses?.documents || []);
     const expensesAndPercentByCategoryThisMonth = calculateTotalExpensesWithPercentageChange(thisMonthExpenses?.documents || [], expensesByCategoriesEarlierMonth)
 
@@ -107,6 +101,7 @@ const useDashboard = () => {
             metricPrev: formatCurrency(userInfo?.prefs?.currency, savingsEarlierMonth),
             delta: savingsChange.percentage ? savingsChange.percentage.toFixed(2) + '%' : "0%",
             deltaType: savingsChange.transactionChange,
+            change: savingsChange.change,
         },
         {
             title: "Expenses",
@@ -114,6 +109,7 @@ const useDashboard = () => {
             metricPrev: formatCurrency(userInfo?.prefs?.currency, expenseStatsEarlierMonth.sum),
             delta: expenseChange.percentage ? expenseChange.percentage.toFixed(2) + '%' : "0%",
             deltaType: expenseChange.transactionChange,
+            change: savingsChange.change,
         },
         {
             title: "Income",
@@ -121,8 +117,10 @@ const useDashboard = () => {
             metricPrev: formatCurrency(userInfo?.prefs?.currency, incomeStatsEarlierMonth.sum),
             delta: incomeChange.percentage ? incomeChange.percentage.toFixed(2) + '%' : "0%",
             deltaType: incomeChange.transactionChange,
+            change: incomeChange.change,
         },
     ];
+
 
     const isLoading = isThisMonthExpensesLoading || isEarlierMonthExpensesLoading
 

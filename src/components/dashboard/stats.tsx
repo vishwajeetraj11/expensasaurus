@@ -1,42 +1,61 @@
-import { BadgeDelta, Card, Flex, Grid, Metric, Text } from "@tremor/react";
+import { Card, Flex, Grid, Metric, Text } from "@tremor/react";
+import {
+  Models
+} from 'appwrite';
 import { dashboardStatColors } from "expensasaures/shared/constants/constants";
+import { useAuthStore } from 'expensasaures/shared/stores/useAuthStore';
 import { DashboardStat } from "expensasaures/shared/types/transaction";
-
+import { formatCurrency } from "expensasaures/shared/utils/currency";
+import { shallow } from 'zustand/shallow';
+import DeltaIcon from "./dashboardStatBadge";
 interface Props {
   stats: DashboardStat[];
 }
 
 const DashboardStatistics = (props: Props) => {
   const { stats } = props;
+  const { user, userInfo } = useAuthStore((state) => ({ user: state.user, userInfo: state.userInfo }), shallow) as {
+    user: Models.Session;
+    userInfo: Models.User<Models.Preferences>;
+  };
   return (
     <Grid numItemsSm={2} numItemsLg={3} className="gap-6">
-      {stats.map((item) => (
-        <Card className='box-shadow-card' key={item.title}>
-          <Text className="text-stone-600 font-medium">{item.title}</Text>
-          <Flex
-            justifyContent="start"
-            alignItems="baseline"
-            className="truncate space-x-3"
-          >
-            <Metric className="text-slate-950">{item.metric}</Metric>
-            {item.metricPrev && (
-              <Text className="truncate">from {item.metricPrev}</Text>
-            )}
-          </Flex>
+      {stats.map((item) => {
+        const isExpense = item.title === "Expenses";
+        const isSavings = item.title === "Savings";
+        const isIncome = item.title === "Income";
+        return (
+          (
+            <Card className='box-shadow-card' key={item.title}>
+              <Text className="text-stone-600 font-medium">{item.title}</Text>
+              <Flex
+                justifyContent="start"
+                alignItems="baseline"
+                className="truncate space-x-3"
+              >
+                <Metric className="text-slate-950">{item.metric}</Metric>
+                {item.metricPrev && (
+                  <Text className="truncate">from {item.metricPrev}</Text>
+                )}
+              </Flex>
 
-          <Flex justifyContent="start" className="space-x-2 mt-4">
-            {item.deltaType && <BadgeDelta deltaType={item.deltaType} />}
-            <Flex justifyContent="start" className="space-x-1 truncate">
-              {item.delta && (
-                <Text color={dashboardStatColors[item.deltaType]}>
-                  {item.delta}
-                </Text>
-              )}
-              <Text className="truncate"> to previous month </Text>
-            </Flex>
-          </Flex>
-        </Card>
-      ))}
+              <Flex justifyContent="start" className="space-x-2 mt-4">
+                {item.deltaType &&
+                  <DeltaIcon change={item.change} resource={isExpense ? 'expense' : isIncome ? 'income' : 'saving'} deltaType={item.deltaType} />
+                }
+                <Flex justifyContent="start" className="space-x-1 truncate">
+                  {item.delta && (
+                    <Text color={dashboardStatColors[item.deltaType]}>
+                      {item.delta === '0%' ? formatCurrency(userInfo?.prefs?.currency, isExpense ? Math.abs(item.change) : item.change) : item.delta}
+                    </Text>
+                  )}
+                  <Text className="truncate"> to previous month </Text>
+                </Flex>
+              </Flex>
+            </Card>
+          )
+        )
+      })}
     </Grid>
   );
 };
