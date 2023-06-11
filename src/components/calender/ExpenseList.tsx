@@ -1,4 +1,4 @@
-import { Subtitle } from "@tremor/react";
+import { Subtitle, Text } from "@tremor/react";
 import { Models, Query } from "appwrite";
 import clsx from "clsx";
 import { format } from "date-fns";
@@ -8,6 +8,7 @@ import { ENVS } from "expensasaures/shared/constants/constants";
 import { getAllLists } from "expensasaures/shared/services/query";
 import { useAuthStore } from "expensasaures/shared/stores/useAuthStore";
 import { Transaction } from "expensasaures/shared/types/transaction";
+import { formatCurrency } from "expensasaures/shared/utils/currency";
 import { defaultOptions } from "expensasaures/shared/utils/lottie";
 import Lottie from "react-lottie";
 import { shallow } from "zustand/shallow";
@@ -20,8 +21,9 @@ interface Props {
 
 const ExpenseList = (props: Props) => {
   const { selectedDay } = props;
-  const { user } = useAuthStore((state) => ({ user: state.user }), shallow) as {
+  const { user, userInfo } = useAuthStore((state) => ({ user: state.user, userInfo: state.userInfo }), shallow) as {
     user: Models.Session;
+    userInfo: Models.User<Models.Preferences>
   };
 
   const startOfDay = new Date(
@@ -63,11 +65,17 @@ const ExpenseList = (props: Props) => {
     }
     if (isSuccess) {
       if (data?.documents && data?.documents?.length > 0) {
-        return <ol className="mt-4 space-y-1 text-sm leading-6 text-gray-500">
-          {data?.documents?.map((data, index) => (
-            <ExpenseCalCard expense={data} key={index} />
-          ))}
-        </ol>
+        return <>
+          <div className="flex flex-col lg:flex-row justify-between mt-2">
+            <Text>  Total Transactions : {data?.total}</Text>
+            <Text className="mr-5"> Total Expense: {formatCurrency(userInfo.prefs.currency, data?.documents.map(v => v.amount).reduce((prev, curr) => curr + prev, 0))}</Text>
+          </div>
+          <ol className="mt-4 space-y-1 text-sm leading-6 text-gray-500">
+            {data?.documents?.map((data, index) => (
+              <ExpenseCalCard expense={data} key={index} />
+            ))}
+          </ol>
+        </>
       } else {
         return <div className="w-[300px] sm:w-[400px]">
           <Lottie options={defaultOptions(emptyDocsAnimation)}
@@ -76,15 +84,6 @@ const ExpenseList = (props: Props) => {
           />
           <Subtitle className='text-slate-700 dark:text-slate-400 text-center ml-[-30px]'>No Expenses Listed</Subtitle>
         </div>
-        // return <p>
-        //   No expenses listed for{" "}
-        //   {isSameDay(selectedDay, new Date())
-        //     ? "today"
-        // : isTomorrow(selectedDay)
-        //       ? "tomorrow"
-        //       : format(selectedDay, "MMM dd, yyy")}
-        //   .
-        // </p>
       }
     }
   }
