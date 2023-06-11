@@ -30,6 +30,7 @@ import { capitalize } from "expensasaures/shared/utils/common";
 import { defaultOptions } from "expensasaures/shared/utils/lottie";
 import { getQueryForExpenses } from "expensasaures/shared/utils/react-query";
 import dynamic from "next/dynamic";
+import Head from "next/head";
 import Link from "next/link";
 import { useCallback, useEffect, useMemo, useState } from "react";
 import Lottie from "react-lottie";
@@ -208,6 +209,10 @@ const index = () => {
 
   return (
     <Layout>
+      <Head>
+        <title> Expensasaures - Manage and Filter Expenses</title>
+      </Head>
+
       <div className="flex flex-col flex-1 w-full max-w-[1200px] mx-auto px-4">
         <div className="flex items-center justify-between">
           <button className="visible opacity-100 lg:invisible lg:opacity-0 cursor-pointer w-8 h-8 bg-blue-500 rounded-full flex items-center justify-center" onClick={() => setIsOpen(true)}>

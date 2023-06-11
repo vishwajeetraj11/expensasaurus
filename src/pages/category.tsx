@@ -25,6 +25,7 @@ import { calculateTotalExpensesByCategory } from "expensasaures/shared/utils/cal
 import { capitalize } from "expensasaures/shared/utils/common";
 import { formatCurrency } from "expensasaures/shared/utils/currency";
 import { getQueryForCategoryPage } from "expensasaures/shared/utils/react-query";
+import Head from "next/head";
 import { Fragment, useState } from "react";
 import { shallow } from "zustand/shallow";
 
@@ -108,6 +109,9 @@ const Categories = () => {
 
   return (
     <Layout>
+      <Head>
+        <title>Expensasaures - Analyze Spending by Category</title>
+      </Head>
       <div className="mx-auto max-w-[1200px] px-4 w-full">
         {isLoading ?
           <CategoryLoading /> : <> <Title className="py-10 text-center">Category</Title>

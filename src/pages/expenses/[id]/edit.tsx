@@ -7,6 +7,7 @@ import { ENVS } from "expensasaures/shared/constants/constants";
 import { getDoc } from "expensasaures/shared/services/query";
 import { useAuthStore } from "expensasaures/shared/stores/useAuthStore";
 import { Transaction } from "expensasaures/shared/types/transaction";
+import Head from "next/head";
 import { useRouter } from "next/router";
 import { shallow } from "zustand/shallow";
 
@@ -26,7 +27,9 @@ const update = () => {
   return (
 
     <Layout>
-
+      <Head>
+        <title>Update Expense</title>
+      </Head>
       <div className="mx-auto px-4 gap-10 max-w-[1200px] mt-10 w-full flex flex-1 h-full">
         <div className="w-full lg:w-[50%]">
           <Title className="text-center mb-10">Update Expense</Title>

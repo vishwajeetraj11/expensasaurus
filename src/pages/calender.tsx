@@ -11,6 +11,7 @@ import {
 import ExpenseList from "expensasaures/components/calender/ExpenseList";
 import Layout from "expensasaures/components/layout/Layout";
 import { useCalender } from "expensasaures/hooks/useCalender";
+import Head from "next/head";
 import { MdOutlineChevronLeft, MdOutlineChevronRight } from "react-icons/md";
 
 const Calender = () => {
@@ -26,6 +27,9 @@ const Calender = () => {
 
   return (
     <Layout>
+      <Head>
+        <title>Expensasaures - View Expenses by Date on the Calendar</title>
+      </Head>
       <div className="pt-16 px-4 max-w-[1200px] mx-auto w-full">
         <div className="px-4 mx-auto sm:px-7 md:px-6">
           <div className="md:grid md:grid-cols-[392px_1fr] md:divide-x md:divide-gray-200">

@@ -4,6 +4,7 @@ import RecentBudgets from "expensasaures/components/budgets/RecentBudgets";
 import Layout from "expensasaures/components/layout/Layout";
 import useBudgets from "expensasaures/hooks/useBudgets";
 import dynamic from "next/dynamic";
+import Head from "next/head";
 import Link from "next/link";
 const EmptyStateBudgets = dynamic(() => import("expensasaures/components/budgets/EmptyStateBudgets"), { ssr: false });
 
@@ -13,6 +14,9 @@ const index = () => {
   // const emptyState = true
   return (
     <Layout>
+      <Head>
+        <title>Expensasaures - Set and Monitor Your Budgets</title>
+      </Head>
       <div className="mx-auto max-w-[1200px] w-full px-4">
         <div className={clsx("flex items-center", emptyState ? 'justify-center' : 'justify-between')}>
           &nbsp;

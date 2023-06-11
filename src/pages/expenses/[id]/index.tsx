@@ -25,6 +25,7 @@ import { Transaction } from "expensasaures/shared/types/transaction";
 import { capitalize } from "expensasaures/shared/utils/common";
 import { formatCurrency } from "expensasaures/shared/utils/currency";
 import { getQueryForExpenses } from "expensasaures/shared/utils/react-query";
+import Head from "next/head";
 import Link from "next/link";
 import { useRouter } from "next/router";
 import { useState } from "react";
@@ -99,6 +100,9 @@ const id = () => {
 
   return (
     <Layout>
+      <Head>
+        <title>Expensasaures - Details of an Expense Transaction</title>
+      </Head>
       <div className="mx-auto max-w-[1200px] pt-10 block w-full">
         {isLoading ? <Searching
           title="Searching for expense..."
