@@ -23,6 +23,7 @@ import { shallow } from "zustand/shallow";
 import ErrorMessage from "../ui/ErrorMessage";
 import FormInputLabel from "../ui/FormInputLabel";
 import TextArea from "../ui/TextArea";
+import CategoryIcon from "./CategorySelect";
 
 const IncomeForm = () => {
   const { user, userInfo } = useAuthStore((state) => ({ user: state.user, userInfo: state.userInfo }), shallow) as {
@@ -206,11 +207,13 @@ const IncomeForm = () => {
                           value={input.value}
                         >
                           {incomeCategories.map((category) => {
+                            const CIcon = () => (
+                              <CategoryIcon category={category} />)
                             return (
                               <SelectItem
                                 key={category.id}
                                 value={category.key}
-                                icon={category.Icon}
+                                icon={CIcon}
                               >
                                 {category.category}
                               </SelectItem>
