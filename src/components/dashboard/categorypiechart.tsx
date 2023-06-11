@@ -34,8 +34,9 @@ import { shallow } from "zustand/shallow";
 interface StockData {
   name: string;
   value: number;
-  performance: string;
+  performance: number;
   deltaType: DeltaType;
+  absValuePrev: number;
 }
 
 
@@ -52,7 +53,6 @@ const CategoriesPieChart = (props: Props) => {
     incomeThisMonth,
     expenseThisMonth,
   } = props;
-  const [selectedView, setSelectedView] = useState("chart");
   const [categoryExpense, setCategoryExpense] = useState<StockData[] | []>([]);
 
   const { userInfo } = useAuthStore((store) => ({ userInfo: store.userInfo }), shallow)
@@ -60,16 +60,17 @@ const CategoriesPieChart = (props: Props) => {
   const valueFormatter = (number: number) => formatCurrency(userInfo?.prefs.currency, number);
 
   useEffect(() => {
-    const stocks: StockData[] = [];
+    const stats: StockData[] = [];
 
     if (expensesAndPercentByCategoryThisMonth) {
       Object.entries(expensesAndPercentByCategoryThisMonth).forEach(
         ([key, value]) => {
           const percent = value.percentageChange;
-          stocks.push({
+          stats.push({
+            absValuePrev: value.absolutePrevValue,
             name: categories.find((category) => category.key === key)?.category || "",
             value: value.totalExpenses,
-            performance: value.percentageChange.toFixed(2) + "%",
+            performance: value.percentageChange,
             deltaType:
               percent > 30
                 ? "increase"
@@ -82,7 +83,7 @@ const CategoriesPieChart = (props: Props) => {
         }
       );
     }
-    setCategoryExpense(stocks);
+    setCategoryExpense(stats);
   }, [expensesAndPercentByCategoryThisMonth]);
 
 
@@ -131,7 +132,7 @@ const CategoriesPieChart = (props: Props) => {
                       {formatCurrency(userInfo?.prefs?.currency, category.value)}
                     </Text>
                     <BadgeDelta deltaType={category.deltaType} size="xs">
-                      {category.performance}
+                      {category.performance > 100 ? formatCurrency(userInfo?.prefs.currency, category.absValuePrev) : category.performance.toFixed(2) + "%"}
                     </BadgeDelta>
                   </Flex>
                 </ListItem>
