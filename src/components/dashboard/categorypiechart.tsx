@@ -123,11 +123,10 @@ const CategoriesPieChart = (props: Props) => {
               <Text className="truncate">
                 <Bold>Category</Bold>
               </Text>
-              <Text>**</Text>
+              <Text>Increase from last month</Text>
             </Flex>
             <List className="mt-4">
               {categoryExpense.map((category) => {
-                console.log({ absValuePrev: category.absValuePrev, absValueCurr: category.absValueCurr, performance: category.performance })
                 return (
                   <ListItem key={category.name}>
                     <Text className="font-medium text-stone-500">{category.name}</Text>
