@@ -1,4 +1,4 @@
-import { Metric, Text } from "@tremor/react";
+import { Button, Metric, Text } from "@tremor/react";
 import { Models } from "appwrite";
 import clsx from "clsx";
 import { format } from "date-fns";
@@ -144,9 +144,14 @@ const id = () => {
           </div>
         </div>
         <div className="md:w-[40%] w-full">
-          <Text className="mb-3">More incomes in this category</Text>
+          <div className="flex items-center justify-between mb-3">
+            <Text>More incomes in this category</Text>
+            <Link href={'/incomes/create'}>
+              <Button>+ Add Income</Button>
+            </Link>
+          </div>
           <div className="flex flex-col gap-3">
-            {moreIncomesInCategoryRender?.length !== 0 ? <EmptyTwoDocs subtitle="No More Incomes in this category" /> : moreIncomesInCategoryRender?.map((doc) => {
+            {moreIncomesInCategoryRender?.length !== 0 ? <><EmptyTwoDocs subtitle="No More Incomes in this category" />  </> : moreIncomesInCategoryRender?.map((doc) => {
               const categoryInfo = categories.find(
                 (cat) => cat.key === doc?.category
               );
