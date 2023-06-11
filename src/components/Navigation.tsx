@@ -1,4 +1,5 @@
 import * as Popover from '@radix-ui/react-popover';
+import { Button } from '@tremor/react';
 import { useAuthStore } from "expensasaures/shared/stores/useAuthStore";
 import { clsx } from "expensasaures/shared/utils/common";
 import Link from "next/link";
@@ -7,7 +8,12 @@ import { useEffect, useState } from "react";
 import { shallow } from "zustand/shallow";
 import { Logo } from "./icons/svg";
 
-const Navigation = () => {
+interface Props {
+  landingPage?: boolean
+}
+
+const Navigation = (props: Props) => {
+  const { landingPage = false } = props;
   const [hamburgerMenuIsOpen, setHamburgerMenuIsOpen] = useState(false);
 
   useEffect(() => {
@@ -59,7 +65,7 @@ const Navigation = () => {
       >
         <nav
           className={clsx(
-            "md:opacity-100 h-[calc(100vh_-_var(--navigation-height))] md:block w-full fixed md:relative top-navigation-height md:top-0 left-0 overflow-auto bg-white dark:bg-black md:h-auto md:w-auto md:bg-transparent transform transition-[opacity] duration-500 md:translate-x-0",
+            "md:opacity-100 h-[calc(100vh_-_var(--navigation-height))] md:block w-full fixed md:relative top-navigation-height md:top-0 left-0 overflow-auto bg-white dark:bg-black sm:dark:bg-transparent md:h-auto md:w-auto md:bg-transparent transform transition-[opacity] duration-500 md:translate-x-0",
             hamburgerMenuIsOpen ? "opacity-100" : "opacity-0"
           )}
         >
@@ -72,26 +78,42 @@ const Navigation = () => {
               "[&_a]:duration-300 [&_a]:translate-y-8 md:[&_a]:translate-y-0 [&_a]:transition-[color,transform]"
             )}
           >
-            <li>
+            {!landingPage && <><li>
               <Link className='text-gray' href="/dashboard">Dashboard</Link>
             </li>
-            <li>
-              <Link href="/expenses">Expense</Link>
-            </li>
-            <li className="">
-              <Link href="/incomes">Incomes</Link>
-            </li>
-            <li className="">
-              <Link href="/category">Category</Link>
-            </li>
-            <li className="">
-              <Link href="/calender">Calender</Link>
-            </li>
-            <li>
-              <Link href="/budgets">Budget</Link>
-            </li>
+              <li>
+                <Link href="/expenses">Expense</Link>
+              </li>
+              <li className="">
+                <Link href="/incomes">Incomes</Link>
+              </li>
+              <li className="">
+                <Link href="/category">Category</Link>
+              </li>
+              <li className="">
+                <Link href="/calender">Calender</Link>
+              </li>
+              <li>
+                <Link href="/budgets">Budget</Link>
+              </li></>}
+
+            {landingPage && <>
+              <li>
+                <Link href="/expenses">Features</Link>
+              </li>
+              <li className="">
+                <Link href="/incomes">How It Works</Link>
+              </li>
+              <li className="">
+                <Link href="/category">Expense Tracking</Link>
+              </li>
+              <li className="">
+                <Link href="/calender">Budget Management</Link>
+              </li>
+            </>}
 
           </ul>
+
         </nav>
       </div>
 
@@ -129,14 +151,16 @@ const Navigation = () => {
 
       </>
       }
-      {/* <div className="flex h-full items-center ml-4">
+      {landingPage && <div className="flex h-full items-center  ml-auto">
         <Link href='/login' className="mr-6 text-sm">
           Log in
         </Link>
-        <Button variant={"primary"}>
-          Sign up
-        </Button>
-      </div> */}
+        <Link href='/signup' className="mr-6 text-sm">
+          <Button className='bg-blue-600' variant={"primary"}>
+            Sign up
+          </Button>
+        </Link>
+      </div>}
 
 
       <button
