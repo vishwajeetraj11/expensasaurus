@@ -120,6 +120,7 @@ module.exports = {
         inset: "inset 0px 18px 22px",
         darkinset: "0px 4px 4px inset",
         subtle: "0 5px 15px rgba(0,0,0,0.07)",
+        'light-negative': "0 -0.7rem 1.4rem rgba(0,0,0,.07)",
         // light
         "tremor-input": "0 1px 2px 0 rgb(0 0 0 / 0.05)",
         "tremor-card": "0 1px 3px 0 rgb(0 0 0 / 0.1), 0 1px 2px -1px rgb(0 0 0 / 0.1)",
