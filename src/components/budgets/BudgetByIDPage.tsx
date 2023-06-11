@@ -141,7 +141,7 @@ const BudgetByIDPage = () => {
 
     if (!data) return <></>
     const totalBudgetConsumedPercent = Math.ceil(match().totalExpense / data?.amount * 100)
-    // const totalBudgetConsumedPercent = 20
+
 
     return (
         <div className="mx-auto max-w-[1200px] px-4 pt-10 block w-full">
@@ -200,7 +200,7 @@ const BudgetByIDPage = () => {
                                     })}
                                 </Grid>
 
-                                {Object.entries(match().result).filter(([category, value]) => !value.budget).length !== 0 ? <Callout
+                                {Object.entries(match().result).filter(([category, value]) => !value.budget && value.amount).length !== 0 ? <Callout
                                     className="h-12 my-6"
                                     title="You seem to have spending in categories with no budget"
                                     icon={ExclamationIcon}
@@ -208,7 +208,7 @@ const BudgetByIDPage = () => {
                                 /> : <></>}
 
                                 <Grid numItemsSm={2} numItemsLg={3} className="gap-4">
-                                    {Object.entries(match().result).filter(([category, value]) => !value.budget).map(([category, value], i) => {
+                                    {Object.entries(match().result).filter(([category, value]) => !value.budget && value.amount).map(([category, value], i) => {
                                         const categoryInfo = categories.find(
                                             (c) => c.category === capitalize(category)
                                         );
