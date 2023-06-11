@@ -51,7 +51,7 @@ const Navigation = (props: Props) => {
 
 
 
-  return <header className="fixed top-0 left-0 z-10 w-full border-transparent-white backdrop-blur-[12px]">
+  return <header className="fixed top-0 left-0 z-[12] w-full border-transparent-white backdrop-blur-[12px]">
     <div className="max-w-[1200px] mx-auto lg:px-0 px-8 flex h-navigation-height items-center">
       <Link href={"/dashboard"} className="flex items-center text-md">
         <Logo className="w-[1.8rem] h-[1.8rem] mr-4 dark:fill-white" />
@@ -108,7 +108,7 @@ const Navigation = (props: Props) => {
                 <Link href="/category">Expense Tracking</Link>
               </li>
               <li className="">
-                <Link href="/calender">Budget Management</Link>
+                <Link href="#budget">Budget Management</Link>
               </li>
             </>}
 
@@ -117,7 +117,7 @@ const Navigation = (props: Props) => {
         </nav>
       </div>
 
-      {userInfo && <>
+      {userInfo && !landingPage && <>
         <Popover.Root>
           <Popover.Trigger asChild>
 
