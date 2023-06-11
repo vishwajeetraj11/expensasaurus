@@ -8,7 +8,7 @@ import { Transaction } from "expensasaures/shared/types/transaction";
 import { getBase64, isUploadedFileImage } from "expensasaures/shared/utils/file";
 import { useRouter } from "next/router";
 import { Fragment, useState } from "react";
-import { useField, useFormState } from "react-final-form";
+import { useField, useForm, useFormState } from "react-final-form";
 import { FcFile } from "react-icons/fc";
 import { useQueries, useQueryClient } from "react-query";
 import { useDropArea } from "react-use";
@@ -35,11 +35,15 @@ const FileUpload = (props: Props) => {
   const isUpdateRoute = router.route === "/expenses/[id]/edit";
 
   const { input } = useField("attachments");
+  const form = useForm()
+  const formState = useFormState()
+  const attachements = formState.values.attachments;
   const [files, setFiles] = useState<FileWPreview[]>([]);
 
   const [bond, state] = useDropArea({
     onFiles: async (filesinput) => {
       const [file] = filesinput;
+
       const isSameFile = files.find((f) => f.file.name === file.name);
 
       if (isSameFile) {
@@ -63,7 +67,8 @@ const FileUpload = (props: Props) => {
         res.preview = imagePreview;
       }
       res.file = file;
-      input.onChange(input.value.concat(file));
+      // input.onChange(input.value.concat(file));
+      form.mutators.setFieldValue('attachments', [...attachements, file])
       setFiles(files => files.concat(res));
     },
   });
