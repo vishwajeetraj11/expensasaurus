@@ -38,7 +38,7 @@ const BudgetStatus = (props: BudgetStatusProps) => {
      Remember, financial discipline is key to achieving your financial goals. Keep working towards better budget management, and you'll soon be back on track!
       `
     const Icon = isOnTrack ? CheckCircleIcon : isSuccess ? CheckCircleIcon : ExclamationIcon;
-    const color = isOnTrack ? 'green' : isFail ? 'red' : 'yellow';
+    const color = isOnTrack ? 'green' : isFail ? 'red' : 'green';
 
     return (
         <>
