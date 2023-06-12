@@ -47,7 +47,7 @@ export const useCalender = () => {
                 Query.limit(100)
             ],
         ],
-        { enabled: !!user, staleTime: Infinity }
+        { enabled: !!user, }
     );
 
     let [currentMonth, setCurrentMonth] = useState(format(today, "MMM-yyyy"));

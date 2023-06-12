@@ -29,7 +29,7 @@ import Head from "next/head";
 import Link from "next/link";
 import { useRouter } from "next/router";
 import { useState } from "react";
-import { useQueries } from "react-query";
+import { useQueries, useQueryClient } from "react-query";
 import { toast } from "sonner";
 import { shallow } from "zustand/shallow";
 
@@ -40,7 +40,7 @@ const id = () => {
   const router = useRouter();
   const { id } = router.query;
 
-
+  const queryClient = useQueryClient();
   const { data, error, isLoading, isSuccess } = getDoc<Transaction>(
     ["Expenses by ID", id, user?.userId],
     [ENVS.DB_ID, ENVS.COLLECTIONS.EXPENSES, id as string],

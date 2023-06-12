@@ -49,7 +49,7 @@ const ExpenseList = (props: Props) => {
         Query.greaterThan("date", startOfDay),
       ],
     ],
-    { enabled: !!user, staleTime: Infinity }
+    { enabled: !!user, }
   );
 
   const emptyState = data?.documents && data?.documents?.length === 0
