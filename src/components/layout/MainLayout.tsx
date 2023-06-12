@@ -4,39 +4,40 @@ import React, { useEffect } from "react";
 import { shallow } from "zustand/shallow";
 
 interface Props {
-    children: React.ReactNode;
+  children: React.ReactNode;
 }
 
 const MainLayout = (props: Props) => {
-    const { children, } = props;
-    const { user, getUser } = useAuthStore(
-        (store) => ({ user: store.user, getUser: store.getUser }),
-        shallow
-    );
+  const { children } = props;
+  const { user, getUser } = useAuthStore(
+    (store) => ({ user: store.user, getUser: store.getUser }),
+    shallow
+  );
 
-    const router = useRouter();
+  const router = useRouter();
 
-    useEffect(() => {
-        (async function () {
-            let pushToRoute = '';
-            if (!user) {
-                const userAfterFetch = await getUser();
-                if (!userAfterFetch) {
-                    pushToRoute = router.route === '/signup' || router.route === '/login' || router.route === '/' ? router.route : '/login';
-                }
-            } else {
-                pushToRoute = '/dashboard'
-            }
-            if (router.route === '/') {
-                return;
-            }
-            router.push(pushToRoute);
-        })();
-    }, [user]);
+  useEffect(() => {
+    (async function () {
+      let pushToRoute = "";
+      if (!user) {
+        const userAfterFetch = await getUser();
+        if (!userAfterFetch) {
+          pushToRoute =
+            router.route === "/signup" ||
+            router.route === "/login" ||
+            router.route === "/"
+              ? router.route
+              : "/login";
+        }
+      } else {
+        pushToRoute = "/dashboard";
+      }
 
-    return (
-        <>{children}</>
-    )
-}
+      router.push(pushToRoute);
+    })();
+  }, [user]);
 
-export default MainLayout
+  return <>{children}</>;
+};
+
+export default MainLayout;

@@ -163,6 +163,14 @@ const BudgetByIDPage = () => {
   const totalBudgetConsumedPercent = Math.ceil(
     (match().totalExpense / data?.amount) * 100
   );
+  const anyCategoryExceeded = Object.entries(match().result)
+    .filter(([_, value]) => value.budget)
+    .some(([_, value]) => value.budgetPercent > 100);
+
+  const expensesInCategoriesWithNoBudget =
+    Object.entries(match().result).filter(
+      ([category, value]) => !value.budget && value.amount
+    ).length !== 0;
 
   return (
     <div className="mx-auto max-w-[1200px] px-4 pt-10 block w-full">
@@ -324,6 +332,8 @@ const BudgetByIDPage = () => {
               </p>
             </div>
             <BudgetStatus
+              categoryExceed={anyCategoryExceeded}
+              categoryWithNoBudget={expensesInCategoriesWithNoBudget}
               type={
                 match().totalExpense > data?.amount
                   ? "fail"

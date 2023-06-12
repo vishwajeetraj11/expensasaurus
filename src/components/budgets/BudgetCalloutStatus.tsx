@@ -3,10 +3,12 @@ import { Callout, Subtitle } from "@tremor/react";
 
 interface BudgetStatusProps {
   type: "fail" | "success" | "on-track";
+  categoryExceed: boolean;
+  categoryWithNoBudget: boolean;
 }
 
 const BudgetStatus = (props: BudgetStatusProps) => {
-  const { type } = props;
+  const { type, categoryExceed, categoryWithNoBudget } = props;
   const isFail = type === "fail";
   const isSuccess = type === "success";
   const isOnTrack = type === "on-track";
@@ -16,9 +18,27 @@ const BudgetStatus = (props: BudgetStatusProps) => {
     : isSuccess
     ? "Budget Success"
     : "Budget Exceeded";
+
+  const categoryExceedMessage = categoryExceed
+    ? "Oops! Looks like you have exceeded your budget limit in the selected category. "
+    : "";
+  const categoryWithNoBudgetMsg = categoryWithNoBudget
+    ? "Attention! You have recorded an expense in a category without a defined budget. It's important to allocate a budget for this category to better track your spending and financial goals. "
+    : "";
+  const ifBothMessage =
+    categoryExceed && categoryWithNoBudget
+      ? "Uh-oh! It seems you have exceeded the budget limit in the selected category and recorded an expense in a category without a defined budget."
+      : "";
+
+  const allMessage = ifBothMessage
+    ? ifBothMessage
+    : categoryExceedMessage + categoryWithNoBudgetMsg;
+
   const description = isOnTrack
     ? `
     Great job keeping an eye on your budget! 
+    
+    ${allMessage}
     
     By staying vigilant and monitoring your spending, you're ensuring that you're on track towards your financial goals. Keep up the good work! Remember, regular check-ins on your budget can help you maintain control over your finances and make informed decisions. 
     
@@ -27,14 +47,19 @@ const BudgetStatus = (props: BudgetStatusProps) => {
      `
     : isSuccess
     ? `
-     Congratulations! You've successfully managed your budget and achieved your financial goals across all categories. Your dedication and financial discipline have paid off, putting you on a path to financial success.
+     Congratulations! You've successfully managed your budget${
+       allMessage
+         ? " despite having a few hicups along the way"
+         : " and achieved your financial goals across all categories"
+     }. Your dedication and financial discipline have paid off, putting you on a path to financial success.
 
      By effectively allocating your funds and staying within your budget limits for each category, you've demonstrated excellent financial planning and control. This accomplishment is a testament to your commitment to smart spending and saving habits.
 
      Well done, and keep up the fantastic work on your budgeting journey!
      `
     : `
-     We noticed that your budget has been exceeded in some categories.  It's important to keep track of your expenses to stay within your planned budget. 
+     ${allMessage}  
+     It's important to keep track of your expenses to stay within your planned budget. 
      
      Analyzing your spending patterns and making adjustments can help you regain control over your finances. 
       Take a closer look at the categories where you have exceeded your budget and consider finding ways to cut down on expenses or redistribute funds. 
