@@ -1,4 +1,4 @@
-import "expensasaures/styles/globals.css";
+import "expensasaurus/styles/globals.css";
 import type { AppProps } from "next/app";
 import { useState } from "react";
 import { Hydrate, QueryClient, QueryClientProvider } from "react-query";

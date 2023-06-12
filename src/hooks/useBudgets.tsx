@@ -1,8 +1,8 @@
 import { Models, Query } from "appwrite";
-import { ENVS } from "expensasaures/shared/constants/constants";
-import { getAllLists } from "expensasaures/shared/services/query";
-import { useAuthStore } from "expensasaures/shared/stores/useAuthStore";
-import { Budget } from "expensasaures/shared/types/budget";
+import { ENVS } from "expensasaurus/shared/constants/constants";
+import { getAllLists } from "expensasaurus/shared/services/query";
+import { useAuthStore } from "expensasaurus/shared/stores/useAuthStore";
+import { Budget } from "expensasaurus/shared/types/budget";
 import { useState } from "react";
 import { shallow } from "zustand/shallow";
 
@@ -26,7 +26,7 @@ const useBudgets = () => {
     { enabled: !!user, staleTime: Infinity }
   );
 
-  return { data, setLimit };
+  return { data, setLimit, isLoading };
 };
 
 export default useBudgets;

@@ -5,7 +5,7 @@ import {
     Text,
     Title
 } from "@tremor/react";
-import { LineChartTabsLoading } from "expensasaures/components/dashboard/linechart";
+import { LineChartTabsLoading } from "expensasaurus/components/dashboard/linechart";
 
 const CategoryLoading = () => {
     return (

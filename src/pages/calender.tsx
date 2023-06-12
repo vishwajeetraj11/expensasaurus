@@ -8,9 +8,9 @@ import {
   isToday,
   parseISO,
 } from "date-fns";
-import ExpenseList from "expensasaures/components/calender/ExpenseList";
-import Layout from "expensasaures/components/layout/Layout";
-import { useCalender } from "expensasaures/hooks/useCalender";
+import ExpenseList from "expensasaurus/components/calender/ExpenseList";
+import Layout from "expensasaurus/components/layout/Layout";
+import { useCalender } from "expensasaurus/hooks/useCalender";
 import Head from "next/head";
 import { MdOutlineChevronLeft, MdOutlineChevronRight } from "react-icons/md";
 
@@ -28,7 +28,7 @@ const Calender = () => {
   return (
     <Layout>
       <Head>
-        <title>Expensasaures - View Expenses by Date on the Calendar</title>
+        <title>expensasaurus - View Expenses by Date on the Calendar</title>
       </Head>
       <div className="pt-16 px-4 max-w-[1200px] mx-auto w-full">
         <div className="px-4 mx-auto sm:px-7 md:px-6">

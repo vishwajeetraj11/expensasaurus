@@ -1,10 +1,10 @@
 import clsx from "clsx";
 import { format, formatDistance } from "date-fns";
-import { categories } from "expensasaures/shared/constants/categories";
-import { ENVS } from "expensasaures/shared/constants/constants";
-import { database } from "expensasaures/shared/services/appwrite";
-import { Transaction } from "expensasaures/shared/types/transaction";
-import { formatCurrency } from "expensasaures/shared/utils/currency";
+import { categories } from "expensasaurus/shared/constants/categories";
+import { ENVS } from "expensasaurus/shared/constants/constants";
+import { database } from "expensasaurus/shared/services/appwrite";
+import { Transaction } from "expensasaurus/shared/types/transaction";
+import { formatCurrency } from "expensasaurus/shared/utils/currency";
 import Link from "next/link";
 import { toast } from "sonner";
 interface Props {

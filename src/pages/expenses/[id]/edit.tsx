@@ -1,12 +1,12 @@
 import { Title } from "@tremor/react";
 import { Models } from "appwrite";
 
-import ExpenseForm from "expensasaures/components/forms/ExpenseForm";
-import Layout from "expensasaures/components/layout/Layout";
-import { ENVS } from "expensasaures/shared/constants/constants";
-import { getDoc } from "expensasaures/shared/services/query";
-import { useAuthStore } from "expensasaures/shared/stores/useAuthStore";
-import { Transaction } from "expensasaures/shared/types/transaction";
+import ExpenseForm from "expensasaurus/components/forms/ExpenseForm";
+import Layout from "expensasaurus/components/layout/Layout";
+import { ENVS } from "expensasaurus/shared/constants/constants";
+import { getDoc } from "expensasaurus/shared/services/query";
+import { useAuthStore } from "expensasaurus/shared/stores/useAuthStore";
+import { Transaction } from "expensasaurus/shared/types/transaction";
 import Head from "next/head";
 import { useRouter } from "next/router";
 import { shallow } from "zustand/shallow";

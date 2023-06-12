@@ -1,6 +1,6 @@
 import { Title } from "@tremor/react"
-import IncomeForm from "expensasaures/components/forms/IncomeForm"
-import Layout from "expensasaures/components/layout/Layout"
+import IncomeForm from "expensasaurus/components/forms/IncomeForm"
+import Layout from "expensasaurus/components/layout/Layout"
 import Head from "next/head"
 
 const edit = () => {

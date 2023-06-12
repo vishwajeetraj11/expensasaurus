@@ -1,7 +1,7 @@
 
 import { DeltaType } from '@tremor/react';
-import { TransactionType } from 'expensasaures/shared/utils/calculation';
-import { clsx } from 'expensasaures/shared/utils/common';
+import { TransactionType } from 'expensasaurus/shared/utils/calculation';
+import { clsx } from 'expensasaurus/shared/utils/common';
 import { ArrowDownIcon, ArrowDownRightIcon, ArrowUpIcon, ArrowUpRightIcon } from '../svgs';
 
 

@@ -1,5 +1,5 @@
 import clsx from "clsx";
-import { categories, incomeCategories } from "expensasaures/shared/constants/categories";
+import { categories, incomeCategories } from "expensasaurus/shared/constants/categories";
 
 interface Props {
   category: (typeof categories)[number] | (typeof incomeCategories)[number];

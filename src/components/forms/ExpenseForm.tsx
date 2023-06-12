@@ -2,20 +2,20 @@ import { DesktopDatePicker, LocalizationProvider } from "@mui/x-date-pickers";
 import { AdapterDateFns } from "@mui/x-date-pickers/AdapterDateFns";
 import { Button, Select, SelectItem, TextInput } from "@tremor/react";
 import { Models, Role } from "appwrite";
-import useDates from "expensasaures/hooks/useDates";
-import { categories } from "expensasaures/shared/constants/categories";
-import { ENVS, regex } from "expensasaures/shared/constants/constants";
+import useDates from "expensasaurus/hooks/useDates";
+import { categories } from "expensasaurus/shared/constants/categories";
+import { ENVS, regex } from "expensasaurus/shared/constants/constants";
 import {
   ID,
   Permission,
   database,
   storage
-} from "expensasaures/shared/services/appwrite";
-import { getDoc } from "expensasaures/shared/services/query";
-import { useAuthStore } from "expensasaures/shared/stores/useAuthStore";
-import { Transaction } from "expensasaures/shared/types/transaction";
-import { formatCurrency } from "expensasaures/shared/utils/currency";
-import { defaultMutators, validateAmount, validateExpenseForm } from "expensasaures/shared/utils/form";
+} from "expensasaurus/shared/services/appwrite";
+import { getDoc } from "expensasaurus/shared/services/query";
+import { useAuthStore } from "expensasaurus/shared/stores/useAuthStore";
+import { Transaction } from "expensasaurus/shared/types/transaction";
+import { formatCurrency } from "expensasaurus/shared/utils/currency";
+import { defaultMutators, validateAmount, validateExpenseForm } from "expensasaurus/shared/utils/form";
 import dynamic from "next/dynamic";
 import { useRouter } from "next/router";
 import { useState } from "react";

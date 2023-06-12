@@ -7,11 +7,11 @@ import {
     parse,
     startOfToday
 } from "date-fns";
-import { ENVS } from "expensasaures/shared/constants/constants";
+import { ENVS } from "expensasaurus/shared/constants/constants";
 
-import { getAllLists } from "expensasaures/shared/services/query";
-import { useAuthStore } from "expensasaures/shared/stores/useAuthStore";
-import { Transaction } from "expensasaures/shared/types/transaction";
+import { getAllLists } from "expensasaurus/shared/services/query";
+import { useAuthStore } from "expensasaurus/shared/stores/useAuthStore";
+import { Transaction } from "expensasaurus/shared/types/transaction";
 import { useState } from "react";
 import { shallow } from "zustand/shallow";
 

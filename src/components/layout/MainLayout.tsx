@@ -1,4 +1,4 @@
-import { useAuthStore } from "expensasaures/shared/stores/useAuthStore";
+import { useAuthStore } from "expensasaurus/shared/stores/useAuthStore";
 import { useRouter } from "next/router";
 import React, { useEffect } from "react";
 import { shallow } from "zustand/shallow";

@@ -1,4 +1,4 @@
-import { capitalize } from "expensasaures/shared/utils/common";
+import { capitalize } from "expensasaurus/shared/utils/common";
 import EModal from ".";
 
 interface Props {

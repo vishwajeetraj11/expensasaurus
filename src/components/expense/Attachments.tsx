@@ -1,9 +1,9 @@
 import { DownloadIcon } from '@heroicons/react/outline';
 import { Button, Text } from '@tremor/react';
 import { Models } from 'appwrite';
-import { ENVS } from 'expensasaures/shared/constants/constants';
-import { storage } from 'expensasaures/shared/services/appwrite';
-import { useAuthStore } from 'expensasaures/shared/stores/useAuthStore';
+import { ENVS } from 'expensasaurus/shared/constants/constants';
+import { storage } from 'expensasaurus/shared/services/appwrite';
+import { useAuthStore } from 'expensasaurus/shared/stores/useAuthStore';
 import { Fragment } from 'react';
 import { MdClose } from 'react-icons/md';
 import { useQueries } from 'react-query';

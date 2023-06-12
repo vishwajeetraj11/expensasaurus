@@ -1,7 +1,7 @@
 import * as Popover from '@radix-ui/react-popover';
 import { Button } from '@tremor/react';
-import { useAuthStore } from "expensasaures/shared/stores/useAuthStore";
-import { clsx } from "expensasaures/shared/utils/common";
+import { useAuthStore } from "expensasaurus/shared/stores/useAuthStore";
+import { clsx } from "expensasaurus/shared/utils/common";
 import Link from "next/link";
 import { useRouter } from 'next/router';
 import { useEffect, useState } from "react";
@@ -55,7 +55,7 @@ const Navigation = (props: Props) => {
     <div className="max-w-[1200px] mx-auto lg:px-0 px-8 flex h-navigation-height items-center">
       <Link href={"/dashboard"} className="flex items-center text-md">
         <Logo className="w-[1.8rem] h-[1.8rem] mr-4 dark:fill-white" />
-        <p className="text-[14px] dark:text-white">Expensasaures</p>
+        <p className="text-[14px] dark:text-white">expensasaurus</p>
       </Link>
       <div
         className={clsx(

@@ -12,23 +12,23 @@ import {
   Title
 } from "@tremor/react";
 import { Models } from "appwrite";
-import ExpenseTable from "expensasaures/components/ExpenseTable";
-import CategoryIcon from "expensasaures/components/forms/CategorySelect";
-import Layout from "expensasaures/components/layout/Layout";
-import LeftSidebar from "expensasaures/components/ui/LeftSidebar";
-import emptyDocsAnimation from "expensasaures/lottie/emptyDocs.json";
-import animationData from "expensasaures/lottie/searchingDocs.json";
+import ExpenseTable from "expensasaurus/components/ExpenseTable";
+import CategoryIcon from "expensasaurus/components/forms/CategorySelect";
+import Layout from "expensasaurus/components/layout/Layout";
+import LeftSidebar from "expensasaurus/components/ui/LeftSidebar";
+import emptyDocsAnimation from "expensasaurus/lottie/emptyDocs.json";
+import animationData from "expensasaurus/lottie/searchingDocs.json";
 import {
   categories,
   categoryNames,
-} from "expensasaures/shared/constants/categories";
-import { ENVS, regex } from "expensasaures/shared/constants/constants";
-import { getAllLists } from "expensasaures/shared/services/query";
-import { useAuthStore } from "expensasaures/shared/stores/useAuthStore";
-import { Transaction } from "expensasaures/shared/types/transaction";
-import { capitalize } from "expensasaures/shared/utils/common";
-import { defaultOptions } from "expensasaures/shared/utils/lottie";
-import { getQueryForExpenses } from "expensasaures/shared/utils/react-query";
+} from "expensasaurus/shared/constants/categories";
+import { ENVS, regex } from "expensasaurus/shared/constants/constants";
+import { getAllLists } from "expensasaurus/shared/services/query";
+import { useAuthStore } from "expensasaurus/shared/stores/useAuthStore";
+import { Transaction } from "expensasaurus/shared/types/transaction";
+import { capitalize } from "expensasaurus/shared/utils/common";
+import { defaultOptions } from "expensasaurus/shared/utils/lottie";
+import { getQueryForExpenses } from "expensasaurus/shared/utils/react-query";
 import dynamic from "next/dynamic";
 import Head from "next/head";
 import Link from "next/link";
@@ -210,7 +210,7 @@ const index = () => {
   return (
     <Layout>
       <Head>
-        <title> Expensasaures - Manage and Filter Expenses</title>
+        <title> expensasaurus - Manage and Filter Expenses</title>
       </Head>
 
       <div className="flex flex-col flex-1 w-full max-w-[1200px] mx-auto px-4">

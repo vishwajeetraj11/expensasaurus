@@ -1,6 +1,6 @@
 import { Button, Metric, Subtitle, Title } from '@tremor/react';
-import animationData from 'expensasaures/lottie/emptyBox.json';
-import { defaultOptions } from "expensasaures/shared/utils/lottie";
+import animationData from 'expensasaurus/lottie/emptyBox.json';
+import { defaultOptions } from "expensasaurus/shared/utils/lottie";
 import Link from 'next/link';
 import Lottie from "react-lottie";
 

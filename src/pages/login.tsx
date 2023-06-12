@@ -1,7 +1,7 @@
-import LoginForm from "expensasaures/components/forms/auth/LoginForm";
-import AuthLayout from "expensasaures/components/layout/AuthLayout";
-import MainLayout from "expensasaures/components/layout/MainLayout";
-import { account } from "expensasaures/shared/services/appwrite";
+import LoginForm from "expensasaurus/components/forms/auth/LoginForm";
+import AuthLayout from "expensasaurus/components/layout/AuthLayout";
+import MainLayout from "expensasaurus/components/layout/MainLayout";
+import { account } from "expensasaurus/shared/services/appwrite";
 import Head from "next/head";
 import { BsGithub } from "react-icons/bs";
 import { shallow } from "zustand/shallow";
@@ -30,7 +30,7 @@ const Login = () => {
       <AuthLayout
       >
         <Head>
-          <title>Expensasaures - Log In to Your Account</title>
+          <title>expensasaurus - Log In to Your Account</title>
         </Head>
         <div className="mt-0 md:mt-16 mb-16 flex h-full w-full items-center justify-center px-2 md:mx-0 md:px-0 lg:mb-10 lg:items-center lg:justify-start">
           {/* Sign in section */}

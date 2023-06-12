@@ -1,9 +1,9 @@
 import { CircularProgress } from "@mui/material";
 import { Card, Text } from "@tremor/react";
 import clsx from "clsx";
-import { categories } from "expensasaures/shared/constants/categories";
-import { capitalize } from "expensasaures/shared/utils/common";
-import { formatCurrency } from "expensasaures/shared/utils/currency";
+import { categories } from "expensasaurus/shared/constants/categories";
+import { capitalize } from "expensasaurus/shared/utils/common";
+import { formatCurrency } from "expensasaurus/shared/utils/currency";
 import { useRouter } from "next/router";
 
 interface Props {

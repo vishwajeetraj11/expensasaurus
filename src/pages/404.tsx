@@ -1,4 +1,4 @@
-import PageNotFoundLottie from "expensasaures/components/lottie/pageNotFound"
+import PageNotFoundLottie from "expensasaurus/components/lottie/pageNotFound"
 
 const PageNotFound = () => {
     return (

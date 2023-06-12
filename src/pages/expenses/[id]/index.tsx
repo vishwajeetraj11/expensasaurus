@@ -2,29 +2,29 @@ import { Button, Metric, Text } from "@tremor/react";
 import { Models } from "appwrite";
 import clsx from "clsx";
 import { format } from "date-fns";
-import Attachments from "expensasaures/components/expense/Attachments";
-import Tag from "expensasaures/components/expense/Tag";
-import DeleteButton from "expensasaures/components/icons/DeleteButton";
-import EditButton from "expensasaures/components/icons/EditButton";
+import Attachments from "expensasaurus/components/expense/Attachments";
+import Tag from "expensasaurus/components/expense/Tag";
+import DeleteButton from "expensasaurus/components/icons/DeleteButton";
+import EditButton from "expensasaurus/components/icons/EditButton";
 
-import Layout from "expensasaures/components/layout/Layout";
-import EmptyTwoDocs from "expensasaures/components/lottie/emptyTwoDocs";
-import NotFound from "expensasaures/components/lottie/notFound";
-import Searching from "expensasaures/components/lottie/searching";
-import DeleteModal from "expensasaures/components/modal/DeleteModal";
-import { categories } from "expensasaures/shared/constants/categories";
-import { ENVS } from "expensasaures/shared/constants/constants";
-import { storage } from "expensasaures/shared/services/appwrite";
+import Layout from "expensasaurus/components/layout/Layout";
+import EmptyTwoDocs from "expensasaurus/components/lottie/emptyTwoDocs";
+import NotFound from "expensasaurus/components/lottie/notFound";
+import Searching from "expensasaurus/components/lottie/searching";
+import DeleteModal from "expensasaurus/components/modal/DeleteModal";
+import { categories } from "expensasaurus/shared/constants/categories";
+import { ENVS } from "expensasaurus/shared/constants/constants";
+import { storage } from "expensasaurus/shared/services/appwrite";
 import {
   deleteDoc,
   getAllLists,
   getDoc,
-} from "expensasaures/shared/services/query";
-import { useAuthStore } from "expensasaures/shared/stores/useAuthStore";
-import { Transaction } from "expensasaures/shared/types/transaction";
-import { capitalize } from "expensasaures/shared/utils/common";
-import { formatCurrency } from "expensasaures/shared/utils/currency";
-import { getQueryForExpenses } from "expensasaures/shared/utils/react-query";
+} from "expensasaurus/shared/services/query";
+import { useAuthStore } from "expensasaurus/shared/stores/useAuthStore";
+import { Transaction } from "expensasaurus/shared/types/transaction";
+import { capitalize } from "expensasaurus/shared/utils/common";
+import { formatCurrency } from "expensasaurus/shared/utils/currency";
+import { getQueryForExpenses } from "expensasaurus/shared/utils/react-query";
 import Head from "next/head";
 import Link from "next/link";
 import { useRouter } from "next/router";
@@ -101,7 +101,7 @@ const id = () => {
   return (
     <Layout>
       <Head>
-        <title>Expensasaures - Details of an Expense Transaction</title>
+        <title>expensasaurus - Details of an Expense Transaction</title>
       </Head>
       <div className="mx-auto max-w-[1200px] pt-10 block w-full">
         {isLoading ? <Searching

@@ -23,10 +23,10 @@ import {
 import { ArrowNarrowRightIcon } from "@heroicons/react/solid";
 
 import { ChartPieIcon, ViewListIcon } from "@heroicons/react/outline";
-import { categories } from "expensasaures/shared/constants/categories";
-import { useAuthStore } from "expensasaures/shared/stores/useAuthStore";
-import { CategoryData } from "expensasaures/shared/utils/calculation";
-import { formatCurrency } from "expensasaures/shared/utils/currency";
+import { categories } from "expensasaurus/shared/constants/categories";
+import { useAuthStore } from "expensasaurus/shared/stores/useAuthStore";
+import { CategoryData } from "expensasaurus/shared/utils/calculation";
+import { formatCurrency } from "expensasaurus/shared/utils/currency";
 import Link from "next/link";
 import { useEffect, useState } from "react";
 import { shallow } from "zustand/shallow";

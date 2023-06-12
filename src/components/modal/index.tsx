@@ -1,7 +1,7 @@
 import { Dialog } from "@headlessui/react";
 
 import { Transition } from "@headlessui/react";
-import { clsx } from "expensasaures/shared/utils/common";
+import { clsx } from "expensasaurus/shared/utils/common";
 import { Fragment } from "react";
 
 interface EModalProps {

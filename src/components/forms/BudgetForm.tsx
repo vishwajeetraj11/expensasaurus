@@ -2,22 +2,22 @@ import { LocalizationProvider } from "@mui/x-date-pickers";
 import { AdapterDateFns } from "@mui/x-date-pickers/AdapterDateFns";
 import { Button, DateRangePicker, TextInput } from "@tremor/react";
 import { Models, Role } from "appwrite";
-import { currentMonth } from "expensasaures/hooks/useDates";
-import { ENVS, regex } from "expensasaures/shared/constants/constants";
+import { currentMonth } from "expensasaurus/hooks/useDates";
+import { ENVS, regex } from "expensasaurus/shared/constants/constants";
 import {
   ID,
   Permission,
   database,
-} from "expensasaures/shared/services/appwrite";
-import { getDoc } from "expensasaures/shared/services/query";
-import { useAuthStore } from "expensasaures/shared/stores/useAuthStore";
-import { Budget } from "expensasaures/shared/types/budget";
-import { formatCurrency } from "expensasaures/shared/utils/currency";
+} from "expensasaurus/shared/services/appwrite";
+import { getDoc } from "expensasaurus/shared/services/query";
+import { useAuthStore } from "expensasaurus/shared/stores/useAuthStore";
+import { Budget } from "expensasaurus/shared/types/budget";
+import { formatCurrency } from "expensasaurus/shared/utils/currency";
 import {
   defaultMutators,
   validateAmount,
   validateBudgetForm,
-} from "expensasaures/shared/utils/form";
+} from "expensasaurus/shared/utils/form";
 import dynamic from "next/dynamic";
 import { useRouter } from "next/router";
 import { Field, Form } from "react-final-form";

@@ -3,13 +3,13 @@ import { Models } from "appwrite";
 import clsx from "clsx";
 
 import { startOfYear, subDays } from "date-fns";
-import { dataFormatterLoading } from "expensasaures/hooks/useDates";
-import { ENVS } from "expensasaures/shared/constants/constants";
-import { demoDashboardLineChart } from "expensasaures/shared/constants/loadingData";
-import { getAllLists } from "expensasaures/shared/services/query";
-import { useAuthStore } from "expensasaures/shared/stores/useAuthStore";
-import { Transaction } from "expensasaures/shared/types/transaction";
-import { formatCurrency } from "expensasaures/shared/utils/currency";
+import { dataFormatterLoading } from "expensasaurus/hooks/useDates";
+import { ENVS } from "expensasaurus/shared/constants/constants";
+import { demoDashboardLineChart } from "expensasaurus/shared/constants/loadingData";
+import { getAllLists } from "expensasaurus/shared/services/query";
+import { useAuthStore } from "expensasaurus/shared/stores/useAuthStore";
+import { Transaction } from "expensasaurus/shared/types/transaction";
+import { formatCurrency } from "expensasaurus/shared/utils/currency";
 import { useEffect, useState } from "react";
 
 import { shallow } from "zustand/shallow";

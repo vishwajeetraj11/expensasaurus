@@ -2,10 +2,10 @@ import { Card, Flex, Grid, Metric, Text } from "@tremor/react";
 import {
   Models
 } from 'appwrite';
-import { dashboardStatColors } from "expensasaures/shared/constants/constants";
-import { useAuthStore } from 'expensasaures/shared/stores/useAuthStore';
-import { DashboardStat } from "expensasaures/shared/types/transaction";
-import { formatCurrency } from "expensasaures/shared/utils/currency";
+import { dashboardStatColors } from "expensasaurus/shared/constants/constants";
+import { useAuthStore } from 'expensasaurus/shared/stores/useAuthStore';
+import { DashboardStat } from "expensasaurus/shared/types/transaction";
+import { formatCurrency } from "expensasaurus/shared/utils/currency";
 import { shallow } from 'zustand/shallow';
 import DeltaIcon from "./dashboardStatBadge";
 interface Props {

@@ -1,6 +1,6 @@
 import { Title } from "@tremor/react";
-import BudgetForm from "expensasaures/components/forms/BudgetForm";
-import Layout from "expensasaures/components/layout/Layout";
+import BudgetForm from "expensasaurus/components/forms/BudgetForm";
+import Layout from "expensasaurus/components/layout/Layout";
 import Head from "next/head";
 
 const create = () => {

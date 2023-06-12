@@ -1,4 +1,4 @@
-import { FileWPreview } from 'expensasaures/shared/types/common';
+import { FileWPreview } from 'expensasaurus/shared/types/common';
 import Image from 'next/image';
 import React from 'react';
 import { useForm, useFormState } from 'react-final-form';

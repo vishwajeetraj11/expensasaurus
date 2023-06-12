@@ -10,21 +10,21 @@ import {
   Title
 } from "@tremor/react";
 import { Models } from "appwrite";
-import CategoryLoading from "expensasaures/components/category/CategoryLoading";
-import ExpenseByCategory from "expensasaures/components/category/ExpenseByCategory";
-import { LineChartTabsLoading } from "expensasaures/components/dashboard/linechart";
-import CategoryIcon from "expensasaures/components/forms/CategorySelect";
-import Layout from "expensasaures/components/layout/Layout";
-import useDates from "expensasaures/hooks/useDates";
-import { categories } from "expensasaures/shared/constants/categories";
-import { ENVS } from "expensasaures/shared/constants/constants";
-import { getAllLists } from "expensasaures/shared/services/query";
-import { useAuthStore } from "expensasaures/shared/stores/useAuthStore";
-import { Transaction } from "expensasaures/shared/types/transaction";
-import { calculateTotalExpensesByCategory } from "expensasaures/shared/utils/calculation";
-import { capitalize } from "expensasaures/shared/utils/common";
-import { formatCurrency } from "expensasaures/shared/utils/currency";
-import { getQueryForCategoryPage } from "expensasaures/shared/utils/react-query";
+import CategoryLoading from "expensasaurus/components/category/CategoryLoading";
+import ExpenseByCategory from "expensasaurus/components/category/ExpenseByCategory";
+import { LineChartTabsLoading } from "expensasaurus/components/dashboard/linechart";
+import CategoryIcon from "expensasaurus/components/forms/CategorySelect";
+import Layout from "expensasaurus/components/layout/Layout";
+import useDates from "expensasaurus/hooks/useDates";
+import { categories } from "expensasaurus/shared/constants/categories";
+import { ENVS } from "expensasaurus/shared/constants/constants";
+import { getAllLists } from "expensasaurus/shared/services/query";
+import { useAuthStore } from "expensasaurus/shared/stores/useAuthStore";
+import { Transaction } from "expensasaurus/shared/types/transaction";
+import { calculateTotalExpensesByCategory } from "expensasaurus/shared/utils/calculation";
+import { capitalize } from "expensasaurus/shared/utils/common";
+import { formatCurrency } from "expensasaurus/shared/utils/currency";
+import { getQueryForCategoryPage } from "expensasaurus/shared/utils/react-query";
 import Head from "next/head";
 import { Fragment, useState } from "react";
 import { shallow } from "zustand/shallow";
@@ -110,7 +110,7 @@ const Categories = () => {
   return (
     <Layout>
       <Head>
-        <title>Expensasaures - Analyze Spending by Category</title>
+        <title>expensasaurus - Analyze Spending by Category</title>
       </Head>
       <div className="mx-auto max-w-[1200px] px-4 w-full">
         {isLoading ?

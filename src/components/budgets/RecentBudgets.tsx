@@ -1,5 +1,5 @@
 import { Badge, Title } from "@tremor/react";
-import useBudgets from "expensasaures/hooks/useBudgets";
+import useBudgets from "expensasaurus/hooks/useBudgets";
 
 import {
   Table,
@@ -13,9 +13,9 @@ import {
 import { Models } from "appwrite";
 import clsx from "clsx";
 import { format } from "date-fns";
-import { ENVS } from "expensasaures/shared/constants/constants";
-import { deleteDoc } from "expensasaures/shared/services/query";
-import { useAuthStore } from "expensasaures/shared/stores/useAuthStore";
+import { ENVS } from "expensasaurus/shared/constants/constants";
+import { deleteDoc } from "expensasaurus/shared/services/query";
+import { useAuthStore } from "expensasaurus/shared/stores/useAuthStore";
 import Link from "next/link";
 import { useRouter } from "next/router";
 import { useState } from "react";

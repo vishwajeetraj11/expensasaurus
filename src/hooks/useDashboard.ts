@@ -1,12 +1,12 @@
 import {
     Models, Query
 } from 'appwrite';
-import { ENVS } from 'expensasaures/shared/constants/constants';
-import { getAllLists } from 'expensasaures/shared/services/query';
-import { useAuthStore } from 'expensasaures/shared/stores/useAuthStore';
-import { DashboardStat, Transaction } from 'expensasaures/shared/types/transaction';
-import { calcExpenseStats, calculateTotalExpensesByCategory, calculateTotalExpensesWithPercentageChange, calculateTransactionChange } from 'expensasaures/shared/utils/calculation';
-import { formatCurrency } from 'expensasaures/shared/utils/currency';
+import { ENVS } from 'expensasaurus/shared/constants/constants';
+import { getAllLists } from 'expensasaurus/shared/services/query';
+import { useAuthStore } from 'expensasaurus/shared/stores/useAuthStore';
+import { DashboardStat, Transaction } from 'expensasaurus/shared/types/transaction';
+import { calcExpenseStats, calculateTotalExpensesByCategory, calculateTotalExpensesWithPercentageChange, calculateTransactionChange } from 'expensasaurus/shared/utils/calculation';
+import { formatCurrency } from 'expensasaurus/shared/utils/currency';
 import { shallow } from 'zustand/shallow';
 import useDates from './useDates';
 

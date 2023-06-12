@@ -1,6 +1,6 @@
 import { Button, Flex, Metric, Subtitle, Title } from '@tremor/react';
-import animationData from 'expensasaures/lottie/pageNotFound.json';
-import { defaultOptions } from "expensasaures/shared/utils/lottie";
+import animationData from 'expensasaurus/lottie/pageNotFound.json';
+import { defaultOptions } from "expensasaurus/shared/utils/lottie";
 import Link from 'next/link';
 import Lottie from "react-lottie";
 

@@ -1,4 +1,4 @@
-import { useAuthStore } from "expensasaures/shared/stores/useAuthStore";
+import { useAuthStore } from "expensasaurus/shared/stores/useAuthStore";
 import Link from "next/link";
 import { shallow } from "zustand/shallow";
 import DarkMode from "../ui/DarkMode";

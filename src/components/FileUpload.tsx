@@ -1,11 +1,11 @@
 
 import { Models } from "appwrite";
-import { ENVS } from "expensasaures/shared/constants/constants";
-import { storage } from "expensasaures/shared/services/appwrite";
-import { useAuthStore } from "expensasaures/shared/stores/useAuthStore";
-import { FileWPreview } from "expensasaures/shared/types/common";
-import { Transaction } from "expensasaures/shared/types/transaction";
-import { getBase64, isUploadedFileImage } from "expensasaures/shared/utils/file";
+import { ENVS } from "expensasaurus/shared/constants/constants";
+import { storage } from "expensasaurus/shared/services/appwrite";
+import { useAuthStore } from "expensasaurus/shared/stores/useAuthStore";
+import { FileWPreview } from "expensasaurus/shared/types/common";
+import { Transaction } from "expensasaurus/shared/types/transaction";
+import { getBase64, isUploadedFileImage } from "expensasaurus/shared/utils/file";
 import { useRouter } from "next/router";
 import { Fragment, useState } from "react";
 import { useField, useForm, useFormState } from "react-final-form";

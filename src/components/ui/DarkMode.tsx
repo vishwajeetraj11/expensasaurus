@@ -1,4 +1,4 @@
-import { isBrowser } from "expensasaures/shared/utils/common";
+import { isBrowser } from "expensasaurus/shared/utils/common";
 import React, { useEffect } from "react";
 import { RiMoonFill, RiSunFill } from "react-icons/ri";
 

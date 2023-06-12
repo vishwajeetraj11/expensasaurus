@@ -11,8 +11,8 @@ import {
 } from "@tanstack/react-table";
 import { Button } from "@tremor/react";
 import { format } from "date-fns";
-import { Transaction } from "expensasaures/shared/types/transaction";
-import { capitalize } from "expensasaures/shared/utils/common";
+import { Transaction } from "expensasaurus/shared/types/transaction";
+import { capitalize } from "expensasaurus/shared/utils/common";
 import Link from "next/link";
 import React, { Dispatch, SetStateAction } from "react";
 import { FiExternalLink } from "react-icons/fi";

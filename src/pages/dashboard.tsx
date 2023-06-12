@@ -1,9 +1,9 @@
 import { Title } from "@tremor/react";
-import CategoriesPieChart, { CategoriesPieChartLoading } from "expensasaures/components/dashboard/categorypiechart";
-import LineChartTabs, { LineChartTabsLoading } from "expensasaures/components/dashboard/linechart";
-import DashboardStatistics, { DashboardStatisticsLoading } from "expensasaures/components/dashboard/stats";
-import Layout from "expensasaures/components/layout/Layout";
-import useDashboard from "expensasaures/hooks/useDashboard";
+import CategoriesPieChart, { CategoriesPieChartLoading } from "expensasaurus/components/dashboard/categorypiechart";
+import LineChartTabs, { LineChartTabsLoading } from "expensasaurus/components/dashboard/linechart";
+import DashboardStatistics, { DashboardStatisticsLoading } from "expensasaurus/components/dashboard/stats";
+import Layout from "expensasaurus/components/layout/Layout";
+import useDashboard from "expensasaurus/hooks/useDashboard";
 import Head from "next/head";
 
 const dashboard = () => {
@@ -19,7 +19,7 @@ const dashboard = () => {
   return (
     <Layout>
       <Head>
-        <title>Expensasaures - Monthly Performance Dashboard</title>
+        <title>expensasaurus - Monthly Performance Dashboard</title>
       </Head>
       <main className="max-w-[1200px] w-full mx-auto pt-10 px-4">
         <Title className="font-thin text-center mb-10">Monthly Performance Dashboard</Title>

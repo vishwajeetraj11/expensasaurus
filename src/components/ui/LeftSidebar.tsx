@@ -1,5 +1,5 @@
-import { useClickOutside } from 'expensasaures/hooks/useClickOutside';
-import { clsx } from 'expensasaures/shared/utils/common';
+import { useClickOutside } from 'expensasaurus/hooks/useClickOutside';
+import { clsx } from 'expensasaurus/shared/utils/common';
 import { RefObject, useEffect, useRef } from 'react';
 
 interface Props {

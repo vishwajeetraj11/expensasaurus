@@ -1,6 +1,6 @@
 import { BarChart, Card, Title } from "@tremor/react";
-import { useAuthStore } from "expensasaures/shared/stores/useAuthStore";
-import { formatCurrency } from "expensasaures/shared/utils/currency";
+import { useAuthStore } from "expensasaurus/shared/stores/useAuthStore";
+import { formatCurrency } from "expensasaurus/shared/utils/currency";
 import { shallow } from "zustand/shallow";
 
 const chartdata2 = [

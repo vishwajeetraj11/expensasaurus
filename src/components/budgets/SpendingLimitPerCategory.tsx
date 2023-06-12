@@ -6,9 +6,9 @@ import {
   Text,
   TextInput,
 } from "@tremor/react";
-import { categories } from "expensasaures/shared/constants/categories";
-import { regex } from "expensasaures/shared/constants/constants";
-import { capitalize } from "expensasaures/shared/utils/common";
+import { categories } from "expensasaurus/shared/constants/categories";
+import { regex } from "expensasaurus/shared/constants/constants";
+import { capitalize } from "expensasaurus/shared/utils/common";
 import { Fragment } from "react";
 import { useField, useForm } from "react-final-form";
 import CategoryIcon from "../forms/CategorySelect";

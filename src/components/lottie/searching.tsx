@@ -1,6 +1,6 @@
 import { Metric, Subtitle, Title } from '@tremor/react';
-import animationData from 'expensasaures/lottie/searching.json';
-import { defaultOptions } from "expensasaures/shared/utils/lottie";
+import animationData from 'expensasaurus/lottie/searching.json';
+import { defaultOptions } from "expensasaurus/shared/utils/lottie";
 import { useEffect, useState } from 'react';
 import Lottie from "react-lottie";
 

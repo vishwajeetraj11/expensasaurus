@@ -1,8 +1,8 @@
 import { Button, SearchSelect, SearchSelectItem } from "@tremor/react";
 import { AppwriteException } from "appwrite";
 
-import ErrorMessage from "expensasaures/components/ui/ErrorMessage";
-import { useLocaleStore } from "expensasaures/shared/stores/useLocaleStore";
+import ErrorMessage from "expensasaurus/components/ui/ErrorMessage";
+import { useLocaleStore } from "expensasaurus/shared/stores/useLocaleStore";
 import { useRouter } from "next/router";
 import { useEffect } from "react";
 import { Field, Form } from "react-final-form";
@@ -60,7 +60,7 @@ function LoginForm() {
         // add currency
         const updateUser = await account.updatePrefs({ currency: values.currency })
         toast.success(`Welcome to Expensasaurus`);
-        router.push("/dashboard");
+        router.push("/budgets");
       } else if (isLogin) {
         const response = await account.createEmailSession(
           values.email,
@@ -137,7 +137,7 @@ function LoginForm() {
                 variant="auth"
                 extra="mb-3"
                 label="Email*"
-                placeholder="user@expensasaures.com"
+                placeholder="user@expensasaurus.com"
                 id="email"
                 type="text"
                 message={meta.touched && meta.error}
