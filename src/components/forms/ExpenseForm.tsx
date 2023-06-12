@@ -320,7 +320,6 @@ const ExpenseForm = () => {
                       </div>
                     )}
                   </Field>
-                  {JSON.stringify({ values: values.attachments })}
                   <Field name="attachments">
                     {() => (
                       <>

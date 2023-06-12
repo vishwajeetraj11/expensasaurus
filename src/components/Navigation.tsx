@@ -102,13 +102,13 @@ const Navigation = (props: Props) => {
                 {/* <Link href="/expenses">Features</Link> */}
               </li>
               <li className="">
-                <Link href="#how-it-works">How It Works</Link>
+                <Link onClick={() => setHamburgerMenuIsOpen((open) => !open)} href="#how-it-works">How It Works</Link>
               </li>
               <li className="">
                 {/* <Link href="/category">Expense Tracking</Link> */}
               </li>
               <li className="">
-                <Link href="#budget">Budget Management</Link>
+                <Link onClick={() => setHamburgerMenuIsOpen((open) => !open)} href="#budget">Budget Management</Link>
               </li>
             </>}
 
