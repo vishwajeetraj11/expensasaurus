@@ -54,8 +54,8 @@ const Navigation = (props: Props) => {
   return <header className="fixed top-0 left-0 z-[12] w-full border-transparent-white backdrop-blur-[12px]">
     <div className="max-w-[1200px] mx-auto lg:px-0 px-8 flex h-navigation-height items-center">
       <Link href={"/dashboard"} className="flex items-center text-md">
-        <Logo className="w-[1.8rem] h-[1.8rem] mr-4 dark:fill-white" />
-        <p className="text-[14px] dark:text-white">Expensasaurus</p>
+        <Logo className={clsx("w-[1.8rem] h-[1.8rem] mr-4", !landingPage && 'dark:fill-white')} />
+        <p className={clsx("text-[14px]", 'dark:text-white')}>Expensasaurus</p>
       </Link>
       <div
         className={clsx(
@@ -65,15 +65,17 @@ const Navigation = (props: Props) => {
       >
         <nav
           className={clsx(
-            "md:opacity-100 h-[calc(100vh_-_var(--navigation-height))] md:block w-full fixed md:relative top-navigation-height md:top-0 left-0 overflow-auto bg-white dark:bg-black sm:dark:bg-transparent md:h-auto md:w-auto md:bg-transparent transform transition-[opacity] duration-500 md:translate-x-0",
-            hamburgerMenuIsOpen ? "opacity-100" : "opacity-0"
+            "md:opacity-100 h-[calc(100vh_-_var(--navigation-height))] md:block w-full fixed md:relative top-navigation-height md:top-0 left-0 overflow-auto bg-white  md:h-auto md:w-auto md:bg-transparent transform transition-[opacity] duration-500 md:translate-x-0",
+            hamburgerMenuIsOpen ? "opacity-100" : "opacity-0",
+            !landingPage && "dark:bg-black sm:dark:bg-transparent"
           )}
         >
           <ul
             className={clsx(
               "ease-in flex flex-col md:flex-row md:items-center h-full md:text-sm",
-              "[&_a]:text-md dark:[&_a:hover]:text-gray-200 dark:text-slate-200 md:[&_a]:transition-colors [&_li]:ml-6 [&_li]:border-bottom [&_li]:border-b [&_li]:border-grey-dark md:[&_li]:border-none",
+              "[&_a]:text-md md:[&_a]:transition-colors [&_li]:ml-6 [&_li]:border-bottom [&_li]:border-b [&_li]:border-grey-dark md:[&_li]:border-none",
               "[&_a]:h-navigation-height [&_a]:w-full [&_a]:flex [&_a]:items-center",
+              !landingPage && " dark:[&_a:hover]:text-gray-200 dark:text-slate-200",
               hamburgerMenuIsOpen ? "[&_a]:!translate-y-0" : "", // not working
               "[&_a]:duration-300 [&_a]:translate-y-8 md:[&_a]:translate-y-0 [&_a]:transition-[color,transform]"
             )}
@@ -117,7 +119,7 @@ const Navigation = (props: Props) => {
         </nav>
       </div>
 
-      {userInfo && !landingPage && <>
+      {userInfo && <>
         <Popover.Root>
           <Popover.Trigger asChild>
 
@@ -128,21 +130,17 @@ const Navigation = (props: Props) => {
           </Popover.Trigger>
           <Popover.Portal>
             <Popover.Content
-              className="z-[9999] rounded p-5 w-[150px] bg-white dark:bg-slate-500 shadow-[0_10px_38px_-10px_hsla(206,22%,7%,.35),0_10px_20px_-15px_hsla(206,22%,7%,.2)] focus:shadow-[0_10px_38px_-10px_hsla(206,22%,7%,.35),0_10px_20px_-15px_hsla(206,22%,7%,.2),0_0_0_2px_theme(colors.violet7)] will-change-[transform,opacity] data-[state=open]:data-[side=top]:animate-slideDownAndFade data-[state=open]:data-[side=right]:animate-slideLeftAndFade data-[state=open]:data-[side=bottom]:animate-slideUpAndFade data-[state=open]:data-[side=left]:animate-slideRightAndFade"
+              className={clsx("z-[9999] rounded p-5 w-[150px] bg-white shadow-[0_10px_38px_-10px_hsla(206,22%,7%,.35),0_10px_20px_-15px_hsla(206,22%,7%,.2)] focus:shadow-[0_10px_38px_-10px_hsla(206,22%,7%,.35),0_10px_20px_-15px_hsla(206,22%,7%,.2),0_0_0_2px_theme(colors.violet7)] will-change-[transform,opacity] data-[state=open]:data-[side=top]:animate-slideDownAndFade data-[state=open]:data-[side=right]:animate-slideLeftAndFade data-[state=open]:data-[side=bottom]:animate-slideUpAndFade data-[state=open]:data-[side=left]:animate-slideRightAndFade",
+                !!landingPage && "dark:bg-slate-500")}
               sideOffset={5}
             >
               <div className="flex flex-col gap-2.5">
+                <button type='button' onClick={() => logout(router)} className='text-base'>Dashboard</button>
                 <button type='button'>
                   <Link href={'/profile'} className='text-base'>Profile</Link>
                 </button>
                 <button type='button' onClick={() => logout(router)} className='text-base'>Logout</button>
               </div>
-              {/* <Popover.Close
-                className="rounded-full h-[25px] w-[25px] inline-flex items-center justify-center text-violet11 absolute top-[5px] right-[5px] hover:bg-violet4 focus:shadow-[0_0_0_2px] focus:shadow-violet7 outline-none cursor-default"
-                aria-label="Close"
-              > */}
-
-              {/* </Popover.Close> */}
               <Popover.Arrow className="fill-white" />
             </Popover.Content>
           </Popover.Portal>
@@ -151,7 +149,7 @@ const Navigation = (props: Props) => {
 
       </>
       }
-      {landingPage && <div className="flex h-full items-center  ml-auto">
+      {landingPage && !userInfo && <div className="flex h-full items-center  ml-auto">
         <Link href='/login' className="mr-6 text-sm">
           Log in
         </Link>

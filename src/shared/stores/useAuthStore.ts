@@ -25,11 +25,12 @@ const useAuthStore = create<useAuthStoreType>((set, get) => ({
     setUserInfo: (userInfo) => set({ userInfo }),
     logout: async (router: NextRouter) => {
         try {
-            const { user, setUser } = get();
+            const { user, setUser, setUserInfo } = get();
             if (user) {
                 await account.deleteSession(user.$id);
                 localStorage.removeItem("sessionId");
                 setUser(null);
+                setUserInfo(null);
                 // router.push('/login')
             }
         } catch (e) { }
