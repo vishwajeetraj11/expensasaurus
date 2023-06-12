@@ -36,7 +36,7 @@ const Login = () => {
         <MainLayout>
             <AuthLayout>
                 <Head>
-                    <title>expensasaurus - Create a New Accoun</title>
+                    <title>Expensasaurus - Create a New Accoun</title>
                 </Head>
                 <div className="mt-0 md:mt-16 mb-16 flex h-full w-full items-center justify-center px-2 md:mx-0 md:px-0 lg:mb-10 lg:items-center lg:justify-start">
                     {/* Sign in section */}

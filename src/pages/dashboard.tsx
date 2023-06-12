@@ -19,7 +19,7 @@ const dashboard = () => {
   return (
     <Layout>
       <Head>
-        <title>expensasaurus - Monthly Performance Dashboard</title>
+        <title>Expensasaurus - Monthly Performance Dashboard</title>
       </Head>
       <main className="max-w-[1200px] w-full mx-auto pt-10 px-4">
         <Title className="font-thin text-center mb-10">Monthly Performance Dashboard</Title>

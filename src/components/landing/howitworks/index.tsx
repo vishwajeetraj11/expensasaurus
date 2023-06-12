@@ -29,7 +29,7 @@ const howitWorksData = [
     {
         id: 1,
         title: 'Create an account',
-        description: 'Create your free account on expensasaurus by providing your basic details. It only takes a few minutes to get started.',
+        description: 'Create your free account on Expensasaurus by providing your basic details. It only takes a few minutes to get started.',
     },
     {
         id: 2,

@@ -221,7 +221,7 @@ const index = () => {
     return (
         <Layout>
             <Head>
-                <title>expensasaurus - Track and Sort Your Incomes</title>
+                <title>Expensasaurus - Track and Sort Your Incomes</title>
             </Head>
             <div className="flex flex-col flex-1 w-full max-w-[1200px] mx-auto px-4">
                 <div className="flex items-center justify-between">

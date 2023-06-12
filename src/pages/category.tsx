@@ -110,7 +110,7 @@ const Categories = () => {
   return (
     <Layout>
       <Head>
-        <title>expensasaurus - Analyze Spending by Category</title>
+        <title>Expensasaurus - Analyze Spending by Category</title>
       </Head>
       <div className="mx-auto max-w-[1200px] px-4 w-full">
         {isLoading ?

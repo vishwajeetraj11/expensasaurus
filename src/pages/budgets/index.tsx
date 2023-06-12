@@ -16,7 +16,7 @@ const index = () => {
   return (
     <Layout>
       <Head>
-        <title>expensasaurus - Set and Monitor Your Budgets</title>
+        <title>Expensasaurus - Set and Monitor Your Budgets</title>
       </Head>
       <div className="mx-auto max-w-[1200px] w-full px-4">
         <div className={clsx("flex items-center", emptyState ? 'justify-center' : 'justify-between')}>

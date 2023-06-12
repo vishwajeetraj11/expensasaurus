@@ -9,7 +9,7 @@ const Header = () => {
 
             <h1 className="text-blue-600 mb-4 text-center w-[80%] font-thin text-[40px] md:text-[60px]">
                 {/* Spending made smarter */}
-                Welcome to expensasaurus
+                Welcome to Expensasaurus
             </h1>
             <h3 className="text-center w-[88%] md:w-[70%] text-[18px] md:text-[20px] mb-7 text-slate-700">Take control of your finances with expensasaurus, the ultimate budgeting tool. Our intuitive platform helps you track expenses, manage budgets, and achieve your financial goals. Get started today and experience hassle-free budget management.</h3>
             <Link href='/signup'>

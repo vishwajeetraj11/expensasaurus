@@ -101,7 +101,7 @@ const id = () => {
   return (
     <Layout>
       <Head>
-        <title>expensasaurus - Details of an Expense Transaction</title>
+        <title>Expensasaurus - Details of an Expense Transaction</title>
       </Head>
       <div className="mx-auto max-w-[1200px] pt-10 block w-full">
         {isLoading ? <Searching

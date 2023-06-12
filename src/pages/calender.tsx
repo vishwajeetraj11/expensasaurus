@@ -28,7 +28,7 @@ const Calender = () => {
   return (
     <Layout>
       <Head>
-        <title>expensasaurus - View Expenses by Date on the Calendar</title>
+        <title>Expensasaurus - View Expenses by Date on the Calendar</title>
       </Head>
       <div className="pt-16 px-4 max-w-[1200px] mx-auto w-full">
         <div className="px-4 mx-auto sm:px-7 md:px-6">

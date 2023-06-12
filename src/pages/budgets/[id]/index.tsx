@@ -7,7 +7,7 @@ const id = () => {
   return (
     <Layout>
       <Head>
-        <title>expensasaurus - Analysis of an Individual Budget</title>
+        <title>Expensasaurus - Analysis of an Individual Budget</title>
       </Head>
       <BudgetByIDPage />
     </Layout>
