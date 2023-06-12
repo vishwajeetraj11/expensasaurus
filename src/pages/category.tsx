@@ -68,27 +68,7 @@ const Categories = () => {
     return formatCurrency(userInfo?.prefs?.currency, number)
   };
 
-  // const categoryBarInfo = () => {
-  //   const percentageArray = Object.entries(expensesByCategoriesThisMonth).map(
-  //     ([key, val]) => {
-  //       return Math.ceil(val.percentage);
-  //     }
-  //   );
-  //   const colorClassArray = Object.entries(expensesByCategoriesThisMonth).map(
-  //     ([key, val]) => {
-  //       let className = categories.find((c) => c.category === capitalize(key))
-  //         ?.className as string;
-  //       const regexPattern = /(?:bg|text)-(.*?)-\d+/g;
-  //       const colorNames = [];
-  //       let match;
-  //       while ((match = regexPattern.exec(className))) {
-  //         colorNames.push(match[1]);
-  //       }
-  //       return colorNames[0];
-  //     }
-  //   );
-  //   return { percentageArray, colorClassArray };
-  // };
+
 
   const txnsByCategory =
     thisMonthExpenses?.documents
@@ -121,16 +101,8 @@ const Categories = () => {
                 <DateRangePicker onValueChange={setDates} value={dates} />
               </div>
             </Flex>
-            {/* <div className="mb-10">
-          <Text className="mt-10 mb-4">Expenses distribution</Text>
 
-          <CategoryBar
-            categoryPercentageValues={categoryBarInfo().percentageArray}
-            colors={categoryBarInfo().colorClassArray as Color[]}
-            className="mt-3 w-full"
-          />
 
-        </div> */}
             <Text className="text-slate-600 mb-4">Expenses per category</Text>
             <div className="grid xl:grid-cols-4  lg:grid-cols-3 md:grid-cols-2 grid-cols-1 gap-4">
               {Object.entries(expensesByCategoriesThisMonth).map(

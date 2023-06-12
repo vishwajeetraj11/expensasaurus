@@ -18,14 +18,19 @@ const MainLayout = (props: Props) => {
 
     useEffect(() => {
         (async function () {
+            let pushToRoute = '';
             if (!user) {
                 const userAfterFetch = await getUser();
                 if (!userAfterFetch) {
-                    router.push(router.route === '/signup' || router.route === '/login' || router.route === '/' ? router.route : '/login')
+                    pushToRoute = router.route === '/signup' || router.route === '/login' || router.route === '/' ? router.route : '/login';
                 }
             } else {
-                router.push('/dashboard')
+                pushToRoute = '/dashboard'
             }
+            if (router.route === '/') {
+                return;
+            }
+            router.push(pushToRoute);
         })();
     }, [user]);
 

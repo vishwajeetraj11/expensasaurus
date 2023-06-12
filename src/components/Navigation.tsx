@@ -53,7 +53,7 @@ const Navigation = (props: Props) => {
 
   return <header className="fixed top-0 left-0 z-[12] w-full border-transparent-white backdrop-blur-[12px]">
     <div className="max-w-[1200px] mx-auto lg:px-0 px-8 flex h-navigation-height items-center">
-      <Link href={"/dashboard"} className="flex items-center text-md">
+      <Link href={landingPage ? '/' : "/dashboard"} className="flex items-center text-md">
         <Logo className={clsx("w-[1.8rem] h-[1.8rem] mr-4", !landingPage && 'dark:fill-white')} />
         <p className={clsx("text-[14px]", 'dark:text-white')}>Expensasaurus</p>
       </Link>
@@ -136,9 +136,9 @@ const Navigation = (props: Props) => {
             >
               <div className="flex flex-col gap-2.5">
                 <button type='button' onClick={() => logout(router)} className='text-base'>Dashboard</button>
-                <button type='button'>
+                {/* <button type='button'>
                   <Link href={'/profile'} className='text-base'>Profile</Link>
-                </button>
+                </button> */}
                 <button type='button' onClick={() => logout(router)} className='text-base'>Logout</button>
               </div>
               <Popover.Arrow className="fill-white" />
@@ -176,36 +176,5 @@ const Navigation = (props: Props) => {
 }
 
 
-const OldNavigation = () => {
-  return (
-    <div className=" ">
-      <div className="max-w-[1200px] mx-auto py-2 flex items-center justify-between ">
-        <div>
-          <Logo width={40} height={40} />
-        </div>
-        <div className="flex gap-4">
-          <Link href={"/dashboard"}>
-            <p className="px-4 py-2 rounded-full">Dashboard</p>
-          </Link>
-          <Link href={"/expenses"}>
-            <p className="px-4 py-2 rounded-full">Expense</p>
-          </Link>
-          <Link href={"/incomes"}>
-            <p className="px-4 py-2 rounded-full">Incomes</p>
-          </Link>
-          <Link href={"/category"}>
-            <p className="px-4 py-2 rounded-full">Category</p>
-          </Link>
-          <Link href={"/calender"}>
-            <p className="px-4 py-2 rounded-full">Calender</p>
-          </Link>
-          <Link href={"/budgets"}>
-            <p className="px-4 py-2 rounded-full">Budget</p>
-          </Link>
-        </div>
-      </div>
-    </div>
-  );
-};
 
 export default Navigation;
