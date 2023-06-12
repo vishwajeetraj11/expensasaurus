@@ -4,12 +4,11 @@ import { BudgetManagement } from "expensasaurus/components/landing/budgetmanagem
 import Footer from "expensasaurus/components/landing/footer";
 import Header from "expensasaurus/components/landing/header";
 import HowItWorks from "expensasaurus/components/landing/howitworks";
-import MainLayout from "expensasaurus/components/layout/MainLayout";
 import Head from "next/head";
 
 export default function Home() {
   return (
-    <MainLayout>
+    <>
       <Head>
         <meta name="description" content="Track and manage your finances effortlessly with Expensasaurus. Take control of your budget, monitor spending, and achieve your financial goals." />
         <meta name="keywords" content="expense tracker, budget management, financial planning, personal finance" />
@@ -41,6 +40,6 @@ export default function Home() {
         <CTASection />
         <Footer />
       </main>
-    </MainLayout>
+    </>
   );
 }
