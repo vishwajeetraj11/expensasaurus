@@ -308,8 +308,7 @@ const BudgetByIDPage = () => {
                 }}
                 className={clsx(
                   "absolute inset-0 z-[1] rounded-[500px] ",
-                  totalBudgetConsumedPercent >= 20 &&
-                    totalBudgetConsumedPercent <= 50
+                  totalBudgetConsumedPercent <= 50
                     ? "bg-emerald-600"
                     : totalBudgetConsumedPercent > 50 &&
                       totalBudgetConsumedPercent <= 80
