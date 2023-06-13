@@ -125,7 +125,7 @@ const IncomeForm = () => {
                     tag: "",
                     date: new Date(),
                     attachments: [],
-                    currency: "INR",
+                    currency: userInfo?.prefs?.currency || "INR",
                   }
             }
           >

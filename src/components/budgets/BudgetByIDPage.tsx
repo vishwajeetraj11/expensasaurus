@@ -37,8 +37,12 @@ import BudgetAnalysisTable from "./BudgetByIDTable";
 import BudgetStatus from "./BudgetCalloutStatus";
 
 const BudgetByIDPage = () => {
-  const { user } = useAuthStore((state) => ({ user: state.user }), shallow) as {
+  const { user, userInfo } = useAuthStore(
+    (state) => ({ user: state.user, userInfo: state.userInfo }),
+    shallow
+  ) as {
     user: Models.Session;
+    userInfo: Models.User<Models.Preferences>;
   };
   const router = useRouter();
   const { id } = router.query;
@@ -119,7 +123,7 @@ const BudgetByIDPage = () => {
             key,
             {
               budget: val,
-              currency: "INR",
+              currency: userInfo?.prefs?.currency || "INR",
               amount: 0,
               transactionsCount: 0,
               budgetPercent: 0,

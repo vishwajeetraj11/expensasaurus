@@ -29,9 +29,12 @@ import FormInputLabel from "../ui/FormInputLabel";
 import TextArea from "../ui/TextArea";
 
 const BudgetForm = () => {
-  const { user, userInfo } = useAuthStore((state) => ({ user: state.user, userInfo: state.userInfo }), shallow) as {
+  const { user, userInfo } = useAuthStore(
+    (state) => ({ user: state.user, userInfo: state.userInfo }),
+    shallow
+  ) as {
     user: Models.Session;
-    userInfo: Models.User<Models.Preferences>
+    userInfo: Models.User<Models.Preferences>;
   };
 
   const router = useRouter();
@@ -45,9 +48,7 @@ const BudgetForm = () => {
 
   const isUpdateRoute = router.route === "/budgets/[id]/edit";
 
-
   const handleSubmit = async (values: Record<string, any>) => {
-
     const toastMessage = isUpdateRoute
       ? "Budget updated successfully"
       : "Budget created successfully";
@@ -58,10 +59,10 @@ const BudgetForm = () => {
     const permissionsArray = isUpdateRoute
       ? undefined
       : [
-        Permission.read(Role.user(user.userId)),
-        Permission.update(Role.user(user.userId)),
-        Permission.delete(Role.user(user.userId)),
-      ];
+          Permission.read(Role.user(user.userId)),
+          Permission.update(Role.user(user.userId)),
+          Permission.delete(Role.user(user.userId)),
+        ];
 
     const dbIds: [string, string, string] = [
       ENVS.DB_ID,
@@ -70,9 +71,9 @@ const BudgetForm = () => {
     ];
     try {
       if (values.categories && values.amount) {
-        const categorySumsArray = Object.entries(values.categories).filter(([key, value]) => key !== 'category').map(
-          ([_, value]) => value
-        ) as number[];
+        const categorySumsArray = Object.entries(values.categories)
+          .filter(([key, value]) => key !== "category")
+          .map(([_, value]) => value) as number[];
 
         const totalCategoriesSum = categorySumsArray.reduce(
           (accumulator, currentValue) => accumulator + currentValue,
@@ -104,7 +105,7 @@ const BudgetForm = () => {
             investments: values.categories?.investments || null,
             personal: values.categories?.personal || null,
             transportation: values.categories?.transportation || null,
-          }
+          },
         }).map(([key, value]) => [
           key,
           Boolean(Number(value)) ? Number(value) : null,
@@ -120,18 +121,18 @@ const BudgetForm = () => {
         amount: Number(values.amount),
         currency: values.currency,
         ...categoriesNum,
-      }
+      };
 
       const upsertedBudget = isUpdateRoute
         ? await database.updateDocument(...dbIds, formValues, permissionsArray)
         : await database.createDocument(...dbIds, formValues, permissionsArray);
 
       toast.success(toastMessage);
-      queryClient.invalidateQueries({ queryKey: ["Budgets", user?.userId] })
-      router.push('/budgets')
+      queryClient.invalidateQueries({ queryKey: ["Budgets", user?.userId] });
+      router.push("/budgets");
       if (isUpdateRoute && upsertedBudget) {
-        refetch()
-      };
+        refetch();
+      }
     } catch (error) {
       toast.error(toastFailureMessage);
     }
@@ -140,173 +141,192 @@ const BudgetForm = () => {
   return (
     <div>
       <LocalizationProvider dateAdapter={AdapterDateFns}>
-        {(isUpdateRoute && data) || !isUpdateRoute ? <Form
-          validate={validateBudgetForm}
-          onSubmit={handleSubmit}
-          mutators={defaultMutators}
-          initialValues={isUpdateRoute ? {
-            ...data
-            ,
-            dates: {
-              to: new Date(data?.startingDate || new Date()),
-              from: new Date(data?.endDate || new Date())
-            }, categories: Object.entries({
-              business: data?.business,
-              entertainment: data?.entertainment,
-              food: data?.food,
-              healthcare: data?.healthcare,
-              education: data?.education,
-              travel: data?.travel,
-              other: data?.other,
-              savings: data?.savings,
-              housing: data?.housing,
-              insurance: data?.insurance,
-              utilities: data?.utilities,
-              investments: data?.investments,
-              personal: data?.personal,
-              transportation: data?.transportation,
-            }).reduce<any>((acc, [key, value]) => {
-              if (value !== null) {
-                acc[key] = value;
-              }
-              return acc;
-            }, {})
-          } : {
-            dates: {},
-            title: "",
-            description: "",
-            amount: "",
-            currency: "INR",
-            categories: {},
-          }}
-        >
-          {({ errors, values, form, handleSubmit, submitting }) => {
-            return (
-              <div className="max-w-[500px] mx-auto flex flex-col gap-4">
-                <form className="flex flex-col gap-4" onSubmit={handleSubmit}>
-                  <Field
-                    name="dates"
-                    component={"input"}
-                    label="Date"
-                    type="date"
-                  >
-                    {({ meta, input }) => (
-                      <div>
-                        <DateRangePicker
-                          disabled={submitting}
-                          // minDate={new Date()}
-                          value={input.value}
-                          onValueChange={(value) => {
-                            input.onChange(value);
-                          }}
-                        />
-                        {meta.touched && meta.error && (
-                          <p className="text-xs text-red-500 mt-2">
-                            {meta.error}
-                          </p>
-                        )}
-                      </div>
-                    )}
-                  </Field>
+        {(isUpdateRoute && data) || !isUpdateRoute ? (
+          <Form
+            validate={validateBudgetForm}
+            onSubmit={handleSubmit}
+            mutators={defaultMutators}
+            initialValues={
+              isUpdateRoute
+                ? {
+                    ...data,
+                    dates: {
+                      to: new Date(data?.startingDate || new Date()),
+                      from: new Date(data?.endDate || new Date()),
+                    },
+                    categories: Object.entries({
+                      business: data?.business,
+                      entertainment: data?.entertainment,
+                      food: data?.food,
+                      healthcare: data?.healthcare,
+                      education: data?.education,
+                      travel: data?.travel,
+                      other: data?.other,
+                      savings: data?.savings,
+                      housing: data?.housing,
+                      insurance: data?.insurance,
+                      utilities: data?.utilities,
+                      investments: data?.investments,
+                      personal: data?.personal,
+                      transportation: data?.transportation,
+                    }).reduce<any>((acc, [key, value]) => {
+                      if (value !== null) {
+                        acc[key] = value;
+                      }
+                      return acc;
+                    }, {}),
+                  }
+                : {
+                    dates: {},
+                    title: "",
+                    description: "",
+                    amount: "",
+                    currency: userInfo?.prefs?.currency || "INR",
+                    categories: {},
+                  }
+            }
+          >
+            {({ errors, values, form, handleSubmit, submitting }) => {
+              return (
+                <div className="max-w-[500px] mx-auto flex flex-col gap-4">
+                  <form className="flex flex-col gap-4" onSubmit={handleSubmit}>
+                    <Field
+                      name="dates"
+                      component={"input"}
+                      label="Date"
+                      type="date"
+                    >
+                      {({ meta, input }) => (
+                        <div>
+                          <DateRangePicker
+                            disabled={submitting}
+                            // minDate={new Date()}
+                            value={input.value}
+                            onValueChange={(value) => {
+                              input.onChange(value);
+                            }}
+                          />
+                          {meta.touched && meta.error && (
+                            <p className="text-xs text-red-500 mt-2">
+                              {meta.error}
+                            </p>
+                          )}
+                        </div>
+                      )}
+                    </Field>
 
-                  <Field
-                    name="title"
-                    label="Title"
-                    type="text"
-                    placeholder="Enter title"
-                  >
-                    {({ meta, input }) => (
-                      <div>
-                        <FormInputLabel htmlFor="title">Title</FormInputLabel>
-                        <TextInput
-                          {...input}
-                          type='text'
-                          id="title"
-                          disabled={submitting}
-                          placeholder={`${currentMonth} Budget`}
-                          error={Boolean(meta.touched && meta.error)}
-                          errorMessage={meta.touched && meta.error}
-                        /></div>
-                    )}
-                  </Field>
-                  <Field
-                    name="description"
-                    label="Description"
-                    type="textarea"
-                    component={"textarea"}
-                    placeholder="Enter description"
-                  >
-                    {({ meta, input }) => (
-                      <div>
-                        <FormInputLabel htmlFor="description">
-                          Description
-                        </FormInputLabel>
-                        <TextArea
-                          disabled={submitting}
-                          id="description"
-                          {...input}
-                          message={meta.touched && meta.error}
-                          error={Boolean(meta.error && meta.touched)}
-                        />
-                      </div>
-                    )}
-                  </Field>
-                  <Field
-                    name="amount"
-                    label="Amount"
-                    type="number"
-                    placeholder="Enter amount"
-                    validate={validateAmount}
-                  >
-                    {({ meta, input }) => (
-                      <div>
-                        <FormInputLabel htmlFor="amount">
-                          Amount
-                        </FormInputLabel>
-                        <TextInput
-                          disabled={submitting}
-                          id="amount"
-                          icon={() => <span className="pl-2">{formatCurrency(userInfo?.prefs?.currency, 0).split('0')[0]}</span>}
-                          placeholder="Enter Amount"
-                          {...input}
-                          onChange={(e) => {
-                            if (e.target.value !== '' && !regex.numberAndDot.test(e.target.value)) {
-                              return;
-                            }
-                            input.onChange(e)
-                          }}
-                          type='text'
-                          errorMessage={meta.touched && meta.error}
-                          error={Boolean(meta.error && meta.touched)}
-                        />
-                      </div>
-                    )}
-                  </Field>
+                    <Field
+                      name="title"
+                      label="Title"
+                      type="text"
+                      placeholder="Enter title"
+                    >
+                      {({ meta, input }) => (
+                        <div>
+                          <FormInputLabel htmlFor="title">Title</FormInputLabel>
+                          <TextInput
+                            {...input}
+                            type="text"
+                            id="title"
+                            disabled={submitting}
+                            placeholder={`${currentMonth} Budget`}
+                            error={Boolean(meta.touched && meta.error)}
+                            errorMessage={meta.touched && meta.error}
+                          />
+                        </div>
+                      )}
+                    </Field>
+                    <Field
+                      name="description"
+                      label="Description"
+                      type="textarea"
+                      component={"textarea"}
+                      placeholder="Enter description"
+                    >
+                      {({ meta, input }) => (
+                        <div>
+                          <FormInputLabel htmlFor="description">
+                            Description
+                          </FormInputLabel>
+                          <TextArea
+                            disabled={submitting}
+                            id="description"
+                            {...input}
+                            message={meta.touched && meta.error}
+                            error={Boolean(meta.error && meta.touched)}
+                          />
+                        </div>
+                      )}
+                    </Field>
+                    <Field
+                      name="amount"
+                      label="Amount"
+                      type="number"
+                      placeholder="Enter amount"
+                      validate={validateAmount}
+                    >
+                      {({ meta, input }) => (
+                        <div>
+                          <FormInputLabel htmlFor="amount">
+                            Amount
+                          </FormInputLabel>
+                          <TextInput
+                            disabled={submitting}
+                            id="amount"
+                            icon={() => (
+                              <span className="pl-2">
+                                {
+                                  formatCurrency(
+                                    userInfo?.prefs?.currency,
+                                    0
+                                  ).split("0")[0]
+                                }
+                              </span>
+                            )}
+                            placeholder="Enter Amount"
+                            {...input}
+                            onChange={(e) => {
+                              if (
+                                e.target.value !== "" &&
+                                !regex.numberAndDot.test(e.target.value)
+                              ) {
+                                return;
+                              }
+                              input.onChange(e);
+                            }}
+                            type="text"
+                            errorMessage={meta.touched && meta.error}
+                            error={Boolean(meta.error && meta.touched)}
+                          />
+                        </div>
+                      )}
+                    </Field>
 
-                  <Field name="categories">
-                    {() => (
-                      <>
-                        <SpendingLimitPerCategory />
-                      </>
-                    )}
-                  </Field>
+                    <Field name="categories">
+                      {() => (
+                        <>
+                          <SpendingLimitPerCategory />
+                        </>
+                      )}
+                    </Field>
 
-                  <Button
-                    size="lg"
-                    className="w-full mt-10"
-                    variant="primary"
-                    type="submit"
-                    disabled={submitting}
-                  >
-                    {isUpdateRoute ? 'Update' : ' Submit'}
-                  </Button>
-                </form>
-              </div>
-            );
-          }}
-        </Form> : null}
+                    <Button
+                      size="lg"
+                      className="w-full mt-10"
+                      variant="primary"
+                      type="submit"
+                      disabled={submitting}
+                    >
+                      {isUpdateRoute ? "Update" : " Submit"}
+                    </Button>
+                  </form>
+                </div>
+              );
+            }}
+          </Form>
+        ) : null}
       </LocalizationProvider>
-    </div >
+    </div>
   );
 };
 
