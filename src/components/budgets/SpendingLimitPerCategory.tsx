@@ -32,18 +32,19 @@ const SpendingLimitPerCategory = () => {
   const totalCategoriesSum = Object.entries(category)
     .map(([_, value]) => value)
     .reduce((accumulator, currentValue) => {
-      return accumulator + currentValue
+      return accumulator + currentValue;
     }, 0);
 
-  const submitting = formState.submitting
+  const submitting = formState.submitting;
 
   return (
     <div className="mb-10">
       <div className="flex items-center justify-between mb-4">
         <Text>Category</Text>
         <Button
-
-          disabled={!Boolean(amount) || totalCategoriesSum >= amount || submitting}
+          disabled={
+            !Boolean(amount) || totalCategoriesSum >= amount || submitting
+          }
           type="button"
           variant="primary"
           onClick={onAddCategory}
@@ -86,7 +87,7 @@ const SpendingLimitPerCategory = () => {
                   <TextInput
                     disabled={submitting}
                     placeholder="Enter Amount"
-                    value={value === 0 ? '' : value.toString()}
+                    value={value === 0 ? "" : value.toString()}
                     onChange={(e) => {
                       if (e.target.value === "") {
                         form.mutators.setFieldValue(`categories.${key}`, 0);
@@ -107,7 +108,8 @@ const SpendingLimitPerCategory = () => {
                       const res = { ...category };
                       delete res[key];
                       form.mutators.setFieldValue("categories", res);
-                    }} />
+                    }}
+                  />
                 </div>
 
                 {category[key] > amount && (
@@ -118,20 +120,33 @@ const SpendingLimitPerCategory = () => {
               </Fragment>
             );
           })}
-        {totalCategoriesSum > amount ? <p className="text-xs text-rose-500">The total sum of category amounts exceeds your spending limit.</p> : null}
+        {totalCategoriesSum > amount ? (
+          <p className="text-xs text-rose-500">
+            The total sum of category amounts exceeds your spending limit.
+          </p>
+        ) : null}
+        {meta.touched && Object.keys(category).length === 0 ? (
+          <p className="text-xs text-rose-500">
+            You need to have a budget in minimum one category
+          </p>
+        ) : null}
 
-        <Button disabled={amount === totalCategoriesSum} onClick={() => {
-          const remainingAmount = amount - totalCategoriesSum;
-          let sum = remainingAmount;
-          if (category['other']) {
-            sum = remainingAmount + category['other']
-          }
-          form.mutators.setFieldValue(
-            `categories.other`,
-            sum
-          );
-        }} type="button" variant="secondary">
-          {amount < totalCategoriesSum ? `Adjust remaing amount in 'other' category` : `Add remaing amount in 'other' category`}
+        <Button
+          disabled={amount === totalCategoriesSum}
+          onClick={() => {
+            const remainingAmount = amount - totalCategoriesSum;
+            let sum = remainingAmount;
+            if (category["other"]) {
+              sum = remainingAmount + category["other"];
+            }
+            form.mutators.setFieldValue(`categories.other`, sum);
+          }}
+          type="button"
+          variant="secondary"
+        >
+          {amount < totalCategoriesSum
+            ? `Adjust remaing amount in 'other' category`
+            : `Add remaing amount in 'other' category`}
         </Button>
         <Flex>
           <Text>Total</Text>
