@@ -9,7 +9,7 @@ import {
   Subtitle,
   Text,
   TextInput,
-  Title
+  Title,
 } from "@tremor/react";
 import { Models } from "appwrite";
 import ExpenseTable from "expensasaurus/components/ExpenseTable";
@@ -44,8 +44,8 @@ const index = () => {
   const categoryQuery = params.get("category");
   const validQuery = categoryQuery
     ? categoryNames
-      .find((c) => c === capitalize(categoryQuery as string))
-      ?.toLowerCase()
+        .find((c) => c === capitalize(categoryQuery as string))
+        ?.toLowerCase()
     : false;
 
   const [dates, setDates] = useState<DateRangePickerValue>({});
@@ -54,7 +54,7 @@ const index = () => {
   const [maxAmount, setMaxAmount] = useState("");
   const [category, setCategory] = useState(validQuery || "");
   const [tag, setTag] = useState("");
-  const [filter, setFilters] = useState<any[]>([])
+  const [filter, setFilters] = useState<any[]>([]);
 
   const [pagination, setPagination] = useState<PaginationState>({
     pageIndex: 0,
@@ -63,12 +63,7 @@ const index = () => {
   const fetchDataOptions = pagination;
 
   const { data, isLoading, isFetching } = getAllLists<Transaction>(
-    [
-      "Expenses", "Listing",
-      user?.userId,
-      ...filter,
-      fetchDataOptions,
-    ],
+    ["Expenses", "Listing", user?.userId, ...filter, fetchDataOptions],
     [
       ENVS.DB_ID,
       ENVS.COLLECTIONS.EXPENSES,
@@ -85,13 +80,17 @@ const index = () => {
         fetchDataOptions,
       }),
     ],
-    { enabled: !!user, keepPreviousData: true, staleTime: 2000, cacheTime: 2000 }
+    {
+      enabled: !!user,
+      keepPreviousData: true,
+      staleTime: 2000,
+      cacheTime: 2000,
+    }
   );
 
-  useEffect(() => { }, []);
+  useEffect(() => {}, []);
 
-
-  const [isOpen, setIsOpen] = useState(false)
+  const [isOpen, setIsOpen] = useState(false);
 
   const onClearFilters = useCallback(() => {
     setDates({});
@@ -100,112 +99,116 @@ const index = () => {
     setQuery("");
     setTag("");
     setCategory("");
-    setFilters([])
-    setIsOpen(false)
+    setFilters([]);
+    setIsOpen(false);
   }, []);
 
   const onFilter = useCallback(() => {
-    setFilters([
-      dates,
-      query,
-      maxAmount,
-      minAmount,
-      category,
-      tag
-    ])
-    setIsOpen(false)
-  }, [category, dates, maxAmount, minAmount, query, tag, setIsOpen])
+    setFilters([dates, query, maxAmount, minAmount, category, tag]);
+    setIsOpen(false);
+  }, [category, dates, maxAmount, minAmount, query, tag, setIsOpen]);
 
   const disableFilters = isLoading || isFetching;
 
   const filterElements = useMemo(() => {
-    return <> <div className="flex items-center justify-between">
-      <Button onClick={onFilter}>Filter</Button>
-      <Button variant="light" onClick={onClearFilters}>
-        <XCircleIcon className="w-5 h-5" />
-      </Button>
-    </div>
-      <Text className="my-2">Date</Text>
-      <DateRangePicker
-        className="max-w-md mx-auto"
-        value={dates}
-        disabled={disableFilters}
-        onValueChange={(value) => {
-          setDates(value);
-        }}
-      />
-      <div className="mt-4">
-        <Text className="my-2">Search</Text>
-        <TextInput
+    return (
+      <>
+        {" "}
+        <div className="flex items-center justify-between">
+          <Button onClick={onFilter}>Filter</Button>
+          <Button variant="light" onClick={onClearFilters}>
+            <XCircleIcon className="w-5 h-5" />
+          </Button>
+        </div>
+        <Text className="my-2">Date</Text>
+        <DateRangePicker
+          className="max-w-md mx-auto"
+          value={dates}
           disabled={disableFilters}
-          value={query}
-          onChange={(e) => {
-            setQuery(e.target.value)
+          onValueChange={(value) => {
+            setDates(value);
           }}
         />
-      </div>
-      <div className="mt-4">
-        <Text className="my-2">Min Amount</Text>
-        <TextInput
-          value={minAmount === '0' ? '' : minAmount}
-          disabled={disableFilters}
-          onChange={(e) => {
-            if (e.target.value === '') {
-              setMinAmount('0')
-            }
-            if (!regex.number.test(e.target.value)) {
-              return;
-            }
-            setMinAmount(e.target.value)
-
-          }}
-        />
-      </div>
-      <div className="mt-4">
-        <Text className="my-2">Max Amount</Text>
-        <TextInput
-          value={maxAmount === '0' ? '' : maxAmount}
-          disabled={disableFilters}
-          onChange={(e) => {
-            if (e.target.value === '') {
-              setMaxAmount('0')
-            }
-            if (!regex.number.test(e.target.value)) {
-              return;
-            }
-            setMaxAmount(e.target.value)
-          }}
-        />
-      </div>
-      <div className="mt-4">
-        <Text className="my-2">Category</Text>
-        <Select
-          value={category}
-          disabled={disableFilters}
-          onValueChange={(value) => setCategory(value)}
-        >
-          {categories.map((category) => {
-            const CIcon = () => <CategoryIcon category={category} />;
-            return (
-              <SelectItem
-                key={category.id}
-                value={category.key}
-                icon={CIcon}
-              >
-                {category.category}
-              </SelectItem>
-            );
-          })}
-        </Select>
-      </div>
-      <div className="mt-4">
-        <Text className="my-2">Tag</Text>
-        <TextInput
-          disabled={disableFilters}
-          value={tag}
-        />
-      </div></>
-  }, [category, dates, disableFilters, maxAmount, minAmount, onFilter, onClearFilters, query, tag])
+        <div className="mt-4">
+          <Text className="my-2">Search</Text>
+          <TextInput
+            disabled={disableFilters}
+            value={query}
+            onChange={(e) => {
+              setQuery(e.target.value);
+            }}
+          />
+        </div>
+        <div className="mt-4">
+          <Text className="my-2">Min Amount</Text>
+          <TextInput
+            value={minAmount === "0" ? "" : minAmount}
+            disabled={disableFilters}
+            onChange={(e) => {
+              if (e.target.value === "") {
+                setMinAmount("0");
+              }
+              if (!regex.number.test(e.target.value)) {
+                return;
+              }
+              setMinAmount(e.target.value);
+            }}
+          />
+        </div>
+        <div className="mt-4">
+          <Text className="my-2">Max Amount</Text>
+          <TextInput
+            value={maxAmount === "0" ? "" : maxAmount}
+            disabled={disableFilters}
+            onChange={(e) => {
+              if (e.target.value === "") {
+                setMaxAmount("0");
+              }
+              if (!regex.number.test(e.target.value)) {
+                return;
+              }
+              setMaxAmount(e.target.value);
+            }}
+          />
+        </div>
+        <div className="mt-4">
+          <Text className="my-2">Category</Text>
+          <Select
+            value={category}
+            disabled={disableFilters}
+            onValueChange={(value) => setCategory(value)}
+          >
+            {categories.map((category) => {
+              const CIcon = () => <CategoryIcon category={category} />;
+              return (
+                <SelectItem key={category.id} value={category.key} icon={CIcon}>
+                  {category.category}
+                </SelectItem>
+              );
+            })}
+          </Select>
+        </div>
+        <div className="mt-4">
+          <Text className="my-2">Tag</Text>
+          <TextInput
+            disabled={disableFilters}
+            value={tag}
+            onChange={(e) => setTag(e.target.value)}
+          />
+        </div>
+      </>
+    );
+  }, [
+    category,
+    dates,
+    disableFilters,
+    maxAmount,
+    minAmount,
+    onFilter,
+    onClearFilters,
+    query,
+    tag,
+  ]);
 
   return (
     <Layout>
@@ -215,7 +218,10 @@ const index = () => {
 
       <div className="flex flex-col flex-1 w-full max-w-[1200px] mx-auto px-4">
         <div className="flex items-center justify-between">
-          <button className="visible opacity-100 lg:invisible lg:opacity-0 cursor-pointer w-8 h-8 bg-blue-500 rounded-full flex items-center justify-center" onClick={() => setIsOpen(true)}>
+          <button
+            className="visible opacity-100 lg:invisible lg:opacity-0 cursor-pointer w-8 h-8 bg-blue-500 rounded-full flex items-center justify-center"
+            onClick={() => setIsOpen(true)}
+          >
             <FilterIcon className="w-4 h-4 text-white" />
           </button>
           <Title className="text-center py-10">Expenses</Title>
@@ -224,35 +230,47 @@ const index = () => {
           </Link>
         </div>
         <div className="flex gap-8 flex-1">
-          <LeftSidebar showMenu={isOpen} onCloseMenu={() => { setIsOpen(false) }}>
+          <LeftSidebar
+            showMenu={isOpen}
+            onCloseMenu={() => {
+              setIsOpen(false);
+            }}
+          >
             {filterElements}
           </LeftSidebar>
           <div className="w-[70%] flex flex-1 flex-col">
-            {isLoading ? <>
-              <div className="w-full">
-                <Lottie options={defaultOptions(animationData)}
-                  height={'auto'}
-                  width={'auto'}
-                />
-              </div>
-            </> : data
-              ? data.documents?.length === 0
-                ?
+            {isLoading ? (
+              <>
                 <div className="w-full">
-                  <Lottie options={defaultOptions(emptyDocsAnimation)}
+                  <Lottie
+                    options={defaultOptions(animationData)}
+                    height={"auto"}
+                    width={"auto"}
+                  />
+                </div>
+              </>
+            ) : data ? (
+              data.documents?.length === 0 ? (
+                <div className="w-full">
+                  <Lottie
+                    options={defaultOptions(emptyDocsAnimation)}
                     height={500}
-                    width={'auto'}
+                    width={"auto"}
                   />
-                  <Subtitle className='text-slate-700 text-center ml-[-30px]'>No Expenses Listed</Subtitle>
-                </div> : (
-                  <ExpenseTable
-                    type="expense"
-                    setPagination={setPagination}
-                    pageCount={Math.ceil(data?.total / pagination.pageSize)}
-                    fetchDataOptions={fetchDataOptions}
-                    data={data?.documents || []}
-                  />
-                ) : null}
+                  <Subtitle className="text-slate-700 text-center ml-[-30px]">
+                    No Expenses Listed
+                  </Subtitle>
+                </div>
+              ) : (
+                <ExpenseTable
+                  type="expense"
+                  setPagination={setPagination}
+                  pageCount={Math.ceil(data?.total / pagination.pageSize)}
+                  fetchDataOptions={fetchDataOptions}
+                  data={data?.documents || []}
+                />
+              )
+            ) : null}
           </div>
         </div>
       </div>

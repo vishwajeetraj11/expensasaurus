@@ -51,6 +51,9 @@ const CurrencyForm = (props: { changeUI?: boolean; onClose?: () => void }) => {
     <>
       <Form
         onSubmit={onSubmit}
+        initialValues={{
+          currency: "INR",
+        }}
         render={({ handleSubmit, submitting }) => (
           <form className={clsx("min-h-[100px]")} onSubmit={handleSubmit}>
             <div
@@ -79,7 +82,7 @@ const CurrencyForm = (props: { changeUI?: boolean; onClose?: () => void }) => {
                       <>
                         <SearchSelect
                           placeholder="Select Currency"
-                          value={input.value || "INR"}
+                          value={input.value}
                           onChange={input.onChange}
                           id="select-currency"
                         >
