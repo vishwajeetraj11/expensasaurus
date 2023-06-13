@@ -9,13 +9,17 @@ import {
   ID,
   Permission,
   database,
-  storage
+  storage,
 } from "expensasaurus/shared/services/appwrite";
 import { getDoc } from "expensasaurus/shared/services/query";
 import { useAuthStore } from "expensasaurus/shared/stores/useAuthStore";
 import { Transaction } from "expensasaurus/shared/types/transaction";
 import { formatCurrency } from "expensasaurus/shared/utils/currency";
-import { defaultMutators, validateAmount, validateExpenseForm } from "expensasaurus/shared/utils/form";
+import {
+  defaultMutators,
+  validateAmount,
+  validateExpenseForm,
+} from "expensasaurus/shared/utils/form";
 import dynamic from "next/dynamic";
 import { useRouter } from "next/router";
 import { useState } from "react";
@@ -30,30 +34,35 @@ import TextArea from "../ui/TextArea";
 import CategoryIcon from "./CategorySelect";
 
 const ExpenseForm = () => {
-  const { user, userInfo } = useAuthStore((state) => ({ user: state.user, userInfo: state.userInfo }), shallow) as {
+  const { user, userInfo } = useAuthStore(
+    (state) => ({ user: state.user, userInfo: state.userInfo }),
+    shallow
+  ) as {
     user: Models.Session;
-    userInfo: Models.User<Models.Preferences>
+    userInfo: Models.User<Models.Preferences>;
   };
 
   const router = useRouter();
   const { id } = router.query;
-  const { startOfEarlierMonth, startOfThisMonth } = useDates()
+  const { startOfEarlierMonth, startOfThisMonth } = useDates();
   const { data, refetch } = getDoc<Transaction>(
     ["Expenses by ID", id, user?.userId],
     [ENVS.DB_ID, ENVS.COLLECTIONS.EXPENSES, id as string],
     { enabled: false }
   );
-  const [loading, setLoading] = useState(false)
+  const [loading, setLoading] = useState(false);
 
   const attachments = data?.attachments || [];
 
-  const filePreviews = useQueries(attachments.map(id => ({
-    queryKey: ['get-file-preview', id, user.userId],
-    queryFn: async () => {
-      return storage.getFilePreview(ENVS.BUCKET_ID, id);
-    },
-    enabled: !!user && !!data
-  })));
+  const filePreviews = useQueries(
+    attachments.map((id) => ({
+      queryKey: ["get-file-preview", id, user.userId],
+      queryFn: async () => {
+        return storage.getFilePreview(ENVS.BUCKET_ID, id);
+      },
+      enabled: !!user && !!data,
+    }))
+  );
   const queryClient = useQueryClient();
 
   const isUpdateRoute = router.route === "/expenses/[id]/edit";
@@ -73,7 +82,7 @@ const ExpenseForm = () => {
     if (attachements.length > 0) {
       for (let i = 0; i < attachements.length; i++) {
         const file = attachements[i];
-        if (typeof file === 'string') {
+        if (typeof file === "string") {
           attachmentsIds.push(file);
           continue;
         }
@@ -85,10 +94,10 @@ const ExpenseForm = () => {
       const permissionsArray = isUpdateRoute
         ? undefined
         : [
-          Permission.read(Role.user(user.userId)),
-          Permission.update(Role.user(user.userId)),
-          Permission.delete(Role.user(user.userId)),
-        ];
+            Permission.read(Role.user(user.userId)),
+            Permission.update(Role.user(user.userId)),
+            Permission.delete(Role.user(user.userId)),
+          ];
 
       const dbIds: [string, string, string] = [
         ENVS.DB_ID,
@@ -116,26 +125,29 @@ const ExpenseForm = () => {
 
       // dashboard page
       if (new Date(startOfThisMonth) < new Date(values.date)) {
-        queryClient.invalidateQueries(["Expenses", "Stats this month", user?.userId]);
+        // queryClient.invalidateQueries(["Expenses", "Stats this month", user?.userId]);
       }
-      if (new Date(startOfEarlierMonth) < new Date(values.date) && new Date(values.date) < new Date(startOfThisMonth)) {
-        queryClient.invalidateQueries(["Expenses", "Stats earlier month", user?.userId]);
+      if (
+        new Date(startOfEarlierMonth) < new Date(values.date) &&
+        new Date(values.date) < new Date(startOfThisMonth)
+      ) {
+        // queryClient.invalidateQueries(["Expenses", "Stats earlier month", user?.userId]);
       }
       // category page
-      queryClient.invalidateQueries(["Expenses", user?.userId, values.date]);
-      // listing 
-      queryClient.invalidateQueries(["Expenses", "Listing"]);
+      // queryClient.invalidateQueries(["Expenses", user?.userId, values.date]);
+      // listing
+      // queryClient.invalidateQueries(["Expenses", "Listing"]);
+      queryClient.invalidateQueries(["Expenses"]);
       router.push(`/expenses/${upsertedExpense.$id}`);
       toast.success(toastMessage);
       if (isUpdateRoute && upsertedExpense) {
         // indvidual expense page
         queryClient.invalidateQueries(["Expenses by ID", id, user?.userId]);
-        refetch()
-      };
+        refetch();
+      }
     } catch (error) {
       toast.error(toastFailureMessage);
-    }
-    finally {
+    } finally {
       // setLoading(false) do not use -> forces reredner causing form intial values to be reset
     }
   };
@@ -151,22 +163,20 @@ const ExpenseForm = () => {
             initialValues={
               isUpdateRoute
                 ? { ...data, date: new Date(data?.date as string) }
-                :
-                {
-                  title: "",
-                  description: "",
-                  amount: 0,
-                  category: "",
-                  tag: "",
-                  date: new Date(),
-                  attachments: [],
-                  currency: userInfo?.prefs?.currency || 'INR',
-                }
+                : {
+                    title: "",
+                    description: "",
+                    amount: 0,
+                    category: "",
+                    tag: "",
+                    date: new Date(),
+                    attachments: [],
+                    currency: userInfo?.prefs?.currency || "INR",
+                  }
             }
           >
             {({ errors, handleSubmit, submitting, form, values }) => {
               return (
-
                 <form className="flex flex-col gap-4" onSubmit={handleSubmit}>
                   <Field
                     name="title"
@@ -179,13 +189,14 @@ const ExpenseForm = () => {
                         <FormInputLabel htmlFor="title">Title</FormInputLabel>
                         <TextInput
                           {...input}
-                          type='text'
+                          type="text"
                           id="title"
                           disabled={submitting}
                           placeholder={`Enter Title`}
                           error={Boolean(meta.touched && meta.error)}
                           errorMessage={meta.touched && meta.error}
-                        /></div>
+                        />
+                      </div>
                     )}
                   </Field>
 
@@ -220,22 +231,32 @@ const ExpenseForm = () => {
                   >
                     {({ meta, input }) => (
                       <div>
-                        <FormInputLabel htmlFor="amount">
-                          Amount
-                        </FormInputLabel>
+                        <FormInputLabel htmlFor="amount">Amount</FormInputLabel>
                         <TextInput
-                          icon={() => <span className="pl-2">{formatCurrency(userInfo?.prefs?.currency, 0).split('0')[0]}</span>}
+                          icon={() => (
+                            <span className="pl-2">
+                              {
+                                formatCurrency(
+                                  userInfo?.prefs?.currency,
+                                  0
+                                ).split("0")[0]
+                              }
+                            </span>
+                          )}
                           disabled={submitting}
                           id="amount"
                           placeholder="Enter Amount"
                           {...input}
                           onChange={(e) => {
-                            if (e.target.value !== '' && !regex.numberAndDot.test(e.target.value)) {
+                            if (
+                              e.target.value !== "" &&
+                              !regex.numberAndDot.test(e.target.value)
+                            ) {
                               return;
                             }
-                            input.onChange(e)
+                            input.onChange(e);
                           }}
-                          type='text'
+                          type="text"
                           errorMessage={meta.touched && meta.error}
                           error={Boolean(meta.error && meta.touched)}
                         />
@@ -271,7 +292,9 @@ const ExpenseForm = () => {
                             );
                           })}
                         </Select>
-                        {meta.touched && meta.error && <ErrorMessage>{meta.error}</ErrorMessage>}
+                        {meta.touched && meta.error && (
+                          <ErrorMessage>{meta.error}</ErrorMessage>
+                        )}
                       </div>
                     )}
                   </Field>
@@ -283,9 +306,7 @@ const ExpenseForm = () => {
                   >
                     {({ meta, input }) => (
                       <div>
-                        <FormInputLabel htmlFor="tag">
-                          Tag
-                        </FormInputLabel>
+                        <FormInputLabel htmlFor="tag">Tag</FormInputLabel>
                         <TextInput
                           placeholder="Make your category."
                           id="tag"
@@ -306,15 +327,11 @@ const ExpenseForm = () => {
                   >
                     {({ meta, input }) => (
                       <div className="">
-                        <FormInputLabel htmlFor="category">
-                          Date
-                        </FormInputLabel>
+                        <FormInputLabel htmlFor="category">Date</FormInputLabel>
                         <DesktopDatePicker
                           disabled={submitting}
                           className="w-full dark:bg-gray-700 rounded-md"
-                          onChange={(value) =>
-                            input.onChange(value)
-                          }
+                          onChange={(value) => input.onChange(value)}
                           defaultValue={input.value}
                         />
                       </div>
@@ -334,10 +351,9 @@ const ExpenseForm = () => {
                     type="submit"
                     disabled={submitting}
                   >
-                    {isUpdateRoute ? 'Update' : ' Submit'}
+                    {isUpdateRoute ? "Update" : " Submit"}
                   </Button>
                 </form>
-
               );
             }}
           </Form>

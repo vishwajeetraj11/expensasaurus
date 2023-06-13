@@ -32,8 +32,6 @@ export const QueryFactoryList = <T extends unknown>(
     {
       refetchOnWindowFocus: false,
       retry: false,
-      staleTime: Infinity,
-      cacheTime: Infinity,
       ...options,
     }
   );
@@ -61,7 +59,8 @@ export const QueryFactoryOneDoc = <T extends unknown>(
 
 export const QueryFactoryOneFileDownload = <T extends unknown>(
   queryKey: QueryKey,
-  fileId: string, bucketId: string,
+  fileId: string,
+  bucketId: string,
   options?: UseQueryOptions<any, any, any>
 ) => {
   return useQuery<any, any, any>(
@@ -113,7 +112,8 @@ export const deleteDoc = (
 
 export const downloadFile = (
   queryKey: QueryKey,
-  fileId: string, bucketId: string,
+  fileId: string,
+  bucketId: string,
   options: UseQueryOptions<any, any, any>
 ) => QueryFactoryOneFileDownload(queryKey, fileId, bucketId, options);
 

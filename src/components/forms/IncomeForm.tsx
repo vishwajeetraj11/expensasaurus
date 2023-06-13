@@ -8,13 +8,17 @@ import { ENVS, regex } from "expensasaurus/shared/constants/constants";
 import {
   ID,
   Permission,
-  database
+  database,
 } from "expensasaurus/shared/services/appwrite";
 import { getDoc } from "expensasaurus/shared/services/query";
 import { useAuthStore } from "expensasaurus/shared/stores/useAuthStore";
 import { Transaction } from "expensasaurus/shared/types/transaction";
 import { formatCurrency } from "expensasaurus/shared/utils/currency";
-import { defaultMutators, validateAmount, validateExpenseForm } from "expensasaurus/shared/utils/form";
+import {
+  defaultMutators,
+  validateAmount,
+  validateExpenseForm,
+} from "expensasaurus/shared/utils/form";
 import dynamic from "next/dynamic";
 import { useRouter } from "next/router";
 import { Field, Form } from "react-final-form";
@@ -27,12 +31,15 @@ import TextArea from "../ui/TextArea";
 import CategoryIcon from "./CategorySelect";
 
 const IncomeForm = () => {
-  const { user, userInfo } = useAuthStore((state) => ({ user: state.user, userInfo: state.userInfo }), shallow) as {
+  const { user, userInfo } = useAuthStore(
+    (state) => ({ user: state.user, userInfo: state.userInfo }),
+    shallow
+  ) as {
     user: Models.Session;
-    userInfo: Models.User<Models.Preferences>
+    userInfo: Models.User<Models.Preferences>;
   };
-  const { startOfEarlierMonth, startOfThisMonth } = useDates()
-  const router = useRouter()
+  const { startOfEarlierMonth, startOfThisMonth } = useDates();
+  const router = useRouter();
   const { id } = router.query;
   const queryClient = useQueryClient();
 
@@ -54,10 +61,10 @@ const IncomeForm = () => {
     const permissionsArray = isUpdateRoute
       ? undefined
       : [
-        Permission.read(Role.user(user.userId)),
-        Permission.update(Role.user(user.userId)),
-        Permission.delete(Role.user(user.userId)),
-      ];
+          Permission.read(Role.user(user.userId)),
+          Permission.update(Role.user(user.userId)),
+          Permission.delete(Role.user(user.userId)),
+        ];
     const formValues = {
       title: values.title,
       description: values.description,
@@ -78,19 +85,18 @@ const IncomeForm = () => {
         ? await database.updateDocument(...dbIds, formValues, permissionsArray)
         : await database.createDocument(...dbIds, formValues, permissionsArray);
 
-
-
       // dashboard query clear.
-      if (new Date(startOfThisMonth) < new Date(values.date)) {
-        queryClient.invalidateQueries(["Incomes", "Stats this month", user?.userId]);
-      }
-      if (new Date(startOfEarlierMonth) < new Date(values.date) && new Date(values.date) < new Date(startOfThisMonth)) {
-        queryClient.invalidateQueries(["Incomes", "Stats earlier month", user?.userId]);
-      }
+      // if (new Date(startOfThisMonth) < new Date(values.date)) {
+      //   queryClient.invalidateQueries(["Incomes", "Stats this month", user?.userId]);
+      // }
+      // if (new Date(startOfEarlierMonth) < new Date(values.date) && new Date(values.date) < new Date(startOfThisMonth)) {
+      //   queryClient.invalidateQueries(["Incomes", "Stats earlier month", user?.userId]);
+      // }
       // listing
-      queryClient.invalidateQueries(["Expenses", "Listing"]);
+      // queryClient.invalidateQueries(["Expenses", "Listing"]);
+      queryClient.invalidateQueries(["Expenses"]);
       toast.success(toastMessage);
-      router.push(`/incomes/${upsertedIncome.$id}`)
+      router.push(`/incomes/${upsertedIncome.$id}`);
       if (isUpdateRoute) {
         queryClient.invalidateQueries(["Income by ID", id, user?.userId]);
       }
@@ -100,12 +106,10 @@ const IncomeForm = () => {
     }
   };
 
-
   return (
     <div>
-
       <LocalizationProvider dateAdapter={AdapterDateFns}>
-        {(isUpdateRoute && data) || !isUpdateRoute ?
+        {(isUpdateRoute && data) || !isUpdateRoute ? (
           <Form
             validate={validateExpenseForm}
             onSubmit={handleSubmit}
@@ -113,22 +117,20 @@ const IncomeForm = () => {
             initialValues={
               isUpdateRoute
                 ? { ...data, date: new Date(data?.date as string) }
-                :
-                {
-                  title: "",
-                  description: "",
-                  amount: 0,
-                  category: "",
-                  tag: "",
-                  date: new Date(),
-                  attachments: [],
-                  currency: "INR",
-                }
+                : {
+                    title: "",
+                    description: "",
+                    amount: 0,
+                    category: "",
+                    tag: "",
+                    date: new Date(),
+                    attachments: [],
+                    currency: "INR",
+                  }
             }
           >
             {({ errors, handleSubmit, submitting, form }) => {
               return (
-
                 <form className="flex flex-col gap-4" onSubmit={handleSubmit}>
                   <Field
                     name="title"
@@ -141,13 +143,14 @@ const IncomeForm = () => {
                         <FormInputLabel htmlFor="title">Title</FormInputLabel>
                         <TextInput
                           {...input}
-                          type='text'
+                          type="text"
                           id="title"
                           disabled={submitting}
                           placeholder={`Enter Title`}
                           error={Boolean(meta.touched && meta.error)}
                           errorMessage={meta.touched && meta.error}
-                        /></div>
+                        />
+                      </div>
                     )}
                   </Field>
 
@@ -182,22 +185,32 @@ const IncomeForm = () => {
                   >
                     {({ meta, input }) => (
                       <div>
-                        <FormInputLabel htmlFor="amount">
-                          Amount
-                        </FormInputLabel>
+                        <FormInputLabel htmlFor="amount">Amount</FormInputLabel>
                         <TextInput
                           disabled={submitting}
                           id="amount"
-                          icon={() => <span className="pl-2">{formatCurrency(userInfo?.prefs?.currency, 0).split('0')[0]}</span>}
+                          icon={() => (
+                            <span className="pl-2">
+                              {
+                                formatCurrency(
+                                  userInfo?.prefs?.currency,
+                                  0
+                                ).split("0")[0]
+                              }
+                            </span>
+                          )}
                           placeholder="Enter Amount"
                           {...input}
                           onChange={(e) => {
-                            if (e.target.value !== '' && !regex.numberAndDot.test(e.target.value)) {
+                            if (
+                              e.target.value !== "" &&
+                              !regex.numberAndDot.test(e.target.value)
+                            ) {
                               return;
                             }
-                            input.onChange(e)
+                            input.onChange(e);
                           }}
-                          type='text'
+                          type="text"
                           errorMessage={meta.touched && meta.error}
                           error={Boolean(meta.error && meta.touched)}
                         />
@@ -221,7 +234,8 @@ const IncomeForm = () => {
                         >
                           {incomeCategories.map((category) => {
                             const CIcon = () => (
-                              <CategoryIcon category={category} />)
+                              <CategoryIcon category={category} />
+                            );
                             return (
                               <SelectItem
                                 key={category.id}
@@ -233,7 +247,9 @@ const IncomeForm = () => {
                             );
                           })}
                         </Select>
-                        {meta.touched && meta.error && <ErrorMessage>{meta.error}</ErrorMessage>}
+                        {meta.touched && meta.error && (
+                          <ErrorMessage>{meta.error}</ErrorMessage>
+                        )}
                       </div>
                     )}
                   </Field>
@@ -245,9 +261,7 @@ const IncomeForm = () => {
                   >
                     {({ meta, input }) => (
                       <div>
-                        <FormInputLabel htmlFor="tag">
-                          Tag
-                        </FormInputLabel>
+                        <FormInputLabel htmlFor="tag">Tag</FormInputLabel>
                         <TextInput
                           disabled={submitting}
                           placeholder="Make your category."
@@ -269,9 +283,7 @@ const IncomeForm = () => {
                   >
                     {({ meta, input }) => (
                       <div>
-                        <FormInputLabel htmlFor="date">
-                          Date
-                        </FormInputLabel>
+                        <FormInputLabel htmlFor="date">Date</FormInputLabel>
                         <DesktopDatePicker
                           disabled={submitting}
                           className="w-full dark:bg-gray-700 rounded-md"
@@ -291,13 +303,13 @@ const IncomeForm = () => {
                     type="submit"
                     disabled={submitting}
                   >
-                    {isUpdateRoute ? 'Update' : ' Submit'}
+                    {isUpdateRoute ? "Update" : " Submit"}
                   </Button>
                 </form>
-
               );
             }}
-          </Form> : null}
+          </Form>
+        ) : null}
       </LocalizationProvider>
     </div>
   );
