@@ -109,7 +109,7 @@ const useDashboard = () => {
             metricPrev: formatCurrency(userInfo?.prefs?.currency, expenseStatsEarlierMonth.sum),
             delta: expenseChange.percentage ? expenseChange.percentage.toFixed(2) + '%' : "0%",
             deltaType: expenseChange.transactionChange,
-            change: savingsChange.change,
+            change: expenseChange.change,
         },
         {
             title: "Income",
