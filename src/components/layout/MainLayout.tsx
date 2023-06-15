@@ -38,6 +38,9 @@ const MainLayout = (props: Props) => {
         }
       } catch (e) {}
     })();
+    return () => {
+      router.push(router.route);
+    };
   }, [user]);
 
   return <>{children}</>;
