@@ -121,7 +121,7 @@ const Navigation = (props: Props) => {
                 <>
                   <li className="">
                     <Link
-                      onClick={() => setHamburgerMenuIsOpen((open) => !open)}
+                      onClick={() => setHamburgerMenuIsOpen((open) => false)}
                       href="#how-it-works"
                     >
                       How It Works
@@ -130,7 +130,7 @@ const Navigation = (props: Props) => {
 
                   <li className="">
                     <Link
-                      onClick={() => setHamburgerMenuIsOpen((open) => !open)}
+                      onClick={() => setHamburgerMenuIsOpen((open) => false)}
                       href="#budget"
                     >
                       Budget Management
