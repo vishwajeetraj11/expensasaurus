@@ -69,11 +69,10 @@ export type Budget = {
 
 # Screenshot 
 
-<img width="1222" alt="Screenshot 2023-06-12 at 12 10 08 AM" src="https://github.com/vishwajeetraj11/expensasaurus/assets/47270995/61542999-be65-4dd5-9288-f5448490d03d">
 <img width="1260" alt="Screenshot 2023-06-11 at 6 15 15 PM" src="https://github.com/vishwajeetraj11/expensasaurus/assets/47270995/bff691b1-96ea-43da-8709-0afdb57ea96c">
 <img width="1260" alt="Screenshot 2023-06-11 at 6 15 01 PM" src="https://github.com/vishwajeetraj11/expensasaurus/assets/47270995/913b4395-619a-407b-86c8-4756c0423aa7">
 <img width="1260" alt="Screenshot 2023-06-11 at 6 14 53 PM" src="https://github.com/vishwajeetraj11/expensasaurus/assets/47270995/3f5484ac-e4af-44bf-bb2b-e9d1335d5dd3">
 <img width="1260" alt="Screenshot 2023-06-11 at 5 30 18 PM" src="https://github.com/vishwajeetraj11/expensasaurus/assets/47270995/9489020e-2e22-4e93-9b5f-98af05b1a774">
-<img width="1260" alt="Screenshot 2023-06-11 at 5 30 10 PM" src="https://github.com/vishwajeetraj11/expensasaurus/assets/47270995/f52034eb-ec21-43dc-a512-a935d8a62fc0">
+
 
 
