@@ -23,12 +23,9 @@ const MainLayout = (props: Props) => {
         if (!user) {
           const userAfterFetch = await getUser();
           if (!userAfterFetch) {
-            pushToRoute =
-              router.route === "/signup" ||
-              router.route === "/login" ||
-              router.route === "/"
-                ? router.route
-                : "/login";
+            pushToRoute = ["/", "/signup", "/login"].includes(router.route)
+              ? router.route
+              : "/login";
           }
         } else {
           pushToRoute = "/dashboard";

@@ -1,7 +1,7 @@
 import clsx from "clsx";
 import { useAuthStore } from "expensasaurus/shared/stores/useAuthStore";
 import { useRouter } from "next/router";
-import React, { useEffect } from "react";
+import React from "react";
 import { shallow } from "zustand/shallow";
 import CurrencyModal from "../CurrencyModal";
 import Navigation from "../Navigation";
@@ -21,12 +21,12 @@ const Layout = (props: Props) => {
 
   const router = useRouter();
 
-  useEffect(() => {
-    (async function () {
-      const user = await getUser();
-      if (!user) router.push("/login");
-    })();
-  }, [user]);
+  // useEffect(() => {
+  //   (async function () {
+  //     const user = await getUser();
+  //     if (!user) router.push("/login");
+  //   })();
+  // }, [user]);
 
   return user ? (
     <div

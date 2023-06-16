@@ -1,3 +1,4 @@
+import MainLayout from "expensasaurus/components/layout/MainLayout";
 import "expensasaurus/styles/globals.css";
 import type { AppProps } from "next/app";
 import { useState } from "react";
@@ -11,8 +12,10 @@ export default function App({ Component, pageProps }: AppProps) {
     <>
       <QueryClientProvider client={queryClient}>
         <Hydrate state={pageProps.dehydratedState}>
-          <Toaster duration={3000} richColors closeButton />
-          <Component {...pageProps} />
+          <MainLayout>
+            <Toaster duration={3000} richColors closeButton />
+            <Component {...pageProps} />
+          </MainLayout>
           <ReactQueryDevtools initialIsOpen={false} />
         </Hydrate>
       </QueryClientProvider>
