@@ -159,12 +159,10 @@ const Navigation = (props: Props) => {
                   sideOffset={5}
                 >
                   <div className="flex flex-col gap-2.5">
-                    <button
-                      type="button"
-                      onClick={() => logout(router)}
-                      className="text-base"
-                    >
-                      Dashboard
+                    <button type="button" className="text-base">
+                      <Link href={"/dashboard"} className="text-base">
+                        Dashboard
+                      </Link>
                     </button>
                     <button type="button">
                       <Link href={"/profile"} className="text-base">
