@@ -151,8 +151,8 @@ const BudgetForm = () => {
                 ? {
                     ...data,
                     dates: {
-                      to: new Date(data?.startingDate || new Date()),
-                      from: new Date(data?.endDate || new Date()),
+                      to: new Date(data?.endDate || new Date()),
+                      from: new Date(data?.startingDate || new Date()),
                     },
                     categories: Object.entries({
                       business: data?.business,
