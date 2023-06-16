@@ -3,6 +3,24 @@ import { useRouter } from "next/router";
 import React, { useEffect } from "react";
 import { shallow } from "zustand/shallow";
 
+const authenticatedRoutes = [
+  "/calendar",
+  "/category",
+  "/expenses",
+  "/incomes",
+  "/budgets",
+  "/incomes/[id]",
+  "/expenses/[id]",
+  "/budgets/[id]",
+  "/incomes/create",
+  "/expenses/create",
+  "/budgets/create",
+  "/incomes/[id]/edit",
+  "/expenses/[id]/edit",
+  "/budgets/[id]/edit",
+  "/dashboard",
+  "/profile",
+];
 interface Props {
   children: React.ReactNode;
 }
@@ -28,10 +46,18 @@ const MainLayout = (props: Props) => {
               : "/login";
           }
         } else {
-          pushToRoute = "/dashboard";
+          if (authenticatedRoutes.includes(router.route)) {
+            pushToRoute = router.route;
+          } else {
+            console.log("here");
+            pushToRoute = "/dashboard";
+          }
         }
         if (pushToRoute) {
-          router.push(pushToRoute);
+          router.push({
+            pathname: pushToRoute,
+            query: router.query,
+          });
         }
       } catch (e) {}
     })();
