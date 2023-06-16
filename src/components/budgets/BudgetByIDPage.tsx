@@ -192,7 +192,7 @@ const BudgetByIDPage = () => {
                 Budget (Spending Limit)
               </Metric>
               <div className="mt-8 flex justify-end flex-col items-end">
-                <p className="text-sm mb-2">
+                <p className="text-sm mb-2 dark:text-slate-100">
                   {format(new Date(data?.startingDate), "dd MMMM yyyy")} -{" "}
                   {format(new Date(data?.endDate), "dd MMMM yyyy")}
                 </p>
