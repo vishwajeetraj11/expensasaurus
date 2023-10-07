@@ -49,7 +49,6 @@ const MainLayout = (props: Props) => {
           if (authenticatedRoutes.includes(router.route)) {
             pushToRoute = router.route;
           } else {
-            console.log("here");
             pushToRoute = "/dashboard";
           }
         }

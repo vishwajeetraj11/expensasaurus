@@ -12,7 +12,6 @@ import { ID, account } from "../../../shared/services/appwrite";
 import { useAuthStore } from "../../../shared/stores/useAuthStore";
 import InputField from "../../ui/InputField";
 
-
 function LoginForm() {
   const { authFormState } = useAuthStore(
     (state) => ({
@@ -21,21 +20,18 @@ function LoginForm() {
     shallow
   );
 
-  const { currencies, getCurrencies } = useLocaleStore(
-    (state) => ({
-      currencies: state.currencies,
-      getCurrencies: state.getCurrencies
-    })
-  )
+  const { currencies, getCurrencies } = useLocaleStore((state) => ({
+    currencies: state.currencies,
+    getCurrencies: state.getCurrencies,
+  }));
   const isLogin = authFormState === "SIGN_IN";
   const isSignup = authFormState === "SIGN_UP";
 
   useEffect(() => {
     if (isSignup) {
-      getCurrencies()
-    };
-  }, [isSignup])
-
+      getCurrencies();
+    }
+  }, [isSignup]);
 
   const router = useRouter();
 
@@ -58,7 +54,9 @@ function LoginForm() {
         localStorage.setItem("sessionId", session.$id);
 
         // add currency
-        const updateUser = await account.updatePrefs({ currency: values.currency })
+        const updateUser = await account.updatePrefs({
+          currency: values.currency,
+        });
         toast.success(`Welcome to Expensasaurus`);
         router.push("/budgets");
       } else if (isLogin) {
@@ -71,21 +69,20 @@ function LoginForm() {
         // session ID will be available in the response object
         localStorage.setItem("sessionId", rest.$id);
 
-
         toast.success(`Welcome to Expensasaurus`);
         router.push("/dashboard");
       }
     } catch (error: unknown) {
-      let appwriteError = error as AppwriteException
+      let appwriteError = error as AppwriteException;
       if (appwriteError.code === 401) {
-        toast.error('Invalid credentials')
+        toast.error("Invalid credentials");
       } else if (appwriteError.code === 409) {
-        toast.error('Email already exists')
+        toast.error("Email already exists");
       } else {
-        toast.error('Something went wrong')
+        toast.error("Something went wrong");
       }
-    };
-  }
+    }
+  };
 
   const validate = (values: any) => {
     const errors: any = {};
@@ -106,7 +103,6 @@ function LoginForm() {
     }
     return errors;
   };
-
 
   return (
     <Form
@@ -147,36 +143,47 @@ function LoginForm() {
             )}
           </Field>
 
-          {isSignup && currencies && <div className="mb-3">
-            <label
-              htmlFor={'select-currency'}
-              className={`text-sm text-navy-700 dark:text-white "ml-1.5 font-medium mb-3 block`}
-            >
-              {'Select Currency*'}
-            </label>
-            <Field validate={(value) => {
-              if (!value) {
-                return 'Currency is required'
-              }
-            }} name="currency">
-              {({ meta, input }) => (
-                <>
-                  <SearchSelect
-                    placeholder="Select Currency"
-                    value={input.value}
-                    onChange={input.onChange} id='select-currency'>
-                    {currencies?.currencies.map((currency, index) => (
-                      <SearchSelectItem value={currency.code} key={index}>{currency.name} ({currency.code})</SearchSelectItem>
-                    ))}
-                  </SearchSelect>
-                  {meta.touched && meta.error && <ErrorMessage>{meta.error}</ErrorMessage>}
-                </>
-              )}
-            </Field>
+          {isSignup && currencies && (
+            <div className="mb-3">
+              <label
+                htmlFor={"select-currency"}
+                className={`text-sm text-navy-700 dark:text-white "ml-1.5 font-medium mb-3 block`}
+              >
+                {"Select Currency*"}
+              </label>
+              <Field
+                validate={(value) => {
+                  if (!value) {
+                    return "Currency is required";
+                  }
+                }}
+                name="currency"
+                type="text"
+              >
+                {({ meta, input }) => (
+                  <>
+                    <SearchSelect
+                      placeholder="Select Currency"
+                      value={input.value}
+                      onChange={input.onChange}
+                      id="select-currency"
+                    >
+                      {currencies?.currencies.map((currency, index) => (
+                        <SearchSelectItem value={currency.code} key={index}>
+                          {currency.name} ({currency.code})
+                        </SearchSelectItem>
+                      ))}
+                    </SearchSelect>
+                    {meta.touched && meta.error && (
+                      <ErrorMessage>{meta.error}</ErrorMessage>
+                    )}
+                  </>
+                )}
+              </Field>
+            </div>
+          )}
 
-          </div>}
-
-          <Field name="password">
+          <Field type="password" name="password">
             {({ meta, input }) => (
               <InputField
                 variant="auth"
@@ -198,7 +205,7 @@ function LoginForm() {
             loading={submitting}
             className="linear mt-2 w-full rounded-xl bg-brand-500 py-[12px] text-base font-medium text-white transition duration-200 hover:bg-brand-600 active:bg-brand-700 dark:bg-brand-400 dark:text-white dark:hover:bg-brand-300 dark:active:bg-brand-200"
           >
-            {isSignup ? 'Sign up' : 'Sign In'}
+            {isSignup ? "Sign up" : "Sign In"}
           </Button>
         </form>
       )}
