@@ -1,5 +1,5 @@
 # Expensasaurus
-
+## DEMO: https://www.youtube.com/watch?v=LAi9S0MFdrg&t=7s
 <img width="1449" alt="Screenshot 2023-06-13 at 11 58 22 PM" src="https://github.com/vishwajeetraj11/expensasaurus/assets/47270995/d317f556-9cee-430e-8fc9-841d15527ef2">
 
 # Local Setup
