@@ -22,7 +22,7 @@ const useDashboard = () => {
         ["Expenses", "Stats this month", user?.userId],
         [
             ENVS.DB_ID,
-            "6467f98b8e8fe5ffa576",
+            ENVS.COLLECTIONS.EXPENSES,
             [
                 Query.equal("userId", user?.userId),
                 Query.lessThanEqual("date", endOfThisMonth),
@@ -38,7 +38,7 @@ const useDashboard = () => {
         ["Expenses", "Stats earlier month", user?.userId],
         [
             ENVS.DB_ID,
-            "6467f98b8e8fe5ffa576",
+            ENVS.COLLECTIONS.EXPENSES,
             [
                 Query.equal("userId", user?.userId),
                 Query.lessThanEqual("date", endOfEarlierMonth),

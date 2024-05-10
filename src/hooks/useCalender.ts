@@ -39,7 +39,7 @@ export const useCalender = () => {
         ["Expenses", user?.userId, selectedDay],
         [
             ENVS.DB_ID,
-            "6467f98b8e8fe5ffa576",
+            ENVS.COLLECTIONS.EXPENSES,
             [
                 Query.equal("userId", user?.userId),
                 Query.lessThanEqual("date", endOfDay),
@@ -73,7 +73,7 @@ export const useCalender = () => {
         ["Expenses", "Stats this month", user?.userId, startOfThisMonth, endOfThisMonth],
         [
             ENVS.DB_ID,
-            "6467f98b8e8fe5ffa576",
+            ENVS.COLLECTIONS.EXPENSES,
             [
                 Query.equal("userId", user?.userId),
                 Query.lessThanEqual("date", endOfThisMonth),

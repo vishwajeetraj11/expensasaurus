@@ -18,21 +18,27 @@ const LineChartTabs = () => {
   const [selectedPeriod, setSelectedPeriod] = useState("Max");
   const [data, setData] = useState<{ date: string; amount: number }[] | []>([]);
 
-  const { user, userInfo } = useAuthStore((state) => ({ user: state.user, userInfo: state.userInfo }), shallow) as {
+  const { user, userInfo } = useAuthStore(
+    (state) => ({ user: state.user, userInfo: state.userInfo }),
+    shallow
+  ) as {
     user: Models.Session;
-    userInfo: Models.User<Models.Preferences>
+    userInfo: Models.User<Models.Preferences>;
   };
   const { data: thisMonthExpenses, isSuccess } = getAllLists<Transaction>(
     ["Expenses", "Stats this month", user?.userId],
-    [ENVS.DB_ID, "6467f98b8e8fe5ffa576", []],
+    [ENVS.DB_ID, ENVS.COLLECTIONS.EXPENSES, []],
     {
       enabled: false,
     }
   );
 
   useEffect(() => {
-
-    if (thisMonthExpenses && thisMonthExpenses?.documents.length && !data.length) {
+    if (
+      thisMonthExpenses &&
+      thisMonthExpenses?.documents.length &&
+      !data.length
+    ) {
       const mappedData = thisMonthExpenses?.documents.map(
         (item: Transaction) => {
           const date = new Date(item.date);
@@ -95,12 +101,10 @@ const LineChartTabs = () => {
     }
   };
   const dataFormatter = (number: number) => {
-    return formatCurrency(userInfo?.prefs?.currency, number)
+    return formatCurrency(userInfo?.prefs?.currency, number);
   };
   return (
-    <Card
-      className='box-shadow-card'
-    >
+    <Card className="box-shadow-card">
       <Title>Expense</Title>
       <Text>This Month</Text>
       {isSuccess && (
@@ -115,39 +119,67 @@ const LineChartTabs = () => {
           showLegend={false}
           yAxisWidth={80}
           showXAxis
-
         />
       )}
     </Card>
   );
-}
+};
 
 interface PropsL {
-  animate?: boolean
+  animate?: boolean;
 }
 
 export const LineChartTabsLoading = (props: PropsL) => {
   const { animate = true } = props;
-  return <div className={clsx(animate && "before:animate-[shimmer_2s_infinite]", "relative p-6 w-full mb-5 overflow-hidden rounded-2xl bg-white/10 shadow-xl shadow-black/5 before:absolute before:inset-0 before:-translate-x-full before:border-t before:border-slate-100 before:bg-gradient-to-r before:from-transparent before:via-slate-50/50 dark:before:via-slate-50/10  before:to-transparent")}>
-    <div className={clsx("h-[20px] bg-slate-500/20 rounded-full w-[100px] mb-2", animate ? 'opacity-40' : 'opacity-5')}>&nbsp;</div>
-    <div className={clsx("h-[12px] bg-slate-500/20 rounded-full w-[100px]", animate ? 'opacity-40' : 'opacity-5')}>&nbsp;</div>
-    {!animate && <div className="absolute inset-0 flex items-center justify-center flex-col">
-      <Title className="mb-5 mt-[-100px]">Select a Category</Title>
-      <Subtitle className="w-[80%] sm:w-[40%] text-center">No category selected. Please choose a category from the dropdown to view the corresponding chart.</Subtitle>
-    </div>}
-    <LineChart
-      className={clsx("h-80 mt-8 z-[-1] relative", animate ? 'opacity-40' : 'opacity-5')}
-      data={demoDashboardLineChart}
-      curveType="natural"
-      index="date"
-      categories={["amount"]}
-      colors={["slate"]}
-      valueFormatter={dataFormatterLoading}
-      showLegend={false}
-      yAxisWidth={60}
-      showXAxis
-    />
-  </div>
-}
+  return (
+    <div
+      className={clsx(
+        animate && "before:animate-[shimmer_2s_infinite]",
+        "relative p-6 w-full mb-5 overflow-hidden rounded-2xl bg-white/10 shadow-xl shadow-black/5 before:absolute before:inset-0 before:-translate-x-full before:border-t before:border-slate-100 before:bg-gradient-to-r before:from-transparent before:via-slate-50/50 dark:before:via-slate-50/10  before:to-transparent"
+      )}
+    >
+      <div
+        className={clsx(
+          "h-[20px] bg-slate-500/20 rounded-full w-[100px] mb-2",
+          animate ? "opacity-40" : "opacity-5"
+        )}
+      >
+        &nbsp;
+      </div>
+      <div
+        className={clsx(
+          "h-[12px] bg-slate-500/20 rounded-full w-[100px]",
+          animate ? "opacity-40" : "opacity-5"
+        )}
+      >
+        &nbsp;
+      </div>
+      {!animate && (
+        <div className="absolute inset-0 flex items-center justify-center flex-col">
+          <Title className="mb-5 mt-[-100px]">Select a Category</Title>
+          <Subtitle className="w-[80%] sm:w-[40%] text-center">
+            No category selected. Please choose a category from the dropdown to
+            view the corresponding chart.
+          </Subtitle>
+        </div>
+      )}
+      <LineChart
+        className={clsx(
+          "h-80 mt-8 z-[-1] relative",
+          animate ? "opacity-40" : "opacity-5"
+        )}
+        data={demoDashboardLineChart}
+        curveType="natural"
+        index="date"
+        categories={["amount"]}
+        colors={["slate"]}
+        valueFormatter={dataFormatterLoading}
+        showLegend={false}
+        yAxisWidth={60}
+        showXAxis
+      />
+    </div>
+  );
+};
 
 export default LineChartTabs;

@@ -15,7 +15,10 @@ function ExpenseCalCard(props: Props) {
   const { expense } = props;
   let createdDate = new Date(expense.date);
   const now = new Date();
-  const formattedDate = createdDate.getTime() > now.getTime() ? format(createdDate, `d MMMM yy`) : formatDistance(createdDate, now);
+  const formattedDate =
+    createdDate.getTime() > now.getTime()
+      ? format(createdDate, `d MMMM yy`)
+      : formatDistance(createdDate, now);
   const categoryInfo = categories.find(
     (category) => category.key === expense.category
   );
@@ -25,7 +28,7 @@ function ExpenseCalCard(props: Props) {
     try {
       const data = await database.deleteDocument(
         ENVS.DB_ID,
-        "6467f98b8e8fe5ffa576",
+        ENVS.COLLECTIONS.EXPENSES,
         expenseId
       );
       toast.success("Expense deleted successfully");
@@ -61,7 +64,6 @@ function ExpenseCalCard(props: Props) {
             <p className="text-md text-slate-500 dark:text-white font-semibold text-right">
               {formatCurrency(expense.currency, expense.amount)}
             </p>
-
           </div>
         </div>
       </li>

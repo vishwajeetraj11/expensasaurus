@@ -15,7 +15,7 @@ export const regex = {
   number: /^(?!$)(\d{0,12}|\d{1,12}\.\d{1,2})$/,
   // /^(?!$)\d{0,3}(,\d{3})*(\.\d*)?$/
   // amount: /^\d+(\.\d{1,2})?$/,
-  numberAndDot: /^[0-9.]+$/
+  numberAndDot: /^[0-9.]+$/,
 };
 
 export const ENVS = {
@@ -29,3 +29,19 @@ export const ENVS = {
   APPWRITE_ENDPOINT: process.env.NEXT_PUBLIC_APPWRITE_ENDPOINT as string,
   BUCKET_ID: process.env.NEXT_PUBLIC_BUCKET_ID as string,
 };
+
+// Define the months of the year in an array
+export const months = [
+  { value: "1", label: "January" },
+  { value: "2", label: "February" },
+  { value: "3", label: "March" },
+  { value: "4", label: "April" },
+  { value: "5", label: "May" },
+  { value: "6", label: "June" },
+  { value: "7", label: "July" },
+  { value: "8", label: "August" },
+  { value: "9", label: "September" },
+  { value: "10", label: "October" },
+  { value: "11", label: "November" },
+  { value: "12", label: "December" },
+];

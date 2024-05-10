@@ -7,7 +7,7 @@ import {
   Select,
   SelectItem,
   Text,
-  Title
+  Title,
 } from "@tremor/react";
 import { Models } from "appwrite";
 import CategoryLoading from "expensasaurus/components/category/CategoryLoading";
@@ -36,22 +36,23 @@ const Categories = () => {
     to: new Date(endOfThisMonth),
   });
 
-  const { user, userInfo } = useAuthStore((state) => ({ user: state.user, userInfo: state.userInfo }), shallow) as {
+  const { user, userInfo } = useAuthStore(
+    (state) => ({ user: state.user, userInfo: state.userInfo }),
+    shallow
+  ) as {
     user: Models.Session;
-    userInfo: Models.User<Models.Preferences>
+    userInfo: Models.User<Models.Preferences>;
   };
   const [selectedCategory, setSelectedCategory] = useState("");
-  const { data: thisMonthExpenses,
-    isLoading
-  } = getAllLists<Transaction>(
+  const { data: thisMonthExpenses, isLoading } = getAllLists<Transaction>(
     ["Expenses", "Stats this month", user?.userId, dates.from, dates.to],
     [
       ENVS.DB_ID,
-      "6467f98b8e8fe5ffa576",
+      ENVS.COLLECTIONS.EXPENSES,
       getQueryForCategoryPage({
         dates,
         user,
-        limit: 100
+        limit: 100,
       }),
     ],
     { enabled: !!user, keepPreviousData: true }
@@ -65,10 +66,8 @@ const Categories = () => {
   );
 
   const dataFormatter = (number: number) => {
-    return formatCurrency(userInfo?.prefs?.currency, number)
+    return formatCurrency(userInfo?.prefs?.currency, number);
   };
-
-
 
   const txnsByCategory =
     thisMonthExpenses?.documents
@@ -93,16 +92,18 @@ const Categories = () => {
         <title>Expensasaurus - Analyze Spending by Category</title>
       </Head>
       <div className="mx-auto max-w-[1200px] px-4 w-full">
-        {isLoading ?
-          <CategoryLoading /> : <> <Title className="py-10 text-center">Category</Title>
+        {isLoading ? (
+          <CategoryLoading />
+        ) : (
+          <>
+            {" "}
+            <Title className="py-10 text-center">Category</Title>
             <Flex className="flex-col md:flex-row items-baseline mb-10">
               <Text className="text-slate-600">Date Range</Text>
               <div className="mt-2 md:mt-0 md:ml-auto w-full md:w-auto">
                 <DateRangePicker onValueChange={setDates} value={dates} />
               </div>
             </Flex>
-
-
             <Text className="text-slate-600 mb-4">Expenses per category</Text>
             <div className="grid xl:grid-cols-4  lg:grid-cols-3 md:grid-cols-2 grid-cols-1 gap-4">
               {Object.entries(expensesByCategoriesThisMonth).map(
@@ -139,7 +140,9 @@ const Categories = () => {
                       (c) => c.category === capitalize(category)
                     );
                     if (!categoryInfo) return <Fragment key={i}></Fragment>;
-                    const SelectedIcon = () => <CategoryIcon category={categoryInfo} />;
+                    const SelectedIcon = () => (
+                      <CategoryIcon category={categoryInfo} />
+                    );
                     return (
                       <SelectItem
                         key={categoryInfo.id}
@@ -148,7 +151,7 @@ const Categories = () => {
                       >
                         {categoryInfo.category}
                       </SelectItem>
-                    )
+                    );
                   }
                 )}
               </Select>
@@ -172,14 +175,12 @@ const Categories = () => {
               <>
                 <LineChartTabsLoading animate={false} />
               </>
-
-            )}</>}
-
+            )}
+          </>
+        )}
       </div>
     </Layout>
   );
 };
-
-
 
 export default Categories;
