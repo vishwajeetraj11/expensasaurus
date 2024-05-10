@@ -68,7 +68,7 @@ const IncomeForm = () => {
     const formValues = {
       title: values.title,
       description: values.description,
-      amount: values.amount,
+      amount: parseFloat(values.amount),
       category: values.category,
       tag: values.tag,
       date: values.date,

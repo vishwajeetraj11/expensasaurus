@@ -4,14 +4,21 @@ import {
 import { ENVS } from 'expensasaurus/shared/constants/constants';
 import { getAllLists } from 'expensasaurus/shared/services/query';
 import { useAuthStore } from 'expensasaurus/shared/stores/useAuthStore';
+import { useGlobalStore } from 'expensasaurus/shared/stores/useGlobalStore';
 import { DashboardStat, Transaction } from 'expensasaurus/shared/types/transaction';
 import { calcExpenseStats, calculateTotalExpensesByCategory, calculateTotalExpensesWithPercentageChange, calculateTransactionChange } from 'expensasaurus/shared/utils/calculation';
 import { formatCurrency } from 'expensasaurus/shared/utils/currency';
 import { shallow } from 'zustand/shallow';
-import useDates from './useDates';
 
-const useDashboard = () => {
-    const { endOfEarlierMonth, endOfThisMonth, startOfEarlierMonth, startOfThisMonth } = useDates()
+type useDashboardProps = {
+    endOfEarlierMonth: string,
+    endOfTheMonth: string,
+    startOfEarlierMonth: string,
+    startOfTheMonth: string,
+}
+
+const useDashboard = ({ endOfEarlierMonth, endOfTheMonth, startOfEarlierMonth, startOfTheMonth, }: useDashboardProps) => {
+    const { activeMonth } = useGlobalStore();
 
     const { user, userInfo } = useAuthStore((state) => ({ user: state.user, userInfo: state.userInfo }), shallow) as {
         user: Models.Session;
@@ -19,14 +26,14 @@ const useDashboard = () => {
     };
 
     const { data: thisMonthExpenses, isLoading: isThisMonthExpensesLoading, isFetching } = getAllLists<Transaction>(
-        ["Expenses", "Stats this month", user?.userId],
+        ["Expenses", "Stats this month", activeMonth, user?.userId],
         [
             ENVS.DB_ID,
             ENVS.COLLECTIONS.EXPENSES,
             [
                 Query.equal("userId", user?.userId),
-                Query.lessThanEqual("date", endOfThisMonth),
-                Query.greaterThan("date", startOfThisMonth),
+                Query.lessThanEqual("date", endOfTheMonth),
+                Query.greaterThan("date", startOfTheMonth),
                 Query.orderAsc("date"),
                 Query.limit(100)
             ],
@@ -35,7 +42,7 @@ const useDashboard = () => {
     );
 
     const { data: earlierMonthExpenses, isLoading: isEarlierMonthExpensesLoading } = getAllLists<Transaction>(
-        ["Expenses", "Stats earlier month", user?.userId],
+        ["Expenses", "Stats earlier month", activeMonth, user?.userId],
         [
             ENVS.DB_ID,
             ENVS.COLLECTIONS.EXPENSES,
@@ -49,24 +56,24 @@ const useDashboard = () => {
     );
 
     const { data: thisMonthIncomes } = getAllLists<Transaction>(
-        ["Incomes", "Stats this month", user?.userId],
+        ["Incomes", "Stats this month", activeMonth, user?.userId],
         [
             ENVS.DB_ID,
-            "646879f739377942444c",
+            ENVS.COLLECTIONS.INCOMES,
             [
                 Query.equal("userId", user?.userId),
-                Query.lessThanEqual("date", endOfThisMonth),
-                Query.greaterThan("date", startOfThisMonth)
+                Query.lessThanEqual("date", endOfTheMonth),
+                Query.greaterThan("date", startOfTheMonth)
             ],
         ],
         { enabled: !!user }
     );
 
     const { data: earlierMonthIncomes } = getAllLists<Transaction>(
-        ["Incomes", "Stats earlier month", user?.userId],
+        ["Incomes", "Stats earlier month", activeMonth, user?.userId],
         [
             ENVS.DB_ID,
-            "646879f739377942444c",
+            ENVS.COLLECTIONS.INCOMES,
             [
                 Query.equal("userId", user?.userId),
                 Query.lessThanEqual("date", endOfEarlierMonth),
@@ -130,6 +137,9 @@ const useDashboard = () => {
         incomeThisMonth: incomeStatsThisMonth.sum,
         expenseThisMonth: expenseStatsThisMonth.sum,
         isLoading,
+        // activeMonth,
+        // setActiveMonth,
+        // onMonthChange
     }
 }
 

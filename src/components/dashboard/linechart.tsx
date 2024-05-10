@@ -8,6 +8,7 @@ import { ENVS } from "expensasaurus/shared/constants/constants";
 import { demoDashboardLineChart } from "expensasaurus/shared/constants/loadingData";
 import { getAllLists } from "expensasaurus/shared/services/query";
 import { useAuthStore } from "expensasaurus/shared/stores/useAuthStore";
+import { useGlobalStore } from "expensasaurus/shared/stores/useGlobalStore";
 import { Transaction } from "expensasaurus/shared/types/transaction";
 import { formatCurrency } from "expensasaurus/shared/utils/currency";
 import { useEffect, useState } from "react";
@@ -15,6 +16,7 @@ import { useEffect, useState } from "react";
 import { shallow } from "zustand/shallow";
 
 const LineChartTabs = () => {
+  const { activeMonth } = useGlobalStore();
   const [selectedPeriod, setSelectedPeriod] = useState("Max");
   const [data, setData] = useState<{ date: string; amount: number }[] | []>([]);
 
@@ -26,7 +28,7 @@ const LineChartTabs = () => {
     userInfo: Models.User<Models.Preferences>;
   };
   const { data: thisMonthExpenses, isSuccess } = getAllLists<Transaction>(
-    ["Expenses", "Stats this month", user?.userId],
+    ["Expenses", "Stats this month", activeMonth, user?.userId],
     [ENVS.DB_ID, ENVS.COLLECTIONS.EXPENSES, []],
     {
       enabled: false,

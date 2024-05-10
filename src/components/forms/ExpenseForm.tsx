@@ -22,7 +22,6 @@ import {
 } from "expensasaurus/shared/utils/form";
 import dynamic from "next/dynamic";
 import { useRouter } from "next/router";
-import { useState } from "react";
 import { Field, Form } from "react-final-form";
 import { useQueries, useQueryClient } from "react-query";
 import { toast } from "sonner";
@@ -50,7 +49,6 @@ const ExpenseForm = () => {
     [ENVS.DB_ID, ENVS.COLLECTIONS.EXPENSES, id as string],
     { enabled: false }
   );
-  const [loading, setLoading] = useState(false);
 
   const attachments = data?.attachments || [];
 
@@ -110,7 +108,7 @@ const ExpenseForm = () => {
       const formValues = {
         title: values.title,
         description: values.description,
-        amount: values.amount,
+        amount: parseFloat(values.amount),
         category: values.category,
         tag: values.tag,
         date: values.date?.toISOString(),

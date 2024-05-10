@@ -1,4 +1,4 @@
-import { Title } from "@tremor/react";
+import { SearchSelect, SearchSelectItem, Title } from "@tremor/react";
 import CategoriesPieChart, {
   CategoriesPieChartLoading,
 } from "expensasaurus/components/dashboard/categorypiechart";
@@ -10,16 +10,37 @@ import DashboardStatistics, {
 } from "expensasaurus/components/dashboard/stats";
 import Layout from "expensasaurus/components/layout/Layout";
 import useDashboard from "expensasaurus/hooks/useDashboard";
+import { useDynamicDates } from "expensasaurus/hooks/useDates";
+import { months } from "expensasaurus/shared/constants/constants";
+import { useGlobalStore } from "expensasaurus/shared/stores/useGlobalStore";
 import Head from "next/head";
 
 const dashboard = () => {
+  const { setActiveMonth, activeMonth } = useGlobalStore();
+
+  const onMonthChange = (val: string) => {
+    setActiveMonth(val);
+  };
+
+  const {
+    endOfEarlierMonth,
+    endOfTheMonth,
+    startOfEarlierMonth,
+    startOfTheMonth,
+  } = useDynamicDates(activeMonth);
+
   const {
     statistics,
     incomeThisMonth,
     expenseThisMonth,
     expensesAndPercentByCategoryThisMonth,
     isLoading,
-  } = useDashboard();
+  } = useDashboard({
+    endOfEarlierMonth,
+    endOfTheMonth,
+    startOfEarlierMonth,
+    startOfTheMonth,
+  });
 
   // const isLoading = true;
   return (
@@ -28,9 +49,20 @@ const dashboard = () => {
         <title>Expensasaurus - Monthly Performance Dashboard</title>
       </Head>
       <main className="max-w-[1200px] w-full mx-auto pt-10 px-4">
-        <Title className="font-thin text-center mb-10">
-          Monthly Performance Dashboard
-        </Title>
+        <div className="flex justify-between mb-10">
+          <Title className="font-thin text-left">
+            Monthly Performance Dashboard
+          </Title>
+          <div className="">
+            <SearchSelect value={activeMonth} onValueChange={onMonthChange}>
+              {months.map((month, index) => (
+                <SearchSelectItem key={index} value={month}>
+                  {month}
+                </SearchSelectItem>
+              ))}
+            </SearchSelect>
+          </div>
+        </div>
         {isLoading ? (
           <DashboardStatisticsLoading />
         ) : (
