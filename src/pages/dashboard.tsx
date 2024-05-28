@@ -9,6 +9,8 @@ import DashboardStatistics, {
   DashboardStatisticsLoading,
 } from "expensasaurus/components/dashboard/stats";
 import Layout from "expensasaurus/components/layout/Layout";
+import React, { useEffect } from "react";
+import { messaging } from "../firebase";
 import useDashboard from "expensasaurus/hooks/useDashboard";
 import { useDynamicDates } from "expensasaurus/hooks/useDates";
 import { months } from "expensasaurus/shared/constants/constants";
@@ -41,6 +43,20 @@ const dashboard = () => {
     startOfEarlierMonth,
     startOfTheMonth,
   });
+
+   useEffect(() => {
+     messaging
+       .requestPermission()
+       .then(() => {
+         return messaging.getToken();
+       })
+       .then((Token) => {
+         console.log("Token:", token);
+       })
+       .catch((error) => {
+         console.error("Error:", error);
+       });
+   }, []);
 
   // const isLoading = true;
   return (
