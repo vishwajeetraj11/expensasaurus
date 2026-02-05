@@ -112,6 +112,7 @@ const Categories = () => {
                     (c) => c.category === capitalize(category)
                   );
                   const SelectedIcon = categoryInfo?.Icon;
+                  console.log({ categoryInfo });
                   if (!categoryInfo) return <Fragment key={i}></Fragment>;
                   return (
                     <ExpenseByCategory

@@ -7,6 +7,7 @@ import { Transaction } from "expensasaurus/shared/types/transaction";
 import { formatCurrency } from "expensasaurus/shared/utils/currency";
 import Link from "next/link";
 import { toast } from "sonner";
+import CategoryBadge from "expensasaurus/components/ui/CategoryBadge";
 interface Props {
   expense: Transaction;
 }
@@ -42,14 +43,12 @@ function ExpenseCalCard(props: Props) {
       <li className="flex px-4 py-2 items-center rounded-xl transition-all duration-300 dark:hover:bg-slate-600/20 hover:bg-slate-100/80 relative">
         <div className="py-2 flex flex-1">
           {SelectedIcon && (
-            <div
-              className={clsx(
-                "min-w-[40px] h-10 bg-opacity-25 rounded-full flex items-center justify-center mr-3",
-                categoryInfo.className
-              )}
-            >
-              <SelectedIcon className="w-5 h-5" />
-            </div>
+            <CategoryBadge
+              Icon={SelectedIcon}
+              colorClassName={categoryInfo.className}
+              size="md"
+              className="mr-3"
+            />
           )}
 
           <div className="w-[80%]">

@@ -10,7 +10,7 @@ import { useAuthStore } from "expensasaurus/shared/stores/useAuthStore";
 import { Transaction } from "expensasaurus/shared/types/transaction";
 import { formatCurrency } from "expensasaurus/shared/utils/currency";
 import { defaultOptions } from "expensasaurus/shared/utils/lottie";
-import Lottie from "react-lottie";
+import Lottie from "expensasaurus/components/ui/Lottie";
 import { shallow } from "zustand/shallow";
 import ExpenseCalCard from "./ExpenseCalCard";
 

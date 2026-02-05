@@ -1,7 +1,7 @@
 import { Metric, Subtitle, Title } from '@tremor/react';
 import animationData from 'expensasaurus/lottie/empty2docs.json';
 import { defaultOptions } from "expensasaurus/shared/utils/lottie";
-import Lottie from "react-lottie";
+import Lottie from "expensasaurus/components/ui/Lottie";
 
 
 interface Props {

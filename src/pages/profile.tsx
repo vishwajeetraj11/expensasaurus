@@ -2,7 +2,7 @@ import { Title } from "@tremor/react";
 import Layout from "expensasaurus/components/layout/Layout";
 import { useAuthStore } from "expensasaurus/shared/stores/useAuthStore";
 import { defaultOptions } from "expensasaurus/shared/utils/lottie";
-import Lottie from "react-lottie";
+import Lottie from "expensasaurus/components/ui/Lottie";
 import { shallow } from "zustand/shallow";
 import loadingProfile from "../lottie/loadingProfile.json";
 

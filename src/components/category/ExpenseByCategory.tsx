@@ -5,6 +5,7 @@ import { categories } from "expensasaurus/shared/constants/categories";
 import { capitalize } from "expensasaurus/shared/utils/common";
 import { formatCurrency } from "expensasaurus/shared/utils/currency";
 import { useRouter } from "next/router";
+import CategoryBadge from "expensasaurus/components/ui/CategoryBadge";
 
 interface Props {
   category: string;
@@ -26,6 +27,10 @@ const ExpenseByCategory = (props: Props) => {
   const budgetDefined = props.type === 'budget-defined';
   const budgetNotDefined = props.type === 'budget-not-defined';
   const router = useRouter();
+  const shouldShowBudgetPercent =
+    budgetDefined &&
+    typeof value.budgetPercent === "number" &&
+    value.budgetPercent !== 0;
 
   return (
     <Card
@@ -38,19 +43,31 @@ const ExpenseByCategory = (props: Props) => {
       <div className="flex">
         {SelectedIcon && (
           <div className={"relative"}>
-            <div
-              className={clsx(
-                "w-10 h-10 bg-opacity-25 rounded-full flex items-center justify-center mr-3",
-                categoryInfo.className
-              )}
-            >
-              {value.budgetPercent !== 0
-                && typeof value.budgetPercent === 'number'
-                && budgetDefined
-                && <Text className="text-xs hidden group-hover:block text-slate-600">{Math.ceil(value.budgetPercent)}%</Text>}
-              <SelectedIcon className={clsx("w-5 h-5", budgetDefined ? 'group-hover:hidden' : '')} />
-            </div>
-            {budgetDefined && typeof value.budgetPercent === 'number' && <CircularProgress thickness={2} itemProp="" color="inherit" size="lg" variant="determinate" value={value.budgetPercent > 100 ? 100 : value.budgetPercent} className={clsx("h-11 w-11 absolute top-[-2px] left-[-2px]", categoryInfo.className.split(' ')[1])} />}
+            <CategoryBadge
+              Icon={SelectedIcon}
+              colorClassName={categoryInfo.className}
+              size="md"
+              className={clsx("mr-3", shouldShowBudgetPercent ? "group-hover:opacity-0" : "")}
+            />
+            {budgetDefined && typeof value.budgetPercent === 'number' && (
+              <CircularProgress
+                thickness={2}
+                itemProp=""
+                color="inherit"
+                size="lg"
+                variant="determinate"
+                value={value.budgetPercent > 100 ? 100 : value.budgetPercent}
+                className={clsx(
+                  "h-11 w-11 absolute top-[-2px] left-[-2px]",
+                  categoryInfo.className.split(' ')[1]
+                )}
+              />
+            )}
+            {shouldShowBudgetPercent && (
+              <Text className="text-xs hidden group-hover:block text-slate-600 absolute inset-0 flex items-center justify-center">
+                {Math.ceil(value.budgetPercent)}%
+              </Text>
+            )}
           </div>
         )}
         <div className="flex flex-col flex-1">

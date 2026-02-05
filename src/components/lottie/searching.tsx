@@ -2,7 +2,7 @@ import { Metric, Subtitle, Title } from '@tremor/react';
 import animationData from 'expensasaurus/lottie/searching.json';
 import { defaultOptions } from "expensasaurus/shared/utils/lottie";
 import { useEffect, useState } from 'react';
-import Lottie from "react-lottie";
+import Lottie from "expensasaurus/components/ui/Lottie";
 
 interface Props {
     title?: string;
@@ -20,7 +20,7 @@ const Searching = (props: Props) => {
         return () => clearTimeout(timeout)
     }, [])
     return (
-        <div>
+        <div className="flex flex-col items-center justify-center min-h-[60vh] text-center">
             <Lottie options={defaultOptions(animationData)}
                 height={'auto'}
                 width={400}

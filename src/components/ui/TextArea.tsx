@@ -6,26 +6,24 @@ interface TextAreaProps extends HTMLProps<HTMLTextAreaElement> {
   error?: boolean;
 }
 
-const TextArea = (props: TextAreaProps) => {
-  const { message, error, ...rest } = props;
-  const defaultClasses = clsx(
-    'tremor-TextInput-input w-full focus:outline-none focus:ring-0 border-none bg-transparent text-tremor-default text-tremor-content-emphasis dark:text-dark-tremor-content-emphasis pl-4 pr-4 py-2 placeholder:text-tremor-content dark:placeholder:text-dark-tremor-content'
-  );
-
+const TextArea = ({ message, error, className, disabled, ...rest }: TextAreaProps) => {
   return (
-    <div className={clsx(
-      'tremor-TextInput-root py-2 relative w-full flex items-center min-w-[10rem] outline-none rounded-tremor-default shadow-tremor-input dark:shadow-dark-tremor-input bg-tremor-background dark:bg-dark-tremor-background hover:bg-tremor-background-muted dark:hover:bg-dark-tremor-background-muted text-tremor-content-emphasis dark:text-dark-tremor-content-emphasis border-tremor-border dark:border-dark-tremor-border border'
-    )}>
+    <div className="w-full">
       <textarea
-        className={defaultClasses}
+        className={clsx(
+          "w-full rounded-xl border bg-white/90 px-3 py-2.5 text-sm text-slate-900 shadow-sm outline-none transition",
+          "placeholder:text-slate-400 focus:border-slate-900 focus:ring-2 focus:ring-slate-900/10",
+          "dark:border-white/10 dark:bg-white/5 dark:text-white dark:placeholder:text-slate-400 dark:focus:border-white/30 dark:focus:ring-white/10",
+          error &&
+            "border-rose-500 text-rose-600 placeholder:text-rose-400 focus:border-rose-500 focus:ring-rose-500/20",
+          disabled && "cursor-not-allowed opacity-60",
+          className
+        )}
         rows={3}
+        disabled={disabled}
         {...rest}
       />
-      {message && (
-        <p className="text-red-600 dark:text-red-400 text-xs mt-1.5 tracking-normal">
-          {message}
-        </p>
-      )}
+      {message && <p className="mt-1.5 text-xs text-rose-500">{message}</p>}
     </div>
   );
 };

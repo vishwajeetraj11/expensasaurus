@@ -7,10 +7,11 @@ import {
   getPaginationRowModel,
   useReactTable,
 } from "@tanstack/react-table";
-import { Button } from "@tremor/react";
 import { format } from "date-fns";
+import Button from "expensasaurus/components/ui/Button";
 import { Transaction } from "expensasaurus/shared/types/transaction";
 import { capitalize } from "expensasaurus/shared/utils/common";
+import { formatCurrency } from "expensasaurus/shared/utils/currency";
 import Link from "next/link";
 import React, { Dispatch, SetStateAction } from "react";
 import { FiExternalLink } from "react-icons/fi";
@@ -44,7 +45,7 @@ const ExpenseTable = (props: Props) => {
                 : `/incomes/${info.getValue()}`
             }
           >
-            <FiExternalLink />
+            <FiExternalLink className="h-4 w-4 text-slate-400 transition hover:text-slate-700" />
           </Link>
         ),
         footer: (props) => props.column.id,
@@ -57,7 +58,9 @@ const ExpenseTable = (props: Props) => {
         cell: (info) => {
           const title = info.getValue() as string;
           return (
-            <p>{title.length > 60 ? `${title.slice(0, 60)}...` : title}</p>
+            <p className="font-medium text-slate-800">
+              {title.length > 60 ? `${title.slice(0, 60)}...` : title}
+            </p>
           );
         },
         footer: (props) => props.column.id,
@@ -66,7 +69,7 @@ const ExpenseTable = (props: Props) => {
         accessorKey: "category",
         accessorFn: (row) => capitalize(row.category),
         header: () => "Category",
-        cell: (info) => info.getValue(),
+        cell: (info) => <span className="text-slate-600">{info.getValue() as string}</span>,
         footer: (props) => props.column.id,
       },
       {
@@ -74,7 +77,7 @@ const ExpenseTable = (props: Props) => {
         id: "startingDate",
         cell: (info) => {
           const date = new Date(info.getValue() as string);
-          return format(date, "dd MMMM yyyy");
+          return <span className="text-slate-500">{format(date, "dd MMM yyyy")}</span>;
         },
         header: () => "Date",
         footer: (props) => props.column.id,
@@ -82,6 +85,14 @@ const ExpenseTable = (props: Props) => {
       {
         accessorKey: "amount",
         header: () => <span>Total</span>,
+        cell: (info) => {
+          const row = info.row.original;
+          return (
+            <span className="font-semibold text-slate-800 tabular-nums">
+              {formatCurrency(row.currency || "INR", Number(row.amount || 0))}
+            </span>
+          );
+        },
         footer: (props) => props.column.id,
       },
     ],
@@ -142,135 +153,117 @@ function Table({
 
   return (
     <div className="flex flex-col flex-1">
-      <div className="p-2 flex flex-col flex-1 overflow-x-scroll">
-        <table className="w-full">
-          <thead>
-            {table.getHeaderGroups().map((headerGroup) => (
-              <tr key={headerGroup.id} className="">
-                {headerGroup.headers.map((header) => {
-                  return (
-                    <th
-                      className="min-w-[100px] pl-4 first:pl-0 font-semibold text-slate-700"
-                      key={header.id}
-                      colSpan={header.colSpan}
-                    >
-                      {header.isPlaceholder ? null : (
-                        <div className="text-left mb-3">
-                          {flexRender(
-                            header.column.columnDef.header,
-                            header.getContext()
-                          )}
-                          {header.column.getCanFilter() ? (
-                            <div>
-                              {/* <Filter column={header.column} table={table} /> */}
-                            </div>
-                          ) : null}
-                        </div>
-                      )}
-                    </th>
-                  );
-                })}
-              </tr>
-            ))}
-          </thead>
-          <tbody>
-            {table.getRowModel().rows.map((row) => {
-              return (
-                <tr className="border-b" key={row.id}>
-                  {row.getVisibleCells().map((cell) => {
+      <div className="overflow-hidden rounded-2xl border border-slate-200 bg-white shadow-[0_8px_30px_-20px_rgba(15,23,42,0.15)]">
+        <div className="overflow-x-auto">
+          <table className="min-w-[720px] w-full text-sm">
+            <thead className="border-b border-slate-200 bg-white">
+              {table.getHeaderGroups().map((headerGroup) => (
+                <tr key={headerGroup.id}>
+                  {headerGroup.headers.map((header) => {
+                    const isAmountHeader = header.column.id === "amount";
+                    const isLinkHeader = header.column.id === "id";
                     return (
-                      <td
-                        className="min-w-[100px] pl-4 first:pl-0 h-[50px] text-slate-700"
-                        key={cell.id}
+                      <th
+                        className={`px-6 py-4 text-sm font-semibold text-slate-700 ${
+                          isAmountHeader
+                            ? "text-left"
+                            : isLinkHeader
+                            ? "text-center"
+                            : "text-left"
+                        }`}
+                        key={header.id}
+                        colSpan={header.colSpan}
                       >
-                        {flexRender(
-                          cell.column.columnDef.cell,
-                          cell.getContext()
+                        {header.isPlaceholder ? null : (
+                          <div className="flex items-center gap-2">
+                            {flexRender(
+                              header.column.columnDef.header,
+                              header.getContext()
+                            )}
+                          </div>
                         )}
-                      </td>
+                      </th>
                     );
                   })}
                 </tr>
-              );
-            })}
-          </tbody>
-        </table>
+              ))}
+            </thead>
+            <tbody className="divide-y divide-slate-200/70">
+              {table.getRowModel().rows.map((row) => {
+                return (
+                  <tr
+                    className="transition hover:bg-slate-50/60"
+                    key={row.id}
+                  >
+                    {row.getVisibleCells().map((cell) => {
+                      const isAmountCell = cell.column.id === "amount";
+                      const isLinkCell = cell.column.id === "id";
+                      return (
+                        <td
+                          className={`px-6 py-4 text-slate-700 ${
+                            isAmountCell
+                              ? "text-left"
+                              : isLinkCell
+                              ? "text-center"
+                              : ""
+                          }`}
+                          key={cell.id}
+                        >
+                          {flexRender(
+                            cell.column.columnDef.cell,
+                            cell.getContext()
+                          )}
+                        </td>
+                      );
+                    })}
+                  </tr>
+                );
+              })}
+            </tbody>
+          </table>
+        </div>
       </div>
-      <hr className="my-4 mt-auto" />
-      <div className="flex items-center justify-between gap-2">
-        <span className="flex items-center gap-1">
-          <div>Page</div>
-          <strong>
+
+      <div className="mt-4 flex flex-col gap-3 text-xs text-slate-500 sm:flex-row sm:items-center sm:justify-between">
+        <span>
+          Page{" "}
+          <strong className="text-slate-700">
             {table.getState().pagination.pageIndex + 1} of{" "}
             {table.getPageCount()}
           </strong>
         </span>
         <div className="flex items-center gap-2">
           <Button
-            size="xs"
-            className="border rounded"
-            onClick={() => table.setPageIndex(0)}
-            disabled={!table.getCanPreviousPage()}
-          >
-            {"<<"}
-          </Button>
-          <Button
-            size="xs"
-            className="border rounded"
+            size="sm"
+            variant="secondary"
+            className="rounded-full px-4"
             onClick={() => table.previousPage()}
             disabled={!table.getCanPreviousPage()}
           >
-            {"<"}
+            Prev
           </Button>
           <Button
-            size="xs"
-            className="border rounded"
+            size="sm"
+            variant="secondary"
+            className="rounded-full px-4"
             onClick={() => table.nextPage()}
             disabled={!table.getCanNextPage()}
           >
-            {">"}
-          </Button>
-          <Button
-            size="xs"
-            className="border rounded"
-            onClick={() => table.setPageIndex(table.getPageCount() - 1)}
-            disabled={!table.getCanNextPage()}
-          >
-            {">>"}
+            Next
           </Button>
         </div>
-        <div className="flex items-center gap-4">
-          <span className="flex items-center gap-1">
-            page:
-            <input
-              type="number"
-              defaultValue={table.getState().pagination.pageIndex + 1}
-              onChange={(e) => {
-                const page = e.target.value ? Number(e.target.value) - 1 : 0;
-                table.setPageIndex(page);
-              }}
-              className="border p-1 rounded w-10"
-            />
-          </span>
-          {/* <Select
-          onValueChange={(value) =>
-            table.setPageSize(Number(value))
-          }
-          className="min-w-[100px] w-8"
-          value={table.getState().pagination.pageSize.toString()}
-        >
-          {['10', '20', '30', '40', '50'].map((size, index) => {
-            return (
-              <SelectItem
-                key={size}
-                value={size}
-                text={size}
-
-              />
-            );
-          })}
-        </Select> */}
-        </div>
+        <label className="flex items-center gap-2 text-xs">
+          Jump to
+          <input
+            type="number"
+            defaultValue={table.getState().pagination.pageIndex + 1}
+            onChange={(e) => {
+              const page = e.target.value ? Number(e.target.value) - 1 : 0;
+              table.setPageIndex(page);
+            }}
+            className="w-16 rounded-md border border-slate-200 px-3 py-1 text-xs text-slate-700 outline-none focus:border-slate-400"
+          />
+        </label>
       </div>
     </div>
   );

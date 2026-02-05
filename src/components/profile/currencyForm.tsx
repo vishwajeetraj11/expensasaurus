@@ -2,7 +2,8 @@ import { useAuthStore } from "expensasaurus/shared/stores/useAuthStore";
 import { useEffect } from "react";
 import { shallow } from "zustand/shallow";
 
-import { Button, SearchSelect, SearchSelectItem } from "@tremor/react";
+import { SearchSelect, SearchSelectItem } from "@tremor/react";
+import Button from "../ui/Button";
 
 import clsx from "clsx";
 import ErrorMessage from "expensasaurus/components/ui/ErrorMessage";

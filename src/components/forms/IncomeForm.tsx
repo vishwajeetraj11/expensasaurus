@@ -1,6 +1,8 @@
 import { DesktopDatePicker, LocalizationProvider } from "@mui/x-date-pickers";
 import { AdapterDateFns } from "@mui/x-date-pickers/AdapterDateFns";
-import { Button, Select, SelectItem, TextInput } from "@tremor/react";
+import Button from "../ui/Button";
+import TextInput from "../ui/TextInput";
+import Select, { SelectItem } from "../ui/Select";
 import { Models, Role } from "appwrite";
 import useDates from "expensasaurus/hooks/useDates";
 import { incomeCategories } from "expensasaurus/shared/constants/categories";

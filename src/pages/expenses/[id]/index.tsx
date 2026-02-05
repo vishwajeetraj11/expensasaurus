@@ -12,6 +12,7 @@ import EmptyTwoDocs from "expensasaurus/components/lottie/emptyTwoDocs";
 import NotFound from "expensasaurus/components/lottie/notFound";
 import Searching from "expensasaurus/components/lottie/searching";
 import DeleteModal from "expensasaurus/components/modal/DeleteModal";
+import CategoryBadge from "expensasaurus/components/ui/CategoryBadge";
 import { categories } from "expensasaurus/shared/constants/categories";
 import { ENVS } from "expensasaurus/shared/constants/constants";
 import { storage } from "expensasaurus/shared/services/appwrite";
@@ -114,16 +115,14 @@ const id = () => {
             ? <div className="flex items-start flex-col md:flex-row w-full gap-10 px-4">
               <div className="flex flex-col flex-1 w-[inherit]">
                 <div className="flex">
-                  {categoryInfo && (
-                    <div
-                      className={clsx(
-                        "min-w-[80px] h-20 w-20 bg-opacity-25 rounded-full flex items-center justify-center mr-3",
-                        categoryInfo.className
-                      )}
-                    >
-                      {SelectedIcon && <SelectedIcon className="w-10 h-10" />}
-                    </div>
-                  )}
+                {categoryInfo && (
+                  <CategoryBadge
+                    Icon={SelectedIcon}
+                    colorClassName={categoryInfo.className}
+                    size="lg"
+                    className="mr-3"
+                  />
+                )}
 
                   <div>
                     {data?.category && (
@@ -188,16 +187,12 @@ const id = () => {
                         >
                           <div className="flex items-center mt-2">
                             {categoryInfo && (
-                              <div
-                                className={clsx(
-                                  "h-8 w-8 min-w-[32px] bg-opacity-25 rounded-full flex items-center justify-center mr-3",
-                                  categoryInfo.className
-                                )}
-                              >
-                                {SelectedIcon && (
-                                  <SelectedIcon className="w-4 h-4" />
-                                )}
-                              </div>
+                              <CategoryBadge
+                                Icon={SelectedIcon}
+                                colorClassName={categoryInfo.className}
+                                size="sm"
+                                className="mr-3"
+                              />
                             )}
                             <Text>{capitalize(doc?.category)}</Text>
                           </div>

@@ -33,7 +33,7 @@ import dynamic from "next/dynamic";
 import Head from "next/head";
 import Link from "next/link";
 import { useCallback, useEffect, useMemo, useState } from "react";
-import Lottie from "react-lottie";
+import Lottie from "expensasaurus/components/ui/Lottie";
 import { shallow } from "zustand/shallow";
 
 const index = () => {

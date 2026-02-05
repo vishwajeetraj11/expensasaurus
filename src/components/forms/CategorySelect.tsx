@@ -1,5 +1,5 @@
-import clsx from "clsx";
 import { categories, incomeCategories } from "expensasaurus/shared/constants/categories";
+import CategoryBadge from "expensasaurus/components/ui/CategoryBadge";
 
 interface Props {
   category: (typeof categories)[number] | (typeof incomeCategories)[number];
@@ -9,14 +9,12 @@ const CategoryIcon = (props: Props) => {
   const { category } = props;
 
   return (
-    <div
-      className={clsx(
-        "w-6 h-6 mr-2 bg-opacity-25 flex items-center justify-center rounded-full",
-        category.className
-      )}
-    >
-      <category.Icon className="w-4 h-4" />
-    </div>
+    <CategoryBadge
+      Icon={category.Icon}
+      colorClassName={category.className}
+      size="sm"
+      className="mr-2 h-6 w-6 min-w-[24px]"
+    />
   );
 };
 export default CategoryIcon;

@@ -31,8 +31,9 @@ function InputField(props: InputFieldProps) {
     <div className={`${extra}`}>
       <label
         htmlFor={id}
-        className={`text-sm text-navy-700 dark:text-white ${isAuth ? "ml-1.5 font-medium" : "ml-3 font-bold"
-          }`}
+        className={`text-sm text-slate-700 dark:text-slate-200 ${
+          isAuth ? "ml-1.5 font-medium" : "ml-3 font-semibold"
+        }`}
       >
         {label}
       </label>
@@ -42,14 +43,16 @@ function InputField(props: InputFieldProps) {
         id={id}
         placeholder={placeholder}
         className={clsx(
-          `mt-2 flex h-12 w-full items-center justify-center rounded-xl border bg-white/0 p-3 text-sm outline-none ${disabled === true
-            ? "!border-none !bg-gray-100 dark:!bg-white/5 dark:placeholder:!text-[rgba(255,255,255,0.15)]"
+          "mt-2 flex h-12 w-full items-center rounded-xl border bg-white/90 px-3 text-sm text-slate-900 shadow-sm outline-none transition",
+          "placeholder:text-slate-400 focus:border-slate-900 focus:ring-2 focus:ring-slate-900/10",
+          "dark:border-white/10 dark:bg-white/5 dark:text-white dark:placeholder:text-slate-400 dark:focus:border-white/30 dark:focus:ring-white/10",
+          disabled
+            ? "cursor-not-allowed opacity-60"
             : isError
-              ? "border-red-500 text-red-500 placeholder:text-red-500 dark:!border-red-400 dark:!text-red-400 dark:placeholder:!text-red-400"
-              : state === "success"
-                ? "border-green-500 text-green-500 placeholder:text-green-500 dark:!border-green-400 dark:!text-green-400 dark:placeholder:!text-green-400"
-                : "border-gray-200 dark:!border-white/10 dark:text-white"
-          }`
+            ? "border-rose-500 text-rose-600 placeholder:text-rose-400 focus:border-rose-500 focus:ring-rose-500/20"
+            : state === "success"
+            ? "border-emerald-500 text-emerald-600 placeholder:text-emerald-400 focus:border-emerald-500 focus:ring-emerald-500/20"
+            : "border-slate-200"
         )}
         {...rest}
       />

@@ -20,6 +20,8 @@ const authenticatedRoutes = [
   "/budgets/[id]/edit",
   "/dashboard",
   "/profile",
+  "/assistant",
+  "/community",
 ];
 interface Props {
   children: React.ReactNode;

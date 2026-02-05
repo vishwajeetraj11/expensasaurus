@@ -1,4 +1,5 @@
-import { Button, SearchSelect, SearchSelectItem } from "@tremor/react";
+import { SearchSelect, SearchSelectItem } from "@tremor/react";
+import Button from "../../ui/Button";
 import { AppwriteException } from "appwrite";
 
 import ErrorMessage from "expensasaurus/components/ui/ErrorMessage";

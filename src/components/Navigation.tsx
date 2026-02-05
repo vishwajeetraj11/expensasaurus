@@ -100,6 +100,12 @@ const Navigation = (props: Props) => {
                     </Link>
                   </li>
                   <li>
+                    <Link href="/assistant">Assistant</Link>
+                  </li>
+                  <li>
+                    <Link href="/community">Community</Link>
+                  </li>
+                  <li>
                     <Link href="/expenses">Expense</Link>
                   </li>
                   <li className="">

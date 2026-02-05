@@ -48,23 +48,24 @@ const RecentBudgets = () => {
     <>
       <Title className="mb-6">Available Budgets</Title>
       <div className="flex flex-col gap-4">
-        <Table className="mt-5 p-6 shadow-subtle">
-          <TableHead>
-            <TableRow>
-              <TableHeaderCell className="pl-0">Link</TableHeaderCell>
-              <TableHeaderCell className="pl-0">Title</TableHeaderCell>
-              <TableHeaderCell>Budget</TableHeaderCell>
-              <TableHeaderCell>Duration</TableHeaderCell>
-              <TableHeaderCell>Actions</TableHeaderCell>
-              <TableHeaderCell>Status</TableHeaderCell>
-            </TableRow>
-          </TableHead>
-          <TableBody>
+        <div className="overflow-hidden rounded-2xl border border-slate-200 bg-white shadow-[0_8px_30px_-20px_rgba(15,23,42,0.15)]">
+          <Table className="w-full text-sm">
+            <TableHead className="bg-white">
+              <TableRow className="border-b border-slate-200">
+                <TableHeaderCell className="pl-6 py-4 text-sm font-semibold text-slate-700">Link</TableHeaderCell>
+                <TableHeaderCell className="py-4 text-sm font-semibold text-slate-700">Title</TableHeaderCell>
+                <TableHeaderCell className="py-4 text-sm font-semibold text-slate-700">Budget</TableHeaderCell>
+                <TableHeaderCell className="py-4 text-sm font-semibold text-slate-700">Duration</TableHeaderCell>
+                <TableHeaderCell className="py-4 text-sm font-semibold text-slate-700">Actions</TableHeaderCell>
+                <TableHeaderCell className="py-4 text-sm font-semibold text-slate-700">Status</TableHeaderCell>
+              </TableRow>
+            </TableHead>
+            <TableBody className="divide-y divide-slate-200/70">
             {data?.documents?.map((budget, index) => {
               const sadLilDevVariable =
                 index === Object.entries(data).length - 1;
               const lastElemClasses = clsx("");
-              const firstRowClasses = clsx("pl-0");
+              const firstRowClasses = clsx("pl-6");
               const currentDate = new Date(); // Get the current date
               const budgetStartDate = new Date(budget.startingDate); // Budget start date
               const budgetEndDate = new Date(budget.endDate); // Budget end date
@@ -79,14 +80,14 @@ const RecentBudgets = () => {
                 : "Already ended";
 
               return (
-                <TableRow key={index}>
+                <TableRow key={index} className="transition hover:bg-slate-50/60">
                   <TableCell className={clsx(lastElemClasses, firstRowClasses)}>
                     <Link href={`/budgets/${budget.$id}`}>
-                      <FiExternalLink />
+                      <FiExternalLink className="h-4 w-4 text-slate-400 transition hover:text-slate-700" />
                     </Link>
                   </TableCell>
                   <TableCell className={clsx(lastElemClasses, firstRowClasses)}>
-                    {budget.title}
+                    <span className="font-medium text-slate-800">{budget.title}</span>
                   </TableCell>
                   <TableCell>
                     <Text className={clsx(lastElemClasses)}>
@@ -163,8 +164,9 @@ const RecentBudgets = () => {
               }}
               resource="budget"
             />
-          </TableBody>
-        </Table>
+            </TableBody>
+          </Table>
+        </div>
       </div>
     </>
   );
