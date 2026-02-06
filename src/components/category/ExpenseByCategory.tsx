@@ -25,12 +25,11 @@ interface Props {
 const ExpenseByCategory = (props: Props) => {
   const { category, categoryInfo, i, value, SelectedIcon } = props;
   const budgetDefined = props.type === 'budget-defined';
-  const budgetNotDefined = props.type === 'budget-not-defined';
   const router = useRouter();
+  const budgetPercent =
+    typeof value.budgetPercent === "number" ? value.budgetPercent : null;
   const shouldShowBudgetPercent =
-    budgetDefined &&
-    typeof value.budgetPercent === "number" &&
-    value.budgetPercent !== 0;
+    budgetDefined && budgetPercent !== null && budgetPercent !== 0;
 
   return (
     <Card
@@ -49,14 +48,14 @@ const ExpenseByCategory = (props: Props) => {
               size="md"
               className={clsx("mr-3", shouldShowBudgetPercent ? "group-hover:opacity-0" : "")}
             />
-            {budgetDefined && typeof value.budgetPercent === 'number' && (
+            {budgetDefined && budgetPercent !== null && (
               <CircularProgress
                 thickness={2}
                 itemProp=""
                 color="inherit"
                 size="lg"
                 variant="determinate"
-                value={value.budgetPercent > 100 ? 100 : value.budgetPercent}
+                value={budgetPercent > 100 ? 100 : budgetPercent}
                 className={clsx(
                   "h-11 w-11 absolute top-[-2px] left-[-2px]",
                   categoryInfo.className.split(' ')[1]
@@ -65,7 +64,7 @@ const ExpenseByCategory = (props: Props) => {
             )}
             {shouldShowBudgetPercent && (
               <Text className="text-xs hidden group-hover:block text-slate-600 absolute inset-0 flex items-center justify-center">
-                {Math.ceil(value.budgetPercent)}%
+                {Math.ceil(budgetPercent)}%
               </Text>
             )}
           </div>
