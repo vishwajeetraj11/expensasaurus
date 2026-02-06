@@ -1,4 +1,4 @@
-import { Badge, Title } from "@tremor/react";
+import { Title } from "@tremor/react";
 import useBudgets from "expensasaurus/hooks/useBudgets";
 
 import {
@@ -79,6 +79,25 @@ const RecentBudgets = () => {
                 ? "Not yet started"
                 : "Already ended";
 
+              const statusStyles =
+                budgetStatus === "Active"
+                  ? {
+                      wrapper:
+                        "bg-emerald-50 text-emerald-700 ring-emerald-200 dark:bg-emerald-500/10 dark:text-emerald-200 dark:ring-emerald-500/30",
+                      Icon: MdTrackChanges,
+                    }
+                  : budgetStatus === "Not yet started"
+                  ? {
+                      wrapper:
+                        "bg-amber-50 text-amber-700 ring-amber-200 dark:bg-amber-500/10 dark:text-amber-200 dark:ring-amber-500/30",
+                      Icon: GrInProgress,
+                    }
+                  : {
+                      wrapper:
+                        "bg-rose-50 text-rose-700 ring-rose-200 dark:bg-rose-500/10 dark:text-rose-200 dark:ring-rose-500/30",
+                      Icon: TbClockCancel,
+                    };
+
               return (
                 <TableRow key={index} className="transition hover:bg-slate-50/60">
                   <TableCell className={clsx(lastElemClasses, firstRowClasses)}>
@@ -111,24 +130,15 @@ const RecentBudgets = () => {
                     />
                   </TableCell>
                   <TableCell>
-                    <Badge
-                      color={
-                        budgetStatus === "Not yet started"
-                          ? "yellow"
-                          : budgetStatus === "Already ended"
-                          ? "red"
-                          : "emerald"
-                      }
-                      icon={
-                        budgetStatus === "Active"
-                          ? MdTrackChanges
-                          : budgetStatus === "Not yet started"
-                          ? TbClockCancel
-                          : GrInProgress
-                      }
+                    <span
+                      className={clsx(
+                        "inline-flex items-center gap-2 rounded-full px-3 py-1 text-xs font-semibold ring-1 ring-inset",
+                        statusStyles.wrapper
+                      )}
                     >
+                      <statusStyles.Icon className="h-3.5 w-3.5" />
                       {budgetStatus}
-                    </Badge>
+                    </span>
                   </TableCell>
                 </TableRow>
               );
