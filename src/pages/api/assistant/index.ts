@@ -790,13 +790,15 @@ export default async function handler(
   const todayIso = new Date().toISOString().split("T")[0];
   const openaiModel = resolveOpenAIModel(Boolean(imageDataUrl));
 
-  const contextMessages = Array.isArray(messages)
+  const contextMessages: ContextMessage[] | undefined = Array.isArray(messages)
     ? messages
         .filter((message) => message?.text && message?.role)
-        .map((message) => ({
-          role: message.role === "assistant" ? "assistant" : "user",
-          text: String(message.text),
-        }))
+        .map(
+          (message): ContextMessage => ({
+            role: message.role === "assistant" ? "assistant" : "user",
+            text: String(message.text),
+          })
+        )
     : undefined;
 
   if (stream) {

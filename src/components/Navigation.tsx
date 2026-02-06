@@ -2,6 +2,7 @@ import * as Popover from "@radix-ui/react-popover";
 import { Button } from "@tremor/react";
 import { useAuthStore } from "expensasaurus/shared/stores/useAuthStore";
 import { clsx } from "expensasaurus/shared/utils/common";
+import { isAssistantEmailAllowed } from "expensasaurus/shared/constants/assistantAccess";
 import Link from "next/link";
 import { useRouter } from "next/router";
 import { useEffect, useState } from "react";
@@ -49,7 +50,9 @@ const Navigation = (props: Props) => {
     if (user) {
       getUserInfo();
     }
-  }, [user]);
+  }, [user, getUserInfo]);
+
+  const canAccessAssistant = isAssistantEmailAllowed(userInfo?.email);
 
   return (
     <header className="fixed top-0 left-0 z-[12] w-full border-transparent-white backdrop-blur-[12px]">
@@ -99,9 +102,11 @@ const Navigation = (props: Props) => {
                       Dashboard
                     </Link>
                   </li>
-                  <li>
-                    <Link href="/assistant">Assistant</Link>
-                  </li>
+                  {canAccessAssistant && (
+                    <li>
+                      <Link href="/assistant">Assistant</Link>
+                    </li>
+                  )}
                   <li>
                     <Link href="/community">Community</Link>
                   </li>

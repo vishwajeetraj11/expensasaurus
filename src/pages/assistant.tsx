@@ -9,8 +9,10 @@ import { useQueryClient } from "react-query";
 import { toast } from "sonner";
 import { categories, incomeCategories } from "expensasaurus/shared/constants/categories";
 import { ENVS } from "expensasaurus/shared/constants/constants";
+import { isAssistantEmailAllowed } from "expensasaurus/shared/constants/assistantAccess";
 import { ID, Permission, database } from "expensasaurus/shared/services/appwrite";
 import { useAuthStore } from "expensasaurus/shared/stores/useAuthStore";
+import { useRouter } from "next/router";
 
 type AssistantMessage = {
   id: string;
@@ -68,9 +70,17 @@ const createId = () => {
 };
 
 const AssistantPage = () => {
-  const { user } = useAuthStore((state) => ({ user: state.user })) as {
+  const router = useRouter();
+  const { user, userInfo, getUserInfo } = useAuthStore((state) => ({
+    user: state.user,
+    userInfo: state.userInfo,
+    getUserInfo: state.getUserInfo,
+  })) as {
     user: Models.Session | null;
+    userInfo: Models.User<Models.Preferences> | null;
+    getUserInfo: () => Promise<void>;
   };
+  const canAccessAssistant = isAssistantEmailAllowed(userInfo?.email);
   const queryClient = useQueryClient();
   const [messages, setMessages] = useState<AssistantMessage[]>([initialMessage]);
   const [input, setInput] = useState("");
@@ -124,6 +134,18 @@ const AssistantPage = () => {
   useEffect(() => {
     setSpeechSupported(!!getSpeechRecognition());
   }, []);
+
+  useEffect(() => {
+    if (user && !userInfo) {
+      getUserInfo();
+    }
+  }, [user, userInfo, getUserInfo]);
+
+  useEffect(() => {
+    if (userInfo && !canAccessAssistant) {
+      router.replace("/dashboard");
+    }
+  }, [userInfo, canAccessAssistant, router]);
 
   useEffect(() => {
     return () => {
@@ -458,6 +480,10 @@ const AssistantPage = () => {
     imagePreview?: string | null;
   }) => {
     if (!options.displayText.trim() && !options.imageFile) return;
+    if (!canAccessAssistant) {
+      setError("Assistant is restricted for this account.");
+      return;
+    }
 
     setError(null);
     setAudioError(null);
@@ -509,7 +535,16 @@ const AssistantPage = () => {
       });
 
       if (!response.ok || !response.body) {
-        throw new Error("Assistant request failed.");
+        let message = "Assistant request failed.";
+        try {
+          const errorPayload = await response.json();
+          if (typeof errorPayload?.reply === "string") {
+            message = errorPayload.reply;
+          }
+        } catch (parseError) {
+          // ignore non-json error payloads
+        }
+        throw new Error(message);
       }
 
       const reader = response.body.getReader();
