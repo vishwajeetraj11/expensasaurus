@@ -23,6 +23,7 @@ import {
   categoryNames,
 } from "expensasaurus/shared/constants/categories";
 import { ENVS, regex } from "expensasaurus/shared/constants/constants";
+import { ROUTES } from "expensasaurus/shared/constants/routes";
 import { getAllLists } from "expensasaurus/shared/services/query";
 import { useAuthStore } from "expensasaurus/shared/stores/useAuthStore";
 import { Transaction } from "expensasaurus/shared/types/transaction";
@@ -32,7 +33,7 @@ import { getQueryForExpenses } from "expensasaurus/shared/utils/react-query";
 import dynamic from "next/dynamic";
 import Head from "next/head";
 import Link from "next/link";
-import { useCallback, useEffect, useMemo, useState } from "react";
+import { useCallback, useMemo, useState } from "react";
 import Lottie from "expensasaurus/components/ui/Lottie";
 import { shallow } from "zustand/shallow";
 
@@ -61,6 +62,7 @@ const index = () => {
     pageSize: 10,
   });
   const fetchDataOptions = pagination;
+  const loaderSize = 260;
 
   const { data, isLoading, isFetching } = getAllLists<Transaction>(
     ["Expenses", "Listing", user?.userId, ...filter, fetchDataOptions],
@@ -88,8 +90,6 @@ const index = () => {
     }
   );
 
-  useEffect(() => {}, []);
-
   const [isOpen, setIsOpen] = useState(false);
 
   const onClearFilters = useCallback(() => {
@@ -113,16 +113,17 @@ const index = () => {
   const filterElements = useMemo(() => {
     return (
       <>
-        {" "}
-        <div className="flex items-center justify-between">
-          <Button onClick={onFilter}>Filter</Button>
+        <div className="mb-2 flex items-center justify-between gap-2">
+          <Button onClick={onFilter}>Apply</Button>
           <Button variant="light" onClick={onClearFilters}>
-            <XCircleIcon className="w-5 h-5" />
+            <XCircleIcon className="h-5 w-5" />
           </Button>
         </div>
-        <Text className="my-2">Date</Text>
+        <Text className="my-2 font-medium text-slate-600 dark:text-slate-300">
+          Date
+        </Text>
         <DateRangePicker
-          className="max-w-md mx-auto"
+          className="w-full"
           value={dates}
           disabled={disableFilters}
           onValueChange={(value) => {
@@ -130,8 +131,12 @@ const index = () => {
           }}
         />
         <div className="mt-4">
-          <Text className="my-2">Search</Text>
+          <Text className="my-2 font-medium text-slate-600 dark:text-slate-300">
+            Search
+          </Text>
           <TextInput
+            className="w-full"
+            id="search-filter-expense"
             disabled={disableFilters}
             value={query}
             onChange={(e) => {
@@ -140,8 +145,12 @@ const index = () => {
           />
         </div>
         <div className="mt-4">
-          <Text className="my-2">Min Amount</Text>
+          <Text className="my-2 font-medium text-slate-600 dark:text-slate-300">
+            Min Amount
+          </Text>
           <TextInput
+            className="w-full"
+            id="min-amount-expense"
             value={minAmount === "0" ? "" : minAmount}
             disabled={disableFilters}
             onChange={(e) => {
@@ -156,8 +165,12 @@ const index = () => {
           />
         </div>
         <div className="mt-4">
-          <Text className="my-2">Max Amount</Text>
+          <Text className="my-2 font-medium text-slate-600 dark:text-slate-300">
+            Max Amount
+          </Text>
           <TextInput
+            className="w-full"
+            id="max-amount-expense"
             value={maxAmount === "0" ? "" : maxAmount}
             disabled={disableFilters}
             onChange={(e) => {
@@ -172,8 +185,11 @@ const index = () => {
           />
         </div>
         <div className="mt-4">
-          <Text className="my-2">Category</Text>
+          <Text className="my-2 font-medium text-slate-600 dark:text-slate-300">
+            Category
+          </Text>
           <Select
+            className="w-full"
             value={category}
             disabled={disableFilters}
             onValueChange={(value) => setCategory(value)}
@@ -189,8 +205,11 @@ const index = () => {
           </Select>
         </div>
         <div className="mt-4">
-          <Text className="my-2">Tag</Text>
+          <Text className="my-2 font-medium text-slate-600 dark:text-slate-300">
+            Tag
+          </Text>
           <TextInput
+            className="w-full"
             disabled={disableFilters}
             value={tag}
             onChange={(e) => setTag(e.target.value)}
@@ -216,16 +235,18 @@ const index = () => {
         <title> expensasaurus - Manage and Filter Expenses</title>
       </Head>
 
-      <div className="flex flex-col flex-1 w-full max-w-[1200px] mx-auto px-4">
+      <div className="mx-auto flex w-full max-w-[1200px] flex-1 flex-col px-4 pt-16">
         <div className="flex items-center justify-between">
           <button
-            className="visible opacity-100 lg:invisible lg:opacity-0 cursor-pointer w-8 h-8 bg-blue-500 rounded-full flex items-center justify-center"
+            className="visible cursor-pointer flex h-9 w-9 items-center justify-center rounded-full border border-blue-400/30 bg-blue-500 opacity-100 shadow-sm transition hover:bg-blue-400 lg:invisible lg:opacity-0"
             onClick={() => setIsOpen(true)}
           >
             <FilterIcon className="w-4 h-4 text-white" />
           </button>
-          <Title className="text-center py-10">Expenses</Title>
-          <Link href={"/expenses/create"}>
+          <Title className="py-10 text-center text-slate-900 dark:text-slate-100">
+            Expenses
+          </Title>
+          <Link href={ROUTES.EXPENSE_CREATE}>
             <Button>Add Expense</Button>
           </Link>
         </div>
@@ -238,14 +259,14 @@ const index = () => {
           >
             {filterElements}
           </LeftSidebar>
-          <div className="w-[70%] flex flex-1 flex-col">
+          <div className="flex w-full flex-1 flex-col md:w-[70%]">
             {isLoading ? (
               <>
-                <div className="w-full">
+                <div className="mx-auto w-full max-w-[260px]">
                   <Lottie
                     options={defaultOptions(animationData)}
-                    height={"auto"}
-                    width={"auto"}
+                    height={loaderSize}
+                    width={loaderSize}
                   />
                 </div>
               </>
@@ -257,7 +278,7 @@ const index = () => {
                     height={500}
                     width={"auto"}
                   />
-                  <Subtitle className="text-slate-700 text-center ml-[-30px]">
+                  <Subtitle className="ml-[-30px] text-center text-slate-700 dark:text-slate-300">
                     No Expenses Listed
                   </Subtitle>
                 </div>

@@ -55,14 +55,14 @@ export const Attachment = (props: AttachmentProps) => {
         window.open(file, '_blank');
     }
 
-    return <div className='relative'>
-        {onDelete && <button type='button' disabled={disabled} onClick={onDelete} className="z-[1] top-[-10px] flex items-center group transition-all duration-200 justify-center right-[-10px] hover:bg-red-600 absolute bg-white p-2 rounded-full border border-[#f4f4f4] h-[30px] w-[30px] cursor-pointer">
-            <MdClose className="h-[12px]  group-hover:text-white" />
+    return <div className='relative rounded-xl border border-slate-200 bg-white p-2 shadow-sm dark:border-white/10 dark:bg-slate-900/70'>
+        {onDelete && <button type='button' disabled={disabled} onClick={onDelete} className="group absolute right-[-10px] top-[-10px] z-[1] flex h-[30px] w-[30px] cursor-pointer items-center justify-center rounded-full border border-slate-200 bg-white p-2 transition-all duration-200 hover:border-rose-400 hover:bg-rose-500 dark:border-white/15 dark:bg-slate-900 dark:hover:border-rose-500/60 dark:hover:bg-rose-500">
+            <MdClose className="h-[12px] text-slate-600 group-hover:text-white dark:text-slate-300" />
         </button>}
         {data?.href
-            ? <img src={data?.href} className='h-[100px] w-[100px] object-cover opacity-90' alt='File' />
+            ? <img src={data?.href} className='h-[100px] w-[100px] rounded-md object-cover opacity-90' alt='File' />
             : null}
-        <Button onClick={onDownload} className='absolute top-[50%] left-[50%] transform translate-x-[-50%] translate-y-[-50%] p-2 bg-white rounded-full' variant='light' size='xs'><DownloadIcon className='h-[20px]' /></Button>
+        <Button onClick={onDownload} className='absolute left-[50%] top-[50%] -translate-x-[50%] -translate-y-[50%] rounded-full bg-white p-2 dark:bg-slate-800/90' variant='light' size='xs'><DownloadIcon className='h-[20px]' /></Button>
     </div>
 
 }

@@ -1,7 +1,6 @@
 import clsx from "clsx";
 import { useAuthStore } from "expensasaurus/shared/stores/useAuthStore";
-import { useRouter } from "next/router";
-import React, { useEffect } from "react";
+import React from "react";
 import { shallow } from "zustand/shallow";
 import CurrencyModal from "../CurrencyModal";
 import Navigation from "../Navigation";
@@ -14,25 +13,13 @@ interface Props {
 
 const Layout = (props: Props) => {
   const { children, disablePadding } = props;
-  const { user, getUser } = useAuthStore(
-    (store) => ({ user: store.user, getUser: store.getUser }),
-    shallow
-  );
-
-  const router = useRouter();
-
-  useEffect(() => {
-    (async function () {
-      const user = await getUser();
-      if (!user) router.push("/login");
-    })();
-  }, [user]);
+  const { user } = useAuthStore((store) => ({ user: store.user }), shallow);
 
   return user ? (
     <div
       className={clsx(
         "flex flex-col pt-navigation-height dark:bg-[#02040F]",
-        disablePadding ? "min-h-0" : "min-h-screen pb-10"
+        disablePadding ? "min-h-screen" : "min-h-screen pb-10"
       )}
     >
       <Navigation />

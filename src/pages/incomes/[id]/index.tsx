@@ -18,6 +18,7 @@ import {
   incomeCategories,
 } from "expensasaurus/shared/constants/categories";
 import { ENVS } from "expensasaurus/shared/constants/constants";
+import { ROUTES, routeBuilders } from "expensasaurus/shared/constants/routes";
 import {
   deleteDoc,
   getAllLists,
@@ -126,7 +127,7 @@ const id = () => {
                   {data?.tag ? <Tag text={data.tag}></Tag> : ""}
                 </div>
                 <div className="flex gap-3 ml-auto">
-                  <Link href={`/incomes/${id}/edit`} shallow>
+                  <Link href={routeBuilders.incomeEdit(String(id))} shallow>
                     <EditButton />
                   </Link>
                   <DeleteButton
@@ -161,7 +162,7 @@ const id = () => {
             <div className="md:w-[40%] w-full">
               <div className="flex items-center justify-between mb-3">
                 <Text>More incomes in this category</Text>
-                <Link href={"/incomes/create"}>
+                <Link href={ROUTES.INCOME_CREATE}>
                   <Button>+ Add Income</Button>
                 </Link>
               </div>
@@ -180,7 +181,7 @@ const id = () => {
                       <Link
                         className="box-shadow-card px-4 py-3 rounded-sm"
                         key={doc.$id}
-                        href={`/expenses/${doc.$id}`}
+                        href={routeBuilders.expenseDetail(doc.$id)}
                       >
                         <div className="flex items-center mt-2">
                           {categoryInfo && (
@@ -232,7 +233,7 @@ const id = () => {
               },
               onSuccess: () => {
                 toast.success("Expense deleted successfully");
-                router.push("/expenses");
+                router.push(ROUTES.EXPENSES);
               },
               onError: () => {
                 toast.error("Expense deletion failed");

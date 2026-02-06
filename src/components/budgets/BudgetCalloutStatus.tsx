@@ -1,5 +1,5 @@
 import { CheckCircleIcon, ExclamationIcon } from "@heroicons/react/outline";
-import { Callout, Subtitle } from "@tremor/react";
+import clsx from "clsx";
 
 interface BudgetStatusProps {
   type: "fail" | "success" | "on-track";
@@ -19,68 +19,71 @@ const BudgetStatus = (props: BudgetStatusProps) => {
     ? "Budget Success"
     : "Budget Exceeded";
 
-  const categoryExceedMessage = categoryExceed
-    ? "Oops! Looks like you have exceeded your budget limit in the selected category. "
-    : "";
-  const categoryWithNoBudgetMsg = categoryWithNoBudget
-    ? "Attention! You have recorded an expense in a category without a defined budget. It's important to allocate a budget for this category to better track your spending and financial goals. "
-    : "";
-  const ifBothMessage =
-    categoryExceed && categoryWithNoBudget
-      ? "Uh-oh! It seems you have exceeded the budget limit in the selected category and recorded an expense in a category without a defined budget."
-      : "";
-
-  const allMessage = ifBothMessage
-    ? ifBothMessage
-    : categoryExceedMessage + categoryWithNoBudgetMsg;
-
-  const description = isOnTrack
-    ? `
-    Great job keeping an eye on your budget! 
-    
-    ${allMessage}
-    
-    By staying vigilant and monitoring your spending, you're ensuring that you're on track towards your financial goals. Keep up the good work! Remember, regular check-ins on your budget can help you maintain control over your finances and make informed decisions. 
-    
-    If you notice any areas where you can save more or optimize your expenses, feel free to make adjustments accordingly. 
-    Your commitment to budget management will continue to pay off in the long run.
-     `
-    : isSuccess
-    ? `
-     Congratulations! You've successfully managed your budget${
-       allMessage
-         ? " despite having a few hicups along the way"
-         : " and achieved your financial goals across all categories"
-     }. Your dedication and financial discipline have paid off, putting you on a path to financial success.
-
-     By effectively allocating your funds and staying within your budget limits for each category, you've demonstrated excellent financial planning and control. This accomplishment is a testament to your commitment to smart spending and saving habits.
-
-     Well done, and keep up the fantastic work on your budgeting journey!
-     `
-    : `
-     ${allMessage}  
-     It's important to keep track of your expenses to stay within your planned budget. 
-     
-     Analyzing your spending patterns and making adjustments can help you regain control over your finances. 
-      Take a closer look at the categories where you have exceeded your budget and consider finding ways to cut down on expenses or redistribute funds. 
-     
-     Remember, financial discipline is key to achieving your financial goals. Keep working towards better budget management, and you'll soon be back on track!
-      `;
   const Icon = isOnTrack
     ? CheckCircleIcon
     : isSuccess
     ? CheckCircleIcon
     : ExclamationIcon;
-  const color = isOnTrack ? "green" : isFail ? "red" : "green";
+  const highlights = [
+    categoryExceed ? "One or more categories are above budget." : null,
+    categoryWithNoBudget ? "Some spending was logged in categories without a budget." : null,
+  ].filter(Boolean) as string[];
+
+  const summary = highlights.length
+    ? highlights.join(" ")
+    : isSuccess
+    ? "Great control across your budgeted categories."
+    : "Your spending is currently in a healthy range.";
+
+  const actions = isFail
+    ? [
+        categoryExceed
+          ? "Review overspent categories and either reduce upcoming spend or update limits."
+          : null,
+        categoryWithNoBudget
+          ? "Assign budget caps to uncapped categories to prevent surprise overruns."
+          : null,
+        "Check recent transactions and move non-essential expenses to lower-priority categories.",
+      ]
+    : isSuccess
+    ? [
+        "Keep the same spending pace for the rest of this budget period.",
+        "Use any surplus to strengthen savings or pay down high-priority goals.",
+      ]
+    : [
+        "Do a quick weekly review to catch spikes before they turn into overruns.",
+        "Reallocate budget between categories based on actual usage.",
+      ];
+
+  const panelClasses = isFail
+    ? "border-rose-300/80 bg-rose-50 text-rose-900 dark:border-rose-500/35 dark:bg-rose-500/12 dark:text-rose-100"
+    : isSuccess
+    ? "border-emerald-300/80 bg-emerald-50 text-emerald-900 dark:border-emerald-500/35 dark:bg-emerald-500/12 dark:text-emerald-100"
+    : "border-blue-300/80 bg-blue-50 text-blue-900 dark:border-blue-500/35 dark:bg-blue-500/12 dark:text-blue-100";
+
+  const iconClasses = isFail
+    ? "bg-rose-100 text-rose-600 dark:bg-rose-500/20 dark:text-rose-300"
+    : isSuccess
+    ? "bg-emerald-100 text-emerald-600 dark:bg-emerald-500/20 dark:text-emerald-300"
+    : "bg-blue-100 text-blue-600 dark:bg-blue-500/20 dark:text-blue-300";
 
   return (
-    <>
-      <Callout className="mt-10" title={title} icon={Icon} color={color}>
-        <Subtitle className="whitespace-pre-line text-slate-600 dark:text-slate-50/50 w-[90%] md:w-[80%]">
-          {description}
-        </Subtitle>
-      </Callout>
-    </>
+    <div className={clsx("mt-10 rounded-2xl border p-5 shadow-sm", panelClasses)}>
+      <div className="flex items-start gap-3">
+        <span className={clsx("mt-0.5 inline-flex h-8 w-8 shrink-0 items-center justify-center rounded-full", iconClasses)}>
+          <Icon className="h-5 w-5" />
+        </span>
+        <div className="min-w-0">
+          <h3 className="text-base font-semibold">{title}</h3>
+          <p className="mt-1 text-sm leading-6 opacity-95">{summary}</p>
+          <ul className="mt-3 list-disc space-y-1.5 pl-5 text-sm leading-6 opacity-95">
+            {actions.filter(Boolean).map((line) => (
+              <li key={line}>{line}</li>
+            ))}
+          </ul>
+        </div>
+      </div>
+    </div>
   );
 };
 

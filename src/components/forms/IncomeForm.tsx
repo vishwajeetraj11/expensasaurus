@@ -7,6 +7,7 @@ import { Models, Role } from "appwrite";
 import useDates from "expensasaurus/hooks/useDates";
 import { incomeCategories } from "expensasaurus/shared/constants/categories";
 import { ENVS, regex } from "expensasaurus/shared/constants/constants";
+import { ROUTES, routeBuilders } from "expensasaurus/shared/constants/routes";
 import {
   ID,
   Permission,
@@ -45,7 +46,7 @@ const IncomeForm = () => {
   const { id } = router.query;
   const queryClient = useQueryClient();
 
-  const isUpdateRoute = router.route === "/incomes/[id]/edit";
+  const isUpdateRoute = router.route === ROUTES.INCOME_EDIT;
 
   const { data } = getDoc<Transaction>(
     ["Income by ID", id, user?.userId],
@@ -98,7 +99,7 @@ const IncomeForm = () => {
       // queryClient.invalidateQueries(["Expenses", "Listing"]);
       queryClient.invalidateQueries(["Expenses"]);
       toast.success(toastMessage);
-      router.push(`/incomes/${upsertedIncome.$id}`);
+      router.push(routeBuilders.incomeDetail(upsertedIncome.$id));
       if (isUpdateRoute) {
         queryClient.invalidateQueries(["Income by ID", id, user?.userId]);
       }

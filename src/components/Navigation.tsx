@@ -1,11 +1,11 @@
 import * as Popover from "@radix-ui/react-popover";
-import { Button } from "@tremor/react";
 import { useAuthStore } from "expensasaurus/shared/stores/useAuthStore";
-import { clsx } from "expensasaurus/shared/utils/common";
 import { isAssistantEmailAllowed } from "expensasaurus/shared/constants/assistantAccess";
+import { LANDING_SECTIONS, ROUTES } from "expensasaurus/shared/constants/routes";
+import { clsx } from "expensasaurus/shared/utils/common";
 import Link from "next/link";
 import { useRouter } from "next/router";
-import { useEffect, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { shallow } from "zustand/shallow";
 import { Logo } from "./icons/svg";
 
@@ -13,26 +13,31 @@ interface Props {
   landingPage?: boolean;
 }
 
-const Navigation = (props: Props) => {
-  const { landingPage = false } = props;
+type NavItem = {
+  href: string;
+  label: string;
+};
+
+const landingLinks: NavItem[] = [
+  { href: LANDING_SECTIONS.HOW_IT_WORKS, label: "How It Works" },
+  { href: LANDING_SECTIONS.ASSISTANT, label: "Assistant" },
+  { href: LANDING_SECTIONS.BUDGET, label: "Budgets" },
+];
+
+const appLinksBase: NavItem[] = [
+  { href: ROUTES.DASHBOARD, label: "Dashboard" },
+  { href: ROUTES.EXPENSES, label: "Expenses" },
+  { href: ROUTES.INCOMES, label: "Incomes" },
+  { href: ROUTES.CATEGORY, label: "Category" },
+  { href: ROUTES.CALENDAR, label: "Calendar" },
+  { href: ROUTES.BUDGETS, label: "Budgets" },
+];
+
+const isRouteActive = (route: string, href: string) =>
+  href === ROUTES.DASHBOARD ? route === href : route.startsWith(href);
+
+const Navigation = ({ landingPage = false }: Props) => {
   const [hamburgerMenuIsOpen, setHamburgerMenuIsOpen] = useState(false);
-
-  useEffect(() => {
-    const html = document.querySelector("html");
-    if (html) html.classList.toggle("overflow-hidden", hamburgerMenuIsOpen);
-  }, [hamburgerMenuIsOpen]);
-
-  useEffect(() => {
-    const closeHamburgerNavigation = () => setHamburgerMenuIsOpen(false);
-
-    window.addEventListener("orientationchange", closeHamburgerNavigation);
-    window.addEventListener("resize", closeHamburgerNavigation);
-
-    return () => {
-      window.removeEventListener("orientationchange", closeHamburgerNavigation);
-      window.removeEventListener("resize", closeHamburgerNavigation);
-    };
-  }, []);
 
   const { userInfo, getUserInfo, user, logout } = useAuthStore(
     (state) => ({
@@ -47,182 +52,229 @@ const Navigation = (props: Props) => {
   const router = useRouter();
 
   useEffect(() => {
-    if (user) {
+    const html = document.documentElement;
+    if (hamburgerMenuIsOpen) {
+      html.classList.add("overflow-hidden");
+    } else {
+      html.classList.remove("overflow-hidden");
+    }
+
+    return () => {
+      html.classList.remove("overflow-hidden");
+    };
+  }, [hamburgerMenuIsOpen]);
+
+  useEffect(() => {
+    setHamburgerMenuIsOpen(false);
+  }, [router.asPath]);
+
+  useEffect(() => {
+    if (user && !userInfo) {
       getUserInfo();
     }
-  }, [user, getUserInfo]);
+  }, [user, userInfo, getUserInfo]);
 
   const canAccessAssistant = isAssistantEmailAllowed(userInfo?.email);
 
+  const appLinks = useMemo(() => {
+    const links = [...appLinksBase];
+    if (canAccessAssistant) {
+      links.splice(1, 0, { href: ROUTES.ASSISTANT, label: "Assistant" });
+    }
+    return links;
+  }, [canAccessAssistant]);
+
+  const links = landingPage ? landingLinks : appLinks;
+
   return (
-    <header className="fixed top-0 left-0 z-[12] w-full border-transparent-white backdrop-blur-[12px]">
-      <div className="max-w-[1200px] mx-auto lg:px-0 px-8 flex h-navigation-height items-center">
+    <header
+      className={clsx(
+        "fixed left-0 top-0 z-[20] w-full border-b backdrop-blur-xl",
+        landingPage
+          ? "border-blue-100 bg-white/90"
+          : "border-blue-100 bg-white/90 dark:border-blue-400/20 dark:bg-slate-950/70"
+      )}
+    >
+      <div className="mx-auto flex h-navigation-height w-full max-w-[1200px] items-center px-5 md:px-8 lg:px-0">
         <Link
-          href={landingPage ? "/" : "/dashboard"}
-          className="flex items-center text-md"
+          href={landingPage ? ROUTES.HOME : ROUTES.DASHBOARD}
+          className="flex items-center gap-3"
         >
-          <Logo
+          <span
             className={clsx(
-              "w-[1.8rem] h-[1.8rem] mr-4",
-              !landingPage && "dark:fill-white"
-            )}
-          />
-          <p className={clsx("text-[14px]", "dark:text-white")}>
-            Expensasaurus
-          </p>
-        </Link>
-        <div
-          className={clsx(
-            "transition-[visibility] md:visible ml-auto",
-            hamburgerMenuIsOpen ? "visible" : "invisible delay-500"
-          )}
-        >
-          <nav
-            className={clsx(
-              "md:opacity-100 h-[calc(100vh_-_var(--navigation-height))] md:block w-full fixed md:relative top-navigation-height md:top-0 left-0 overflow-auto bg-white  md:h-auto md:w-auto md:bg-transparent transform transition-[opacity] duration-500 md:translate-x-0",
-              hamburgerMenuIsOpen ? "opacity-100" : "opacity-0",
-              !landingPage && "dark:bg-black sm:dark:bg-transparent"
+              "flex h-9 w-9 items-center justify-center rounded-xl p-2 text-white",
+              landingPage
+                ? "bg-blue-600"
+                : "bg-blue-600 dark:bg-blue-500"
             )}
           >
-            <ul
-              className={clsx(
-                "ease-in flex flex-col md:flex-row md:items-center h-full md:text-sm",
-                "[&_a]:text-md md:[&_a]:transition-colors [&_li]:ml-6 [&_li]:border-bottom [&_li]:border-b [&_li]:border-grey-dark md:[&_li]:border-none",
-                "[&_a]:h-navigation-height [&_a]:w-full [&_a]:flex [&_a]:items-center",
-                !landingPage &&
-                  " dark:[&_a:hover]:text-gray-200 dark:text-slate-200",
-                hamburgerMenuIsOpen ? "[&_a]:!translate-y-0" : "", // not working
-                "[&_a]:duration-300 [&_a]:translate-y-8 md:[&_a]:translate-y-0 [&_a]:transition-[color,transform]"
-              )}
-            >
-              {!landingPage && (
-                <>
-                  <li>
-                    <Link className="text-gray" href="/dashboard">
-                      Dashboard
-                    </Link>
-                  </li>
-                  {canAccessAssistant && (
-                    <li>
-                      <Link href="/assistant">Assistant</Link>
-                    </li>
-                  )}
-                  <li>
-                    <Link href="/community">Community</Link>
-                  </li>
-                  <li>
-                    <Link href="/expenses">Expense</Link>
-                  </li>
-                  <li className="">
-                    <Link href="/incomes">Incomes</Link>
-                  </li>
-                  <li className="">
-                    <Link href="/category">Category</Link>
-                  </li>
-                  <li className="">
-                    <Link href="/calender">Calender</Link>
-                  </li>
-                  <li>
-                    <Link href="/budgets">Budget</Link>
-                  </li>
-                </>
-              )}
+            <Logo className="h-4 w-4 fill-current" />
+          </span>
+          <span className="text-sm font-semibold tracking-wide text-slate-900 dark:text-white">
+            Expensasaurus
+          </span>
+        </Link>
 
-              {landingPage && (
-                <>
-                  <li className="">
-                    <Link
-                      onClick={() => setHamburgerMenuIsOpen((open) => false)}
-                      href="#how-it-works"
-                    >
-                      How It Works
-                    </Link>
-                  </li>
+        <nav className="ml-8 hidden items-center gap-1 md:flex lg:ml-12">
+          {links.map((link) => {
+            const active = !landingPage && isRouteActive(router.route, link.href);
+            return (
+              <Link
+                key={link.href}
+                href={link.href}
+                className={clsx(
+                  "rounded-lg px-3 py-2 text-sm font-medium transition",
+                  landingPage
+                    ? "text-slate-600 hover:bg-blue-50 hover:text-blue-700"
+                    : "text-slate-600 hover:bg-slate-100 hover:text-slate-900 dark:text-slate-200 dark:hover:bg-white/10 dark:hover:text-white",
+                  active &&
+                    "bg-blue-600 text-white hover:bg-blue-700 hover:text-white dark:bg-blue-500 dark:text-white"
+                )}
+              >
+                {link.label}
+              </Link>
+            );
+          })}
+        </nav>
 
-                  <li className="">
-                    <Link
-                      onClick={() => setHamburgerMenuIsOpen((open) => false)}
-                      href="#budget"
-                    >
-                      Budget Management
-                    </Link>
-                  </li>
-                </>
-              )}
-            </ul>
-          </nav>
-        </div>
+        <div className="ml-auto hidden items-center gap-3 md:flex">
+          {landingPage && !userInfo && (
+            <>
+              <Link
+                href={ROUTES.LOGIN}
+                className="rounded-lg px-4 py-2 text-sm font-medium text-blue-700 transition hover:bg-blue-50 hover:text-blue-800"
+              >
+                Log in
+              </Link>
+              <Link
+                href={ROUTES.SIGNUP}
+                className="rounded-xl bg-blue-600 px-4 py-2 text-sm font-semibold text-white transition hover:bg-blue-700"
+              >
+                Start free
+              </Link>
+            </>
+          )}
 
-        {userInfo && (
-          <>
+          {userInfo && (
             <Popover.Root>
               <Popover.Trigger asChild>
-                <div className="ml-4 cursor-pointer w-8 h-8 border-gray-200 border rounded-full text-xs flex items-center justify-center bg-blue-500 text-white">
-                  {userInfo?.name[0]}
-                </div>
+                <button
+                  type="button"
+                  className="flex h-9 w-9 items-center justify-center rounded-full bg-blue-600 text-xs font-semibold text-white dark:bg-blue-500"
+                  aria-label="Open profile menu"
+                >
+                  {userInfo.name?.[0] || "U"}
+                </button>
               </Popover.Trigger>
               <Popover.Portal>
                 <Popover.Content
-                  className={clsx(
-                    "z-[9999] rounded p-5 w-[150px] bg-white shadow-[0_10px_38px_-10px_hsla(206,22%,7%,.35),0_10px_20px_-15px_hsla(206,22%,7%,.2)] focus:shadow-[0_10px_38px_-10px_hsla(206,22%,7%,.35),0_10px_20px_-15px_hsla(206,22%,7%,.2),0_0_0_2px_theme(colors.violet7)] will-change-[transform,opacity] data-[state=open]:data-[side=top]:animate-slideDownAndFade data-[state=open]:data-[side=right]:animate-slideLeftAndFade data-[state=open]:data-[side=bottom]:animate-slideUpAndFade data-[state=open]:data-[side=left]:animate-slideRightAndFade",
-                    !!landingPage && "dark:bg-slate-500"
-                  )}
-                  sideOffset={5}
+                  className="z-[9999] w-[180px] rounded-xl border border-slate-200 bg-white p-3 shadow-xl focus:outline-none dark:border-white/10 dark:bg-slate-900"
+                  sideOffset={8}
+                  align="end"
                 >
-                  <div className="flex flex-col gap-2.5">
-                    <button type="button" className="text-base">
-                      <Link href={"/dashboard"} className="text-base">
-                        Dashboard
-                      </Link>
-                    </button>
-                    <button type="button">
-                      <Link href={"/profile"} className="text-base">
-                        Profile
-                      </Link>
-                    </button>
+                  <div className="flex flex-col gap-1">
+                    <Link
+                      href={ROUTES.DASHBOARD}
+                      className="rounded-lg px-3 py-2 text-sm text-slate-700 transition hover:bg-slate-100 hover:text-slate-900 dark:text-slate-200 dark:hover:bg-white/10 dark:hover:text-white"
+                    >
+                      Dashboard
+                    </Link>
+                    <Link
+                      href={ROUTES.PROFILE}
+                      className="rounded-lg px-3 py-2 text-sm text-slate-700 transition hover:bg-slate-100 hover:text-slate-900 dark:text-slate-200 dark:hover:bg-white/10 dark:hover:text-white"
+                    >
+                      Profile
+                    </Link>
                     <button
                       type="button"
                       onClick={() => logout(router)}
-                      className="text-base"
+                      className="rounded-lg px-3 py-2 text-left text-sm text-rose-600 transition hover:bg-rose-50 dark:text-rose-300 dark:hover:bg-rose-500/10"
                     >
                       Logout
                     </button>
                   </div>
-                  <Popover.Arrow className="fill-white" />
+                  <Popover.Arrow className="fill-white dark:fill-slate-900" />
                 </Popover.Content>
               </Popover.Portal>
             </Popover.Root>
-          </>
-        )}
-        {landingPage && !userInfo && (
-          <div className="flex h-full items-center  ml-auto">
-            <Link href="/login" className="mr-6 text-sm">
-              Log in
-            </Link>
-            <Link href="/signup" className="text-sm">
-              <Button className="bg-blue-600" variant={"primary"}>
-                Sign up
-              </Button>
-            </Link>
-          </div>
-        )}
+          )}
+        </div>
 
         <button
-          className="ml-6 md:hidden"
+          type="button"
+          className="ml-auto inline-flex h-9 w-9 items-center justify-center rounded-lg border border-slate-200 text-slate-700 md:hidden"
           onClick={() => setHamburgerMenuIsOpen((open) => !open)}
         >
           <span className="sr-only">Toggle menu</span>
-          <svg
-            className="dark:text-white"
-            width="18"
-            height="11"
-            viewBox="0 0 18 11"
-            fill="none"
-          >
-            <path d="M0 0H18V1H0V0Z" fill="currentColor"></path>
-            <path d="M0 10H18V11H0V10Z" fill="currentColor"></path>
+          <svg width="18" height="12" viewBox="0 0 18 12" fill="none">
+            <path d="M1 1H17" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" />
+            <path d="M1 6H17" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" />
+            <path d="M1 11H17" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" />
           </svg>
         </button>
+      </div>
+
+      <div
+        className={clsx(
+          "border-t border-slate-200/70 bg-white/95 px-5 pb-6 pt-4 transition md:hidden",
+          hamburgerMenuIsOpen ? "block" : "hidden"
+        )}
+      >
+        <nav className="mx-auto flex max-w-[1200px] flex-col gap-1">
+          {links.map((link) => {
+            const active = !landingPage && isRouteActive(router.route, link.href);
+            return (
+              <Link
+                key={link.href}
+                href={link.href}
+                className={clsx(
+                  "rounded-lg px-3 py-2 text-sm font-medium transition",
+                  active
+                    ? "bg-blue-600 text-white"
+                    : "text-slate-700 hover:bg-blue-50 hover:text-blue-700"
+                )}
+                onClick={() => setHamburgerMenuIsOpen(false)}
+              >
+                {link.label}
+              </Link>
+            );
+          })}
+
+          {landingPage && !userInfo && (
+            <div className="mt-3 grid grid-cols-2 gap-2">
+              <Link
+                href={ROUTES.LOGIN}
+                className="rounded-lg border border-blue-200 px-3 py-2 text-center text-sm font-medium text-blue-700"
+              >
+                Log in
+              </Link>
+              <Link
+                href={ROUTES.SIGNUP}
+                className="rounded-lg bg-blue-600 px-3 py-2 text-center text-sm font-semibold text-white"
+              >
+                Start free
+              </Link>
+            </div>
+          )}
+
+          {userInfo && (
+            <div className="mt-3 grid grid-cols-1 gap-2">
+              <Link
+                href={ROUTES.PROFILE}
+                className="rounded-lg border border-slate-200 px-3 py-2 text-sm font-medium text-slate-700"
+              >
+                Profile
+              </Link>
+              <button
+                type="button"
+                onClick={() => logout(router)}
+                className="rounded-lg border border-rose-200 px-3 py-2 text-left text-sm font-medium text-rose-600"
+              >
+                Logout
+              </button>
+            </div>
+          )}
+        </nav>
       </div>
     </header>
   );

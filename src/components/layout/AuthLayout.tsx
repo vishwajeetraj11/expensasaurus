@@ -1,4 +1,5 @@
 import { useAuthStore } from "expensasaurus/shared/stores/useAuthStore";
+import { ROUTES } from "expensasaurus/shared/constants/routes";
 import Link from "next/link";
 import { shallow } from "zustand/shallow";
 import DarkMode from "../ui/DarkMode";
@@ -15,61 +16,65 @@ export default function AuthLayout({ children }: AuthLayoutProps) {
     shallow
   );
 
-  const isLogin = authFormState === "SIGN_IN";
   const isSignup = authFormState === "SIGN_UP";
 
   return (
-    <div>
-      <div className="relative float-right h-full min-h-screen w-full !bg-white dark:!bg-navy-900">
-        <DarkMode />
-        <main className={`mx-auto min-h-screen`}>
-          <div className="relative flex">
-            <div className="mx-auto flex min-h-full w-full flex-col justify-start pt-12 md:max-w-[75%] lg:h-screen lg:max-w-[1013px] lg:px-8 lg:pt-0 xl:h-[100vh] xl:max-w-[1383px] xl:px-0 xl:pl-[70px]">
-              <div className="mb-auto flex flex-col pl-5 pr-5 md:pr-0 md:pl-12 lg:max-w-[48%] lg:pl-0 xl:max-w-full">
-                <Link href="/" className="mt-0 w-max lg:pt-10">
-                  <div className="mx-auto flex h-fit w-fit items-center hover:cursor-pointer">
-                    <svg
-                      width="8"
-                      height="12"
-                      viewBox="0 0 8 12"
-                      fill="none"
-                      xmlns="http://www.w3.org/2000/svg"
-                    >
-                      <path
-                        d="M6.70994 2.11997L2.82994 5.99997L6.70994 9.87997C7.09994 10.27 7.09994 10.9 6.70994 11.29C6.31994 11.68 5.68994 11.68 5.29994 11.29L0.709941 6.69997C0.319941 6.30997 0.319941 5.67997 0.709941 5.28997L5.29994 0.699971C5.68994 0.309971 6.31994 0.309971 6.70994 0.699971C7.08994 1.08997 7.09994 1.72997 6.70994 2.11997V2.11997Z"
-                        fill="#A3AED0"
-                      />
-                    </svg>
-                    <p className="ml-3 text-sm text-gray-600">
-                      Back
-                    </p>
-                  </div>
-                </Link>
-                {children}
-                <div className="absolute right-0 hidden h-full min-h-screen md:block lg:w-[49vw] 2xl:w-[44vw]">
-                  <div
-                    className="absolute flex flex-col h-full w-full px-10 justify-center bg-cover bg-center lg:rounded-bl-[120px] xl:rounded-bl-[200px]"
-                    style={{ backgroundImage: `url(/img/auth/auth.png)` }}
-                  >
-                    <p className="text-white font-thin text-[40px]">
-                      {isSignup ? `Elevate Your Financial Lifestyle` : 'Welcome Back to Your Financial Kingdom'}
-                    </p>
-                    <p className="text-[#f4f4f4] text-[22px] pt-20 max-w-[80%]">
-                      {isSignup ? `Seamlessly track your expenses, optimize your spending, and make informed financial decisions like never before.
-                      Take control of your wealth and embark on a journey towards unparalleled financial freedom!`: `
-                      Step into your financial kingdom with ease and convenience.
-                      As a valued member of our exclusive expense tracking platform, your journey continues here.
-                      Simply enter your login credentials to access a world of financial insights and control. 
-                      `}
-                    </p>
-                  </div>
-                </div>
-              </div>
-              {/* <Footer /> */}
+    <div className="relative min-h-screen overflow-hidden bg-gradient-to-b from-slate-100 via-slate-50 to-white text-slate-900">
+      <div className="pointer-events-none absolute inset-0">
+        <div className="absolute left-[-12%] top-20 h-[20rem] w-[20rem] rounded-full bg-cyan-200/40 blur-3xl" />
+        <div className="absolute right-[-10%] top-10 h-[22rem] w-[22rem] rounded-full bg-blue-200/45 blur-3xl" />
+      </div>
+
+      <DarkMode />
+
+      <main className="relative mx-auto grid min-h-screen w-full max-w-[1240px] grid-cols-1 gap-8 px-5 py-8 md:px-8 lg:grid-cols-[0.95fr_1.05fr] lg:items-center lg:gap-12 lg:px-0">
+        <section className="rounded-3xl border border-slate-200 bg-white/90 p-6 shadow-[0_20px_60px_-40px_rgba(15,23,42,0.55)] backdrop-blur md:p-8 lg:p-10">
+          <Link
+            href={ROUTES.HOME}
+            className="mb-6 inline-flex items-center gap-2 rounded-lg border border-slate-200 px-3 py-1.5 text-sm font-medium text-slate-600 transition hover:border-slate-300 hover:text-slate-900"
+          >
+            <svg width="9" height="12" viewBox="0 0 9 12" fill="none">
+              <path
+                d="M7.5 1L2.5 6L7.5 11"
+                stroke="currentColor"
+                strokeWidth="1.5"
+                strokeLinecap="round"
+                strokeLinejoin="round"
+              />
+            </svg>
+            Back to home
+          </Link>
+          {children}
+        </section>
+
+        <aside className="hidden rounded-3xl bg-slate-900 p-10 text-white shadow-[0_30px_90px_-45px_rgba(15,23,42,0.9)] lg:block">
+          <p className="text-xs font-semibold uppercase tracking-[0.16em] text-cyan-300">
+            Expensasaurus
+          </p>
+          <h2 className="mt-4 text-4xl font-bold leading-tight">
+            {isSignup
+              ? "Build your spending system with clear budgets"
+              : "Welcome back to your finance command center"}
+          </h2>
+          <p className="mt-4 text-base leading-relaxed text-slate-200">
+            {isSignup
+              ? "Create your account to track every expense, plan categories, and start using Assistant for faster entry."
+              : "Sign in to review your dashboard, update budgets, and keep monthly spending on track."}
+          </p>
+
+          <div className="mt-8 space-y-3">
+            <div className="rounded-xl border border-white/10 bg-white/5 px-4 py-3 text-sm text-slate-200">
+              Real-time dashboard with category-level trends
+            </div>
+            <div className="rounded-xl border border-white/10 bg-white/5 px-4 py-3 text-sm text-slate-200">
+              Assistant prompts to structure transactions quickly
+            </div>
+            <div className="rounded-xl border border-white/10 bg-white/5 px-4 py-3 text-sm text-slate-200">
+              Budget health signals to avoid overspending
             </div>
           </div>
-        </main>
-      </div>
+        </aside>
+      </main>
     </div>
   );
 }

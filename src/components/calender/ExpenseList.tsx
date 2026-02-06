@@ -66,11 +66,11 @@ const ExpenseList = (props: Props) => {
     if (isSuccess) {
       if (data?.documents && data?.documents?.length > 0) {
         return <>
-          <div className="flex flex-col lg:flex-row justify-between mt-2">
-            <Text>  Total Transactions : {data?.total}</Text>
-            <Text className="mr-5"> Total Expense: {formatCurrency(userInfo.prefs.currency, data?.documents.map(v => v.amount).reduce((prev, curr) => curr + prev, 0))}</Text>
+          <div className="mt-2 flex flex-col justify-between lg:flex-row">
+            <Text className="text-slate-600 dark:text-slate-300">Total Transactions: {data?.total}</Text>
+            <Text className="mr-5 text-slate-600 dark:text-slate-300">Total Expense: {formatCurrency(userInfo.prefs.currency, data?.documents.map(v => v.amount).reduce((prev, curr) => curr + prev, 0))}</Text>
           </div>
-          <ol className="mt-4 space-y-1 text-sm leading-6 text-gray-500">
+          <ol className="mt-4 space-y-2 text-sm leading-6">
             {data?.documents?.map((data, index) => (
               <ExpenseCalCard expense={data} key={index} />
             ))}
@@ -82,7 +82,7 @@ const ExpenseList = (props: Props) => {
             height={'auto'}
             width={'auto'}
           />
-          <Subtitle className='text-slate-700 dark:text-slate-400 text-center ml-[-30px]'>No Expenses Listed</Subtitle>
+          <Subtitle className='ml-[-30px] text-center text-slate-700 dark:text-slate-300'>No Expenses Listed</Subtitle>
         </div>
       }
     }
@@ -90,10 +90,10 @@ const ExpenseList = (props: Props) => {
 
   return (
     <>
-      <h2 className="font-semibold dark:text-stone-300 text-gray-900">
+      <h2 className="text-xl font-semibold text-slate-900 dark:text-slate-100">
         Expenses for{" "}
         <time dateTime={format(selectedDay, "yyyy-MM-dd")}>
-          {format(selectedDay, "MMM dd, yyy")}
+          {format(selectedDay, "MMM dd, yyyy")}
         </time>
       </h2>
       <div className={clsx((isLoading || emptyState) && "flex items-center justify-center md:block")}>

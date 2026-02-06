@@ -1,28 +1,13 @@
 import { useAuthStore } from "expensasaurus/shared/stores/useAuthStore";
+import {
+  AUTHENTICATED_ROUTES,
+  PUBLIC_ROUTES,
+  ROUTES,
+} from "expensasaurus/shared/constants/routes";
 import { useRouter } from "next/router";
 import React, { useEffect } from "react";
 import { shallow } from "zustand/shallow";
 
-const authenticatedRoutes = [
-  "/calendar",
-  "/category",
-  "/expenses",
-  "/incomes",
-  "/budgets",
-  "/incomes/[id]",
-  "/expenses/[id]",
-  "/budgets/[id]",
-  "/incomes/create",
-  "/expenses/create",
-  "/budgets/create",
-  "/incomes/[id]/edit",
-  "/expenses/[id]/edit",
-  "/budgets/[id]/edit",
-  "/dashboard",
-  "/profile",
-  "/assistant",
-  "/community",
-];
 interface Props {
   children: React.ReactNode;
 }
@@ -35,37 +20,46 @@ const MainLayout = (props: Props) => {
   );
 
   const router = useRouter();
+  const { isReady, query, route, replace } = router;
 
   useEffect(() => {
+    if (!isReady) return;
+
+    let isCancelled = false;
+
     (async function () {
       try {
         let pushToRoute = "";
         if (!user) {
           const userAfterFetch = await getUser();
-          if (!userAfterFetch) {
-            pushToRoute = ["/", "/signup", "/login"].includes(router.route)
-              ? router.route
-              : "/login";
+          if (isCancelled) return;
+
+          if (!userAfterFetch && !PUBLIC_ROUTES.includes(route)) {
+            pushToRoute = ROUTES.LOGIN;
           }
         } else {
-          if (authenticatedRoutes.includes(router.route)) {
-            pushToRoute = router.route;
-          } else {
-            pushToRoute = "/dashboard";
+          if (!AUTHENTICATED_ROUTES.includes(route)) {
+            pushToRoute = ROUTES.DASHBOARD;
           }
         }
-        if (pushToRoute) {
-          router.push({
+
+        if (
+          pushToRoute &&
+          pushToRoute !== route &&
+          !isCancelled
+        ) {
+          replace({
             pathname: pushToRoute,
-            query: router.query,
+            query,
           });
         }
       } catch (e) {}
     })();
+
     return () => {
-      // router.push(router.route);
+      isCancelled = true;
     };
-  }, [user]);
+  }, [user, getUser, isReady, query, replace, route]);
 
   return <>{children}</>;
 };

@@ -1,6 +1,5 @@
 import { ExclamationIcon } from "@heroicons/react/outline";
 import {
-  Callout,
   Grid,
   Metric,
   Subtitle,
@@ -149,7 +148,7 @@ const BudgetByIDPage = () => {
       })
     );
     return { result, graphData, totalExpense };
-  }, [budgetByCategory, expensesByCategory]);
+  }, [budgetByCategory, expensesByCategory, userInfo?.prefs?.currency]);
 
   if (!data && error && error.code === 404) {
     return (
@@ -251,12 +250,14 @@ const BudgetByIDPage = () => {
                 {Object.entries(match().result).filter(
                   ([category, value]) => !value.budget && value.amount
                 ).length !== 0 ? (
-                  <Callout
-                    className="h-12 my-6"
-                    title="You seem to have spending in categories with no budget"
-                    icon={ExclamationIcon}
-                    color="red"
-                  />
+                  <div className="my-6 rounded-xl border border-rose-300/80 bg-rose-50 px-4 py-3 text-rose-900 dark:border-rose-500/35 dark:bg-rose-500/12 dark:text-rose-100">
+                    <div className="flex items-center gap-2">
+                      <ExclamationIcon className="h-5 w-5 shrink-0 text-rose-600 dark:text-rose-300" />
+                      <p className="text-sm font-semibold">
+                        You have spending in categories with no budget.
+                      </p>
+                    </div>
+                  </div>
                 ) : (
                   <></>
                 )}

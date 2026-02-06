@@ -23,6 +23,7 @@ import {
     incomeCategories
 } from "expensasaurus/shared/constants/categories";
 import { ENVS, regex } from "expensasaurus/shared/constants/constants";
+import { ROUTES } from "expensasaurus/shared/constants/routes";
 import { getAllLists } from "expensasaurus/shared/services/query";
 import { useAuthStore } from "expensasaurus/shared/stores/useAuthStore";
 import { Transaction } from "expensasaurus/shared/types/transaction";
@@ -63,6 +64,7 @@ const index = () => {
             pageSize: 10,
         })
     const fetchDataOptions = pagination
+    const loaderSize = 260;
 
 
     const { data, isLoading, isFetching } = getAllLists<Transaction>(
@@ -119,103 +121,118 @@ const index = () => {
     const disableFilters = isLoading || isFetching
 
     const filterElements = useMemo(() => {
-        return <><div className="flex items-center justify-between">
-            <Button onClick={onFilter}>Filter</Button>
-            <Button variant="light" onClick={onClearFilters}>
-                <XCircleIcon className="w-5 h-5" />
-            </Button>
-        </div>
-            <Text className="my-2">Date</Text>
-            <DateRangePicker
-                disabled={disableFilters}
-                className="max-w-md mx-auto"
-                value={dates}
-                onValueChange={(value) => {
-                    setDates(value);
-                }}
-            />
-            <div className="mt-4">
-                <Text className="my-2">Search</Text>
-                <TextInput
-                    id="search-filter-income"
+        return (
+            <>
+                <div className="mb-2 flex items-center justify-between gap-2">
+                    <Button onClick={onFilter}>Apply</Button>
+                    <Button variant="light" onClick={onClearFilters}>
+                        <XCircleIcon className="h-5 w-5" />
+                    </Button>
+                </div>
+                <Text className="my-2 font-medium text-slate-600 dark:text-slate-300">
+                    Date
+                </Text>
+                <DateRangePicker
                     disabled={disableFilters}
-                    value={query}
-                    onChange={(e) => {
-                        setQuery(e.target.value)
-                    }}
-
-                />
-            </div>
-            <div className="mt-4">
-                <Text className="my-2">Min Amount</Text>
-                <TextInput
-                    id="min-amount-income"
-                    disabled={disableFilters}
-
-                    value={minAmount === '0' ? '' : minAmount}
-                    onChange={(e) => {
-                        if (e.target.value === '') {
-                            setMinAmount('0')
-                        }
-                        if (!regex.number.test(e.target.value)) {
-                            return;
-                        }
-                        setMinAmount(e.target.value)
-
-                    }}
-
-                />
-            </div>
-            <div className="mt-4">
-                <Text className="my-2">Max Amount</Text>
-                <TextInput
-                    id="max-amount-filter"
-                    disabled={disableFilters}
-                    value={maxAmount === '0' ? '' : maxAmount}
-                    onChange={(e) => {
-                        if (e.target.value === '') {
-                            setMaxAmount('0')
-                        }
-                        if (!regex.number.test(e.target.value)) {
-                            return;
-                        }
-                        setMaxAmount(e.target.value)
-                    }}
-
-                />
-            </div>
-            <div className="mt-4">
-                <Text className="my-2">Category</Text>
-                <Select
-                    disabled={disableFilters}
-                    value={category}
-                    onValueChange={(value) => setCategory(value)}
-                >
-                    {incomeCategories.map((category) => {
-                        const CIcon = () => <CategoryIcon category={category} />;
-                        return (
-                            <SelectItem
-                                key={category.id}
-                                value={category.key}
-                                icon={CIcon}
-                            >
-                                {category.category}
-                            </SelectItem>
-                        );
-                    })}
-                </Select>
-            </div>
-            <div className="mt-4">
-                <Text className="my-2">Tag</Text>
-                <TextInput
-                    disabled={disableFilters}
-                    defaultValue={tag}
-                    onChange={(e) => {
-                        setTag(e.target.value)
+                    className="w-full"
+                    value={dates}
+                    onValueChange={(value) => {
+                        setDates(value);
                     }}
                 />
-            </div>
-        </>
+                <div className="mt-4">
+                    <Text className="my-2 font-medium text-slate-600 dark:text-slate-300">
+                        Search
+                    </Text>
+                    <TextInput
+                        className="w-full"
+                        id="search-filter-income"
+                        disabled={disableFilters}
+                        value={query}
+                        onChange={(e) => {
+                            setQuery(e.target.value);
+                        }}
+                    />
+                </div>
+                <div className="mt-4">
+                    <Text className="my-2 font-medium text-slate-600 dark:text-slate-300">
+                        Min Amount
+                    </Text>
+                    <TextInput
+                        className="w-full"
+                        id="min-amount-income"
+                        disabled={disableFilters}
+                        value={minAmount === "0" ? "" : minAmount}
+                        onChange={(e) => {
+                            if (e.target.value === "") {
+                                setMinAmount("0");
+                            }
+                            if (!regex.number.test(e.target.value)) {
+                                return;
+                            }
+                            setMinAmount(e.target.value);
+                        }}
+                    />
+                </div>
+                <div className="mt-4">
+                    <Text className="my-2 font-medium text-slate-600 dark:text-slate-300">
+                        Max Amount
+                    </Text>
+                    <TextInput
+                        className="w-full"
+                        id="max-amount-filter"
+                        disabled={disableFilters}
+                        value={maxAmount === "0" ? "" : maxAmount}
+                        onChange={(e) => {
+                            if (e.target.value === "") {
+                                setMaxAmount("0");
+                            }
+                            if (!regex.number.test(e.target.value)) {
+                                return;
+                            }
+                            setMaxAmount(e.target.value);
+                        }}
+                    />
+                </div>
+                <div className="mt-4">
+                    <Text className="my-2 font-medium text-slate-600 dark:text-slate-300">
+                        Category
+                    </Text>
+                    <Select
+                        className="w-full"
+                        disabled={disableFilters}
+                        value={category}
+                        onValueChange={(value) => setCategory(value)}
+                    >
+                        {incomeCategories.map((category) => {
+                            const CIcon = () => <CategoryIcon category={category} />;
+                            return (
+                                <SelectItem
+                                    key={category.id}
+                                    value={category.key}
+                                    icon={CIcon}
+                                >
+                                    {category.category}
+                                </SelectItem>
+                            );
+                        })}
+                    </Select>
+                </div>
+                <div className="mt-4">
+                    <Text className="my-2 font-medium text-slate-600 dark:text-slate-300">
+                        Tag
+                    </Text>
+                    <TextInput
+                        className="w-full"
+                        disabled={disableFilters}
+                        defaultValue={tag}
+                        onChange={(e) => {
+                            setTag(e.target.value);
+                        }}
+                    />
+                </div>
+            </>
+        );
     }, [category, dates, disableFilters, maxAmount, minAmount, onFilter, query, tag])
 
     return (
@@ -223,13 +240,13 @@ const index = () => {
             <Head>
                 <title>Expensasaurus - Track and Sort Your Incomes</title>
             </Head>
-            <div className="flex flex-col flex-1 w-full max-w-[1200px] mx-auto px-4">
+            <div className="mx-auto flex w-full max-w-[1200px] flex-1 flex-col px-4 pt-16">
                 <div className="flex items-center justify-between">
-                    <button className="visible opacity-100 lg:invisible lg:opacity-0 cursor-pointer w-8 h-8 bg-blue-500 rounded-full flex items-center justify-center" onClick={() => setIsOpen(true)}>
+                    <button className="visible opacity-100 lg:invisible lg:opacity-0 cursor-pointer flex h-9 w-9 items-center justify-center rounded-full border border-blue-400/30 bg-blue-500 shadow-sm transition hover:bg-blue-400" onClick={() => setIsOpen(true)}>
                         <FilterIcon className="w-4 h-4 text-white" />
                     </button>
-                    <Title className="text-center py-10">Incomes</Title>
-                    <Link href={"/incomes/create"}>
+                    <Title className="py-10 text-center text-slate-900 dark:text-slate-100">Incomes</Title>
+                    <Link href={ROUTES.INCOME_CREATE}>
                         <Button>Add Income</Button>
                     </Link>
                 </div>
@@ -241,12 +258,12 @@ const index = () => {
 
 
                     </div> */}
-                    <div className="w-full md:w-[70%] flex flex-1 flex-col">
+                    <div className="flex w-full flex-1 flex-col md:w-[70%]">
                         {isLoading ? <>
-                            <div className="w-full">
+                            <div className="mx-auto w-full max-w-[260px]">
                                 <Lottie options={defaultOptions(animationData)}
-                                    height={500}
-                                    width={'auto'}
+                                    height={loaderSize}
+                                    width={loaderSize}
                                 />
                             </div>
                         </> : data
@@ -257,7 +274,7 @@ const index = () => {
                                         height={500}
                                         width={'auto'}
                                     />
-                                    <Subtitle className='text-slate-700 text-center ml-[-30px]'>No Incomes Listed</Subtitle>
+                                    <Subtitle className='ml-[-30px] text-center text-slate-700 dark:text-slate-300'>No Incomes Listed</Subtitle>
                                 </div> : (
                                     <ExpenseTable
                                         type="income"

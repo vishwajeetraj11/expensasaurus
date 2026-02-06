@@ -1,24 +1,38 @@
-import { Button } from "@tremor/react"
-import Link from "next/link"
+import Link from "next/link";
+import { ROUTES } from "expensasaurus/shared/constants/routes";
 
 const CTASection = () => {
-    return (
-        <div className="py-5 md:py-10 bg-blue-600 px-8 w-full">
-            <div className="py-10 md:py-20 max-w-[1200px] mx-auto w-full flex items-center flex-col">
-                <p className="mb-4 text-center text-[24px] md:text-[40px] text-white">Unlock Financial Freedom with Expensasaurus</p>
-                <p className="mb-6 text-center text-[18px] md:text-[24px] max-w-[90%] md:max-w-[80%] text-white">Start managing your budget effectively with expensasaurus.<br /> Sign up today and gain control over your financial future.</p>
-                <Link href='/signup'>
-                    <Button
-                        type="button"
-                        className="mt-2 border-0 w-min px-10 py-4 rounded-xl bg-white md:text-base font-medium text-blue-700 transition duration-200 hover:bg-white active:bg-white"
-                    >
-                        Sign Up Now
-                    </Button>
-                </Link>
-            </div>
+  return (
+    <section className="w-full bg-gradient-to-r from-blue-500 via-blue-600 to-cyan-600 px-5 py-20 md:px-8 lg:py-24">
+      <div className="mx-auto w-full max-w-[1200px] rounded-3xl border border-white/25 bg-white/10 p-8 text-center shadow-[0_24px_80px_-48px_rgba(29,78,216,0.75)] backdrop-blur md:p-12">
+        <p className="text-sm font-semibold uppercase tracking-[0.14em] text-blue-100">
+          Ready to start
+        </p>
+        <h3 className="mt-3 text-3xl font-bold text-white md:text-5xl">
+          Build a budget system you actually stick to
+        </h3>
+        <p className="mx-auto mt-4 max-w-[42rem] text-base text-blue-100 md:text-lg">
+          Create your account, connect your daily spend tracking, and use
+          Assistant audio input to reduce manual entry.
+        </p>
 
+        <div className="mt-8 flex flex-col justify-center gap-3 sm:flex-row">
+          <Link
+            href={ROUTES.SIGNUP}
+            className="inline-flex items-center justify-center rounded-xl bg-white px-6 py-3 text-sm font-semibold text-blue-700 transition hover:bg-blue-50"
+          >
+            Sign up free
+          </Link>
+          <Link
+            href={ROUTES.LOGIN}
+            className="inline-flex items-center justify-center rounded-xl border border-white/40 px-6 py-3 text-sm font-semibold text-white transition hover:bg-white/15"
+          >
+            I already have an account
+          </Link>
         </div>
-    )
-}
+      </div>
+    </section>
+  );
+};
 
-export default CTASection
+export default CTASection;

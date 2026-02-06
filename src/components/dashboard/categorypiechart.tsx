@@ -24,6 +24,7 @@ import { ArrowNarrowRightIcon } from "@heroicons/react/solid";
 
 import { ChartPieIcon, ViewListIcon } from "@heroicons/react/outline";
 import { categories } from "expensasaurus/shared/constants/categories";
+import { ROUTES } from "expensasaurus/shared/constants/routes";
 import { useAuthStore } from "expensasaurus/shared/stores/useAuthStore";
 import { CategoryData } from "expensasaurus/shared/utils/calculation";
 import { formatCurrency } from "expensasaurus/shared/utils/currency";
@@ -39,6 +40,19 @@ interface StockData {
   absValuePrev: number;
   absValueCurr: number;
 }
+
+const getDeltaBadgeClassName = (deltaType: DeltaType) => {
+  switch (deltaType) {
+    case "increase":
+    case "moderateIncrease":
+      return "!bg-emerald-100 !text-emerald-900 !ring-1 !ring-emerald-200";
+    case "decrease":
+    case "moderateDecrease":
+      return "!bg-rose-100 !text-rose-900 !ring-1 !ring-rose-200";
+    default:
+      return "!bg-slate-100 !text-slate-900 !ring-1 !ring-slate-200";
+  }
+};
 
 
 
@@ -121,20 +135,24 @@ const CategoriesPieChart = (props: Props) => {
           <TabPanel>
             <Flex className="mt-8" justifyContent="between">
               <Text className="truncate">
-                <Bold>Category</Bold>
+                <Bold className="text-slate-700 dark:text-slate-200">Category</Bold>
               </Text>
-              <Text>Increase from last month</Text>
+              <Text className="text-slate-700 dark:text-slate-200">Increase from last month</Text>
             </Flex>
             <List className="mt-4">
               {categoryExpense.map((category) => {
                 return (
                   <ListItem key={category.name}>
-                    <Text className="font-medium text-stone-500">{category.name}</Text>
+                    <Text className="font-medium text-slate-700 dark:text-slate-200">{category.name}</Text>
                     <Flex justifyContent="end" className="space-x-2">
-                      <Text className="font-medium text-stone-700">
+                      <Text className="font-medium text-slate-900 dark:text-slate-100">
                         {formatCurrency(userInfo?.prefs?.currency, category.value)}
                       </Text>
-                      <BadgeDelta deltaType={category.deltaType} size="xs">
+                      <BadgeDelta
+                        deltaType={category.deltaType}
+                        size="xs"
+                        className={getDeltaBadgeClassName(category.deltaType)}
+                      >
                         {/* {category.performance > 100 ? formatCurrency(userInfo?.prefs.currency, category.absValuePrev) : category.performance.toFixed(2) + "%"} */}
                         {category.absValuePrev === 0 ? formatCurrency(userInfo?.prefs.currency, category.absValueCurr) : category.performance.toFixed(2) + "%"}
                         {/* {category.performance.toFixed(2) + "%"} */}
@@ -148,7 +166,7 @@ const CategoriesPieChart = (props: Props) => {
         </TabPanels>
       </TabGroup>
       <Flex className="mt-6 pt-4 border-t">
-        <Link href={'/category'} shallow>
+        <Link href={ROUTES.CATEGORY} shallow>
           <Button
             size="xs"
             variant="light"
@@ -165,28 +183,29 @@ const CategoriesPieChart = (props: Props) => {
 export default CategoriesPieChart;
 
 export const CategoriesPieChartLoading = () => {
-  return <div className="relative p-6 w-full mb-5 overflow-hidden rounded-2xl bg-white/10 shadow-xl shadow-black/5 before:absolute before:inset-0 before:-translate-x-full before:animate-[shimmer_2s_infinite] before:border-t before:border-slate-100 before:bg-gradient-to-r before:from-transparent before:via-slate-50/50 before:to-transparent">
+  return <div className="relative mb-5 w-full overflow-hidden rounded-2xl bg-white/10 p-6 shadow-xl shadow-black/5 dark:bg-slate-900/70 before:absolute before:inset-0 before:-translate-x-full before:animate-[shimmer_2s_infinite] before:border-t before:border-slate-100 before:bg-gradient-to-r before:from-transparent before:via-slate-50/50 before:to-transparent dark:before:border-white/10 dark:before:via-slate-300/10">
     <div className="flex items-center justify-between">
-      <div className="h-[28px] bg-slate-500/20 rounded-full w-[150px]">&nbsp;</div>
-      <div className="h-[40px] w-[88px] p-1 bg-slate-500/20 rounded-[8px]">
-        <div className="h-full w-[44px] bg-white rounded-[8px]">&nbsp;</div>
+      <div className="h-[28px] w-[150px] rounded-full bg-slate-500/20 dark:bg-slate-700/70">&nbsp;</div>
+      <div className="h-[40px] w-[88px] rounded-[8px] bg-slate-500/20 p-1 dark:bg-slate-700/60">
+        <div className="h-full w-[44px] rounded-[8px] bg-white dark:bg-slate-600">&nbsp;</div>
         <div>&nbsp;</div>
       </div>
     </div>
 
     <div className="mt-8">
-      <div className="h-[15px] bg-slate-500/20 rounded-full w-[100px]">&nbsp;</div>
-      <div className="h-[30px] bg-slate-500/20 rounded-full w-[150px] mt-2">&nbsp;</div>
+      <div className="h-[15px] w-[100px] rounded-full bg-slate-500/20 dark:bg-slate-700/70">&nbsp;</div>
+      <div className="mt-2 h-[30px] w-[150px] rounded-full bg-slate-500/20 dark:bg-slate-700/60">&nbsp;</div>
     </div>
 
-    <hr className="my-6 bg-gray-200 h-[2px]" />
+    <hr className="my-6 h-[2px] bg-gray-200 dark:bg-white/10" />
 
-    <div className="pie-chart absolute mt-[-40px]">
+    <div className="pie-chart absolute mt-[-40px] dark:hidden">
     </div>
+    <div className="absolute mt-[-18px] hidden h-[210px] w-[210px] rounded-full border border-white/10 bg-slate-800/70 dark:block" />
 
-    <hr className="bg-gray-200 h-[2px] mt-[227px]" />
+    <hr className="mt-[227px] h-[2px] bg-gray-200 dark:bg-white/10" />
 
-    <div className="mt-4 h-[28px] bg-gray-200 rounded-lg w-[50px]">
+    <div className="mt-4 h-[28px] w-[50px] rounded-lg bg-gray-200 dark:bg-slate-700">
       &nbsp;
     </div>
 

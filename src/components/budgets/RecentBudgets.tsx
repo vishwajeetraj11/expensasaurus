@@ -46,25 +46,36 @@ const RecentBudgets = () => {
   const queryClient = useQueryClient();
   return (
     <>
-      <Title className="mb-6">Available Budgets</Title>
+      <Title className="mb-6 text-slate-900 dark:text-slate-100">
+        Available Budgets
+      </Title>
       <div className="flex flex-col gap-4">
-        <div className="overflow-hidden rounded-2xl border border-slate-200 bg-white shadow-[0_8px_30px_-20px_rgba(15,23,42,0.15)]">
+        <div className="overflow-hidden rounded-2xl border border-slate-200 bg-white shadow-[0_8px_30px_-20px_rgba(15,23,42,0.15)] dark:border-white/10 dark:bg-slate-900/75 dark:shadow-[0_16px_40px_-28px_rgba(0,0,0,0.9)]">
           <Table className="w-full text-sm">
-            <TableHead className="bg-white">
-              <TableRow className="border-b border-slate-200">
-                <TableHeaderCell className="pl-6 py-4 text-sm font-semibold text-slate-700">Link</TableHeaderCell>
-                <TableHeaderCell className="py-4 text-sm font-semibold text-slate-700">Title</TableHeaderCell>
-                <TableHeaderCell className="py-4 text-sm font-semibold text-slate-700">Budget</TableHeaderCell>
-                <TableHeaderCell className="py-4 text-sm font-semibold text-slate-700">Duration</TableHeaderCell>
-                <TableHeaderCell className="py-4 text-sm font-semibold text-slate-700">Actions</TableHeaderCell>
-                <TableHeaderCell className="py-4 text-sm font-semibold text-slate-700">Status</TableHeaderCell>
+            <TableHead className="bg-white dark:bg-slate-900/80">
+              <TableRow className="border-b border-slate-200 dark:border-white/10">
+                <TableHeaderCell className="pl-6 py-4 text-sm font-semibold text-slate-700 dark:text-slate-200">
+                  Link
+                </TableHeaderCell>
+                <TableHeaderCell className="py-4 text-sm font-semibold text-slate-700 dark:text-slate-200">
+                  Title
+                </TableHeaderCell>
+                <TableHeaderCell className="py-4 text-sm font-semibold text-slate-700 dark:text-slate-200">
+                  Budget
+                </TableHeaderCell>
+                <TableHeaderCell className="py-4 text-sm font-semibold text-slate-700 dark:text-slate-200">
+                  Duration
+                </TableHeaderCell>
+                <TableHeaderCell className="py-4 text-sm font-semibold text-slate-700 dark:text-slate-200">
+                  Actions
+                </TableHeaderCell>
+                <TableHeaderCell className="py-4 text-sm font-semibold text-slate-700 dark:text-slate-200">
+                  Status
+                </TableHeaderCell>
               </TableRow>
             </TableHead>
-            <TableBody className="divide-y divide-slate-200/70">
+            <TableBody className="divide-y divide-slate-200/70 dark:divide-white/10">
             {data?.documents?.map((budget, index) => {
-              const sadLilDevVariable =
-                index === Object.entries(data).length - 1;
-              const lastElemClasses = clsx("");
               const firstRowClasses = clsx("pl-6");
               const currentDate = new Date(); // Get the current date
               const budgetStartDate = new Date(budget.startingDate); // Budget start date
@@ -99,22 +110,24 @@ const RecentBudgets = () => {
                     };
 
               return (
-                <TableRow key={index} className="transition hover:bg-slate-50/60">
-                  <TableCell className={clsx(lastElemClasses, firstRowClasses)}>
+                <TableRow key={index} className="transition hover:bg-slate-50/60 dark:hover:bg-white/5">
+                  <TableCell className={firstRowClasses}>
                     <Link href={`/budgets/${budget.$id}`}>
-                      <FiExternalLink className="h-4 w-4 text-slate-400 transition hover:text-slate-700" />
+                      <FiExternalLink className="h-4 w-4 text-slate-400 transition hover:text-slate-700 dark:text-slate-400 dark:hover:text-slate-100" />
                     </Link>
                   </TableCell>
-                  <TableCell className={clsx(lastElemClasses, firstRowClasses)}>
-                    <span className="font-medium text-slate-800">{budget.title}</span>
+                  <TableCell className={firstRowClasses}>
+                    <span className="font-medium text-slate-800 dark:text-slate-100">
+                      {budget.title}
+                    </span>
                   </TableCell>
                   <TableCell>
-                    <Text className={clsx(lastElemClasses)}>
+                    <Text className="text-slate-600 dark:text-slate-300">
                       {formatCurrency(budget.currency, budget.amount)}
                     </Text>
                   </TableCell>
                   <TableCell>
-                    <Text className={clsx(lastElemClasses)}>
+                    <Text className="text-slate-600 dark:text-slate-300">
                       {format(new Date(budget.startingDate), "dd MMMM yyyy")} to{" "}
                       {format(new Date(budget.endDate), "dd MMMM yyyy")}
                     </Text>

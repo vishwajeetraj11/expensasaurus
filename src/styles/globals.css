@@ -90,3 +90,29 @@ input:checked.defaultCheckbox::before {
 .tremor-TextInput-errorMessage {
   @apply text-red-600 dark:text-red-400 text-xs mt-1.5 tracking-normal;
 }
+
+.dark .MuiInputBase-root {
+  background-color: rgba(255, 255, 255, 0.05);
+  color: #e2e8f0;
+}
+
+.dark .MuiOutlinedInput-notchedOutline {
+  border-color: rgba(255, 255, 255, 0.12) !important;
+}
+
+.dark .MuiOutlinedInput-root:hover .MuiOutlinedInput-notchedOutline {
+  border-color: rgba(255, 255, 255, 0.24) !important;
+}
+
+.dark .MuiOutlinedInput-root.Mui-focused .MuiOutlinedInput-notchedOutline {
+  border-color: rgba(255, 255, 255, 0.36) !important;
+}
+
+.dark .MuiSvgIcon-root {
+  color: #94a3b8;
+}
+
+.dark .MuiInputBase-input::placeholder {
+  color: #94a3b8;
+  opacity: 1;
+}

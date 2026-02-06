@@ -1,6 +1,7 @@
 
 import { Models } from "appwrite";
 import { ENVS } from "expensasaurus/shared/constants/constants";
+import { ROUTES } from "expensasaurus/shared/constants/routes";
 import { storage } from "expensasaurus/shared/services/appwrite";
 import { useAuthStore } from "expensasaurus/shared/stores/useAuthStore";
 import { FileWPreview } from "expensasaurus/shared/types/common";
@@ -32,7 +33,7 @@ const FileUpload = (props: Props) => {
   const disabled = submitting
 
   const router = useRouter();
-  const isUpdateRoute = router.route === "/expenses/[id]/edit";
+  const isUpdateRoute = router.route === ROUTES.EXPENSE_EDIT;
 
   const { input } = useField("attachments");
   const form = useForm()
@@ -125,14 +126,15 @@ const FileUpload = (props: Props) => {
         })}
       </div>
       <div {...bond} className="col-span-full mt-2">
-        <div className="mt-2 flex justify-center rounded-lg border border-dashed border-gray-900/25 px-6 py-10">
+        <div className="mt-2 flex justify-center rounded-xl border border-dashed border-slate-300/80 bg-white/70 px-6 py-10 dark:border-white/20 dark:bg-white/[0.03]">
           <div className="text-center flex items-center justify-center flex-col">
             <FcFile />
-            <div className="mt-4 flex text-sm leading-6 text-gray-600">
+            <div className="mt-4 flex items-center text-sm leading-6 text-slate-600 dark:text-slate-300">
               <label
                 htmlFor="file-upload"
-                className="relative cursor-pointer rounded-md bg-white font-semibold text-indigo-600 focus-within:outline-none focus-within:ring-2 focus-within:ring-indigo-600 focus-within:ring-offset-2 hover:text-indigo-500"
+                className="relative cursor-pointer rounded-md bg-white px-2 py-1 font-semibold text-blue-600 shadow-sm transition hover:text-blue-500 focus-within:outline-none focus-within:ring-2 focus-within:ring-blue-500 focus-within:ring-offset-2 dark:bg-white/10 dark:text-blue-300 dark:hover:text-blue-200 dark:focus-within:ring-offset-slate-900"
               >
+                Browse
                 <input
                   id="file-upload"
                   name="file-upload"
@@ -140,9 +142,9 @@ const FileUpload = (props: Props) => {
                   className="sr-only"
                 />
               </label>
-              <p className="pl-1">Upload file via drag and drop</p>
+              <p className="pl-2">or drag and drop files here</p>
             </div>
-            <p className="text-xs leading-5 text-gray-600">
+            <p className="text-xs leading-5 text-slate-500 dark:text-slate-400">
               PNG, JPG, GIF up to 5MB
             </p>
           </div>

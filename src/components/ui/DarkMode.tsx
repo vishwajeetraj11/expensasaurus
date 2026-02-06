@@ -9,42 +9,47 @@ type ButtonProps = React.DetailedHTMLProps<
 
 const DarkMode = (props: ButtonProps) => {
   const { ...rest } = props;
-  const [darkmode, setDarkmode] = React.useState(
-    isBrowser ? document.body.classList.contains("dark") : false
-  );
+  const [darkmode, setDarkmode] = React.useState(() => {
+    if (!isBrowser) return false;
+    return (
+      localStorage.getItem("dark") === "true" ||
+      document.body.classList.contains("dark")
+    );
+  });
 
   useEffect(() => {
-    if (localStorage.getItem('dark') === 'true' && !darkmode) {
-      setDarkmode(true);
-      document.body.classList.add("dark");
-    }
-  }, [])
+    document.body.classList.toggle("dark", darkmode);
+    localStorage.setItem("dark", String(darkmode));
+  }, [darkmode]);
 
   return (
     <button
-      className="border-px fixed bottom-[30px] right-[35px] !z-[99] flex h-[40px] w-[40px] items-center justify-center rounded-full border-[#6a53ff] bg-gradient-to-br from-blue-500 to-blue-600 p-0"
+      type="button"
+      aria-label={`Switch to ${darkmode ? "light" : "dark"} mode`}
+      title={`Switch to ${darkmode ? "light" : "dark"} mode`}
+      aria-pressed={darkmode}
+      className="fixed bottom-6 right-6 z-[99] inline-flex items-center gap-2 rounded-2xl border border-slate-200/70 bg-white/90 px-2 py-2 text-slate-700 shadow-[0_16px_35px_-24px_rgba(15,23,42,0.85)] backdrop-blur-xl transition hover:-translate-y-0.5 hover:border-slate-300 hover:text-slate-900 dark:border-white/15 dark:bg-slate-900/80 dark:text-slate-200 dark:hover:border-white/30 dark:hover:text-white"
       onClick={() => {
-        if (darkmode) {
-          document.body.classList.remove("dark");
-          setDarkmode(false);
-          localStorage.setItem('dark', 'false')
-        } else {
-          document.body.classList.add("dark");
-          setDarkmode(true);
-          localStorage.setItem('dark', 'true')
-        }
+        setDarkmode((prev) => !prev);
       }}
       {...rest}
     >
-      {/* // left={document.documentElement.dir === "rtl" ? "35px" : ""}
-      // right={document.documentElement.dir === "rtl" ? "" : "35px"} */}
-      <div className="cursor-pointer text-gray-600">
+      <span
+        className={`inline-flex h-8 w-8 items-center justify-center rounded-xl transition ${
+          darkmode
+            ? "bg-gradient-to-br from-blue-400 to-blue-300 text-white"
+            : "bg-gradient-to-br from-blue-600 to-blue-500 text-white"
+        }`}
+      >
         {darkmode ? (
-          <RiSunFill className="h-4 w-4 text-white" />
+          <RiSunFill className="h-4 w-4" />
         ) : (
-          <RiMoonFill className="h-4 w-4 text-white" />
+          <RiMoonFill className="h-4 w-4" />
         )}
-      </div>
+      </span>
+      <span className="pr-1 text-xs font-semibold tracking-wide">
+        {darkmode ? "Light" : "Dark"}
+      </span>
     </button>
   );
 }

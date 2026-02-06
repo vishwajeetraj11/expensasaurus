@@ -6,6 +6,7 @@ import TextInput from "../ui/TextInput";
 import { Models, Role } from "appwrite";
 import { currentMonth } from "expensasaurus/hooks/useDates";
 import { ENVS, regex } from "expensasaurus/shared/constants/constants";
+import { ROUTES } from "expensasaurus/shared/constants/routes";
 import {
   ID,
   Permission,
@@ -48,7 +49,7 @@ const BudgetForm = () => {
     { enabled: false }
   );
 
-  const isUpdateRoute = router.route === "/budgets/[id]/edit";
+  const isUpdateRoute = router.route === ROUTES.BUDGET_EDIT;
 
   const handleSubmit = async (values: Record<string, any>) => {
     const toastMessage = isUpdateRoute
@@ -131,7 +132,7 @@ const BudgetForm = () => {
 
       toast.success(toastMessage);
       queryClient.invalidateQueries({ queryKey: ["Budgets", user?.userId] });
-      router.push("/budgets");
+      router.push(ROUTES.BUDGETS);
       if (isUpdateRoute && upsertedBudget) {
         refetch();
       }

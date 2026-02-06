@@ -1,17 +1,24 @@
 import { SearchSelect, SearchSelectItem } from "@tremor/react";
-import Button from "../../ui/Button";
 import { AppwriteException } from "appwrite";
-
-import ErrorMessage from "expensasaurus/components/ui/ErrorMessage";
+import { ROUTES } from "expensasaurus/shared/constants/routes";
+import { ID, account } from "expensasaurus/shared/services/appwrite";
 import { useLocaleStore } from "expensasaurus/shared/stores/useLocaleStore";
+import { useAuthStore } from "expensasaurus/shared/stores/useAuthStore";
 import { useRouter } from "next/router";
 import { useEffect } from "react";
 import { Field, Form } from "react-final-form";
 import { toast } from "sonner";
 import { shallow } from "zustand/shallow";
-import { ID, account } from "../../../shared/services/appwrite";
-import { useAuthStore } from "../../../shared/stores/useAuthStore";
+import Button from "../../ui/Button";
+import ErrorMessage from "expensasaurus/components/ui/ErrorMessage";
 import InputField from "../../ui/InputField";
+
+type AuthValues = {
+  name?: string;
+  email?: string;
+  currency?: string;
+  password?: string;
+};
 
 function LoginForm() {
   const { authFormState } = useAuthStore(
@@ -25,6 +32,7 @@ function LoginForm() {
     currencies: state.currencies,
     getCurrencies: state.getCurrencies,
   }));
+
   const isLogin = authFormState === "SIGN_IN";
   const isSignup = authFormState === "SIGN_UP";
 
@@ -32,49 +40,51 @@ function LoginForm() {
     if (isSignup) {
       getCurrencies();
     }
-  }, [isSignup]);
+  }, [isSignup, getCurrencies]);
 
   const router = useRouter();
 
-  const onSubmit = async (values: any) => {
+  const onSubmit = async (values: AuthValues) => {
     try {
       if (isSignup) {
-        // create account
-        const response = await account.create(
+        await account.create(
           ID.unique(),
-          values.email,
-          values.password,
-          values.name
+          values.email || "",
+          values.password || "",
+          values.name || ""
         );
-        // create session
+
         const session = await account.createEmailSession(
-          values.email,
-          values.password
+          values.email || "",
+          values.password || ""
         );
-        // session ID will be available in the response object
+
         localStorage.setItem("sessionId", session.$id);
 
-        // add currency
-        const updateUser = await account.updatePrefs({
+        await account.updatePrefs({
           currency: values.currency,
         });
-        toast.success(`Welcome to Expensasaurus`);
-        router.push("/budgets");
-      } else if (isLogin) {
-        const response = await account.createEmailSession(
-          values.email,
-          values.password
+
+        toast.success("Welcome to Expensasaurus");
+        router.push(ROUTES.BUDGETS);
+        return;
+      }
+
+      if (isLogin) {
+        const session = await account.createEmailSession(
+          values.email || "",
+          values.password || ""
         );
 
-        const rest = await account.getSession(response.$id);
-        // session ID will be available in the response object
-        localStorage.setItem("sessionId", rest.$id);
+        const activeSession = await account.getSession(session.$id);
+        localStorage.setItem("sessionId", activeSession.$id);
 
-        toast.success(`Welcome to Expensasaurus`);
-        router.push("/dashboard");
+        toast.success("Welcome to Expensasaurus");
+        router.push(ROUTES.DASHBOARD);
       }
     } catch (error: unknown) {
-      let appwriteError = error as AppwriteException;
+      const appwriteError = error as AppwriteException;
+
       if (appwriteError.code === 401) {
         toast.error("Invalid credentials");
       } else if (appwriteError.code === 409) {
@@ -85,23 +95,25 @@ function LoginForm() {
     }
   };
 
-  const validate = (values: any) => {
-    const errors: any = {};
+  const validate = (values: AuthValues) => {
+    const errors: AuthValues = {};
+
     if (!values.email) {
       errors.email = "Email is required";
     } else if (!/^[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,}$/i.test(values.email)) {
       errors.email = "Invalid email address";
     }
+
     if (!values.password) {
       errors.password = "Password is required";
     } else if (values.password.length < 8) {
       errors.password = "Password must be at least 8 characters long";
     }
-    if (isSignup) {
-      if (!values.name) {
-        errors.name = "Name is required";
-      }
+
+    if (isSignup && !values.name) {
+      errors.name = "Name is required";
     }
+
     return errors;
   };
 
@@ -110,17 +122,18 @@ function LoginForm() {
       onSubmit={onSubmit}
       validate={validate}
       render={({ handleSubmit, submitting }) => (
-        <form onSubmit={handleSubmit}>
+        <form onSubmit={handleSubmit} className="space-y-2">
           {isSignup && (
             <Field name="name">
               {({ meta, input }) => (
                 <InputField
                   variant="auth"
-                  extra="mb-3"
+                  extra="mb-1"
                   label="Name*"
                   placeholder="John Doe"
                   id="name"
                   type="text"
+                  autoComplete="name"
                   message={meta.touched && meta.error}
                   state={meta.error && meta.touched ? "error" : "idle"}
                   {...input}
@@ -128,15 +141,17 @@ function LoginForm() {
               )}
             </Field>
           )}
+
           <Field name="email">
             {({ meta, input }) => (
               <InputField
                 variant="auth"
-                extra="mb-3"
+                extra="mb-1"
                 label="Email*"
                 placeholder="user@expensasaurus.com"
                 id="email"
-                type="text"
+                type="email"
+                autoComplete="email"
                 message={meta.touched && meta.error}
                 state={meta.error && meta.touched ? "error" : "idle"}
                 {...input}
@@ -145,36 +160,34 @@ function LoginForm() {
           </Field>
 
           {isSignup && currencies && (
-            <div className="mb-3">
+            <div className="mb-1">
               <label
-                htmlFor={"select-currency"}
-                className={`text-sm text-navy-700 dark:text-white "ml-1.5 font-medium mb-3 block`}
+                htmlFor="select-currency"
+                className="mb-2 ml-1.5 block text-sm font-medium text-slate-700"
               >
-                {"Select Currency*"}
+                Select Currency*
               </label>
               <Field
-                validate={(value) => {
-                  if (!value) {
-                    return "Currency is required";
-                  }
-                }}
                 name="currency"
                 type="text"
+                validate={(value) => (!value ? "Currency is required" : undefined)}
               >
                 {({ meta, input }) => (
                   <>
-                    <SearchSelect
-                      placeholder="Select Currency"
-                      value={input.value}
-                      onChange={input.onChange}
-                      id="select-currency"
-                    >
-                      {currencies?.currencies.map((currency, index) => (
-                        <SearchSelectItem value={currency.code} key={index}>
-                          {currency.name} ({currency.code})
-                        </SearchSelectItem>
-                      ))}
-                    </SearchSelect>
+                    <div className="rounded-xl border border-slate-200 bg-white p-1 shadow-sm">
+                      <SearchSelect
+                        placeholder="Select currency"
+                        value={input.value}
+                        onChange={input.onChange}
+                        id="select-currency"
+                      >
+                        {currencies.currencies.map((currency) => (
+                          <SearchSelectItem value={currency.code} key={currency.code}>
+                            {currency.name} ({currency.code})
+                          </SearchSelectItem>
+                        ))}
+                      </SearchSelect>
+                    </div>
                     {meta.touched && meta.error && (
                       <ErrorMessage>{meta.error}</ErrorMessage>
                     )}
@@ -188,11 +201,12 @@ function LoginForm() {
             {({ meta, input }) => (
               <InputField
                 variant="auth"
-                extra="mb-3"
+                extra="mb-1"
                 label="Password*"
-                placeholder="Min. 8 characters"
+                placeholder="Minimum 8 characters"
                 id="password"
                 type="password"
+                autoComplete={isSignup ? "new-password" : "current-password"}
                 message={meta.touched && meta.error}
                 state={meta.error && meta.touched ? "error" : "idle"}
                 {...input}
@@ -204,9 +218,9 @@ function LoginForm() {
             type="submit"
             disabled={submitting}
             loading={submitting}
-            className="linear mt-2 w-full rounded-xl bg-brand-500 py-[12px] text-base font-medium text-white transition duration-200 hover:bg-brand-600 active:bg-brand-700 dark:bg-brand-400 dark:text-white dark:hover:bg-brand-300 dark:active:bg-brand-200"
+            className="mt-4 w-full rounded-xl bg-slate-900 py-3 text-sm font-semibold text-white transition hover:bg-slate-800"
           >
-            {isSignup ? "Sign up" : "Sign In"}
+            {isSignup ? "Create account" : "Sign in"}
           </Button>
         </form>
       )}

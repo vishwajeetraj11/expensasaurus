@@ -40,7 +40,9 @@ const SpendingLimitPerCategory = () => {
   return (
     <div className="mb-10">
       <div className="flex items-center justify-between mb-4">
-        <Text>Category</Text>
+        <Text className="font-medium text-slate-600 dark:text-slate-300">
+          Category
+        </Text>
         <Button
           disabled={
             !Boolean(amount) || totalCategoriesSum >= amount || submitting
@@ -149,8 +151,10 @@ const SpendingLimitPerCategory = () => {
             : `Add remaing amount in 'other' category`}
         </Button>
         <Flex>
-          <Text>Total</Text>
-          <Text>{totalCategoriesSum}</Text>
+          <Text className="text-slate-600 dark:text-slate-300">Total</Text>
+          <Text className="font-semibold text-slate-800 dark:text-slate-100">
+            {totalCategoriesSum}
+          </Text>
         </Flex>
       </div>
     </div>

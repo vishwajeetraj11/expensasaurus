@@ -1,6 +1,7 @@
 import { Models } from "appwrite";
 import { format } from "date-fns";
 import { ENVS } from "expensasaurus/shared/constants/constants";
+import { ROUTES, routeBuilders } from "expensasaurus/shared/constants/routes";
 import { deleteDoc } from "expensasaurus/shared/services/query";
 import { Budget } from "expensasaurus/shared/types/budget";
 import { useRouter } from "next/router";
@@ -38,7 +39,7 @@ const BudgetCard = (props: BudgetCardProps) => {
         },
         onSuccess: () => {
           toast.success("Buget deleted successfully");
-          router.push("/budgets");
+          router.push(ROUTES.BUDGETS);
         },
         onError: (er) => {
           console.log(er);
@@ -49,7 +50,7 @@ const BudgetCard = (props: BudgetCardProps) => {
   };
 
   return (
-    <Link href={`/budgets/${$id}`}>
+    <Link href={routeBuilders.budgetDetail($id)}>
       <div className="box-shadow-card w-[500px] px-5 py-4 flex">
         <div className="flex flex-col flex-1">
           <div>{title}</div>

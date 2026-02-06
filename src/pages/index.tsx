@@ -1,5 +1,6 @@
 import Navigation from "expensasaurus/components/Navigation";
 import CTASection from "expensasaurus/components/landing/CTASection";
+import AssistantSpotlight from "expensasaurus/components/landing/AssistantSpotlight";
 import { BudgetManagement } from "expensasaurus/components/landing/budgetmanagement";
 import Footer from "expensasaurus/components/landing/footer";
 import Header from "expensasaurus/components/landing/header";
@@ -52,14 +53,12 @@ export default function Home() {
         />
         <title>Expensasaurus - Track and Manage Your Finances</title>
       </Head>
-      <main
-        className={`flex min-h-screen flex-col items-center justify-between`}
-      >
-        <div className="pt-navigation-height">
-          <Navigation landingPage />
-        </div>
+
+      <main className="min-h-screen bg-gradient-to-b from-blue-50 via-blue-50/60 to-white">
+        <Navigation landingPage />
         <Header />
         <HowItWorks />
+        <AssistantSpotlight />
         <BudgetManagement />
         <CTASection />
         <Footer />

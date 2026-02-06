@@ -137,12 +137,12 @@ export const LineChartTabsLoading = (props: PropsL) => {
     <div
       className={clsx(
         animate && "before:animate-[shimmer_2s_infinite]",
-        "relative p-6 w-full mb-5 overflow-hidden rounded-2xl bg-white/10 shadow-xl shadow-black/5 before:absolute before:inset-0 before:-translate-x-full before:border-t before:border-slate-100 before:bg-gradient-to-r before:from-transparent before:via-slate-50/50 dark:before:via-slate-50/10  before:to-transparent"
+        "relative mb-5 w-full overflow-hidden rounded-2xl bg-white/10 p-6 shadow-xl shadow-black/5 dark:bg-slate-900/70 before:absolute before:inset-0 before:-translate-x-full before:border-t before:border-slate-100 before:bg-gradient-to-r before:from-transparent before:via-slate-50/50 before:to-transparent dark:before:border-white/10 dark:before:via-slate-300/10"
       )}
     >
       <div
         className={clsx(
-          "h-[20px] bg-slate-500/20 rounded-full w-[100px] mb-2",
+          "mb-2 h-[20px] w-[100px] rounded-full bg-slate-500/20 dark:bg-slate-700/70",
           animate ? "opacity-40" : "opacity-5"
         )}
       >
@@ -150,7 +150,7 @@ export const LineChartTabsLoading = (props: PropsL) => {
       </div>
       <div
         className={clsx(
-          "h-[12px] bg-slate-500/20 rounded-full w-[100px]",
+          "h-[12px] w-[100px] rounded-full bg-slate-500/20 dark:bg-slate-700/55",
           animate ? "opacity-40" : "opacity-5"
         )}
       >

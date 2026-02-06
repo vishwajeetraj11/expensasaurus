@@ -7,6 +7,7 @@ import { Models, Role } from "appwrite";
 import useDates from "expensasaurus/hooks/useDates";
 import { categories } from "expensasaurus/shared/constants/categories";
 import { ENVS, regex } from "expensasaurus/shared/constants/constants";
+import { ROUTES, routeBuilders } from "expensasaurus/shared/constants/routes";
 import {
   ID,
   Permission,
@@ -65,7 +66,7 @@ const ExpenseForm = () => {
   );
   const queryClient = useQueryClient();
 
-  const isUpdateRoute = router.route === "/expenses/[id]/edit";
+  const isUpdateRoute = router.route === ROUTES.EXPENSE_EDIT;
 
   const handleSubmit = async (values: Record<string, any>) => {
     // setLoading(true)
@@ -138,7 +139,7 @@ const ExpenseForm = () => {
       // listing
       // queryClient.invalidateQueries(["Expenses", "Listing"]);
       queryClient.invalidateQueries(["Expenses"]);
-      router.push(`/expenses/${upsertedExpense.$id}`);
+      router.push(routeBuilders.expenseDetail(upsertedExpense.$id));
       toast.success(toastMessage);
       if (isUpdateRoute && upsertedExpense) {
         // indvidual expense page

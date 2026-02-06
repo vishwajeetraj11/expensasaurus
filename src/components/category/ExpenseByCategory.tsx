@@ -2,6 +2,7 @@ import { CircularProgress } from "@mui/material";
 import { Card, Text } from "@tremor/react";
 import clsx from "clsx";
 import { categories } from "expensasaurus/shared/constants/categories";
+import { routeBuilders } from "expensasaurus/shared/constants/routes";
 import { capitalize } from "expensasaurus/shared/utils/common";
 import { formatCurrency } from "expensasaurus/shared/utils/currency";
 import { useRouter } from "next/router";
@@ -34,9 +35,12 @@ const ExpenseByCategory = (props: Props) => {
   return (
     <Card
       onClick={() => {
-        router.push(`/expenses?category=${encodeURIComponent(category)}`);
+        router.push(routeBuilders.expensesByCategory(category));
       }}
-      className={clsx("box-shadow-card border-none ring-0 cursor-pointer", value.transactionsCount !== 0 && 'group')}
+      className={clsx(
+        "box-shadow-card cursor-pointer border border-slate-200/70 bg-white/95 ring-0 transition-all duration-300 hover:-translate-y-0.5 hover:border-slate-300 dark:border-white/10 dark:bg-slate-900/70 dark:hover:border-white/25",
+        value.transactionsCount !== 0 && "group"
+      )}
       key={i}
     >
       <div className="flex">
@@ -63,7 +67,7 @@ const ExpenseByCategory = (props: Props) => {
               />
             )}
             {shouldShowBudgetPercent && (
-              <Text className="text-xs hidden group-hover:block text-slate-600 absolute inset-0 flex items-center justify-center">
+              <Text className="absolute inset-0 hidden items-center justify-center text-xs text-slate-600 dark:text-slate-200 group-hover:flex">
                 {Math.ceil(budgetPercent)}%
               </Text>
             )}
@@ -71,11 +75,11 @@ const ExpenseByCategory = (props: Props) => {
         )}
         <div className="flex flex-col flex-1">
           <div className="flex items-center justify-between">
-            <Text className="font-medium text-slate-700">
+            <Text className="font-medium text-slate-700 dark:text-slate-200">
               {capitalize(category)}
             </Text>
 
-            <Text className="font-bold text-slate-900">
+            <Text className="font-bold text-slate-900 dark:text-slate-100">
               {value.currency && formatCurrency(value.currency, value.amount)}
               {value.budget && value.currency
                 ? `/${formatCurrency(value.currency, value.budget)}`
@@ -83,7 +87,7 @@ const ExpenseByCategory = (props: Props) => {
             </Text>
           </div>
           <div className="flex">
-            <Text className="text-slate-700">
+            <Text className="text-slate-600 dark:text-slate-300">
               {JSON.stringify(value.transactionsCount)} transaction
               {value.transactionsCount > 1 || value.transactionsCount === 0
                 ? "s"

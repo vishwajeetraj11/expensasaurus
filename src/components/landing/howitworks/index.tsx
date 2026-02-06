@@ -1,61 +1,88 @@
-import Image from "next/image"
-
 const HowItWorks = () => {
-    return (
-        <div id="how-it-works" style={{
-            scrollMargin: 100
-        }} className="relative w-full">
-            <div className="w-full pl-4 lg:max-w-[1200px] mx-auto pt-8 md:py-10">
-                <h4 className="text-[28px] text-center">How it works</h4>
-                <div className="w-full pt-8 md:py-10 flex flex-col md:flex-row items-center justify-between">
-                    <div className="flex flex-col gap-10">
-                        {howitWorksData.map(step => (
-                            <div key={step.id} className="max-w-[29rem]">
-                                <div className="text-[24px] mb-4 font-thin">{step.title}</div>
-                                <div className="text-slate-700 text-[16px]">{step.description}</div>
-                            </div>
-                        ))}
-                    </div>
-                    <div>
-                        <Image alt="How it works." width={700} height={900} className="z-[-1] mt-4 md:mt-0 md:opacity-30 lg:opacity-100 md:absolute md:right-0 md:top-[50%] md:translate-y-[-50%]" src='/showcase1.png' />
-                    </div>
-                </div>
-            </div>
+  return (
+    <section
+      id="how-it-works"
+      className="w-full scroll-mt-[var(--navigation-height)] bg-gradient-to-b from-blue-50 to-cyan-50 px-5 pb-20 pt-2 md:px-8 md:pt-3 lg:pb-24 lg:pt-4"
+    >
+      <div className="mx-auto w-full max-w-[1200px]">
+        <div className="mx-auto max-w-[42rem] text-center">
+          <p className="text-sm font-semibold uppercase tracking-[0.16em] text-blue-700">
+            How it works
+          </p>
+          <h2 className="mt-3 text-3xl font-bold text-blue-950 md:text-5xl">
+            Start tracking in a few focused steps
+          </h2>
+          <p className="mt-4 text-base text-blue-900/80 md:text-lg">
+            Set up once, then let your dashboard and Assistant keep your
+            spending clear and actionable.
+          </p>
         </div>
-    )
-}
 
-const howitWorksData = [
-    {
-        id: 1,
-        title: 'Create an account',
-        description: 'Create your free account on Expensasaurus by providing your basic details. It only takes a few minutes to get started.',
-    },
-    {
-        id: 2,
-        title: 'Set Your Budget',
-        description: 'Define your budget by allocating spending limits to different categories, such as food, transportation, entertainment, and more. Customize it to match your unique financial goals.',
-    },
-    {
-        id: 3,
-        title: 'Track Your Expenses and Income',
-        description: 'Enter your expenses and income with ease. Add transactions, categorize them, and keep a comprehensive record of your financial activities to maintain an accurate overview.',
-    },
-    {
-        id: 4,
-        title: 'Monitor Your Budget',
-        description: `Keep a close eye on your budget's progress with real-time updates. Visualize your spending patterns, track category-wise expenses, and receive notifications to stay within your limits.`,
-    },
-    {
-        id: 5,
-        title: 'Analyze Your Finances',
-        description: 'Gain valuable insights into your financial habits with our intuitive analysis tools. Explore interactive charts and reports to understand where your money is going and make informed decisions.',
-    },
-    {
-        id: 6,
-        title: 'Adjust and Optimize',
-        description: 'Fine-tune your budget as needed based on your financial goals and changing circumstances. Modify spending limits, add new categories, or reallocate funds to optimize your budget.'
-    }
-]
+        <div className="mt-12 grid gap-4 md:grid-cols-2 xl:grid-cols-3">
+          {howItWorksData.map((step, index) => (
+            <article
+              key={step.id}
+              className="group rounded-2xl border border-blue-200 bg-gradient-to-b from-white to-blue-50 p-6 shadow-sm transition hover:-translate-y-0.5 hover:shadow-md"
+            >
+              <div className="flex items-center justify-between">
+                <p className="text-xs font-semibold uppercase tracking-[0.12em] text-blue-500">
+                  Step {index + 1}
+                </p>
+                <span className="text-blue-300 transition group-hover:text-blue-600">
+                  →
+                </span>
+              </div>
+              <h3 className="mt-3 text-xl font-semibold text-blue-950">
+                {step.title}
+              </h3>
+              <p className="mt-2 text-sm leading-relaxed text-blue-900/75">
+                {step.description}
+              </p>
+            </article>
+          ))}
+        </div>
+      </div>
+    </section>
+  );
+};
 
-export default HowItWorks
+const howItWorksData = [
+  {
+    id: 1,
+    title: "Create your account",
+    description:
+      "Sign up with email or GitHub, choose your preferred currency, and start with a clean workspace.",
+  },
+  {
+    id: 2,
+    title: "Define budget limits",
+    description:
+      "Set practical limits by category so each rupee or dollar has a clear job.",
+  },
+  {
+    id: 3,
+    title: "Capture entries quickly",
+    description:
+      "Log expenses manually or use Assistant prompts to convert plain text into transaction-ready data.",
+  },
+  {
+    id: 4,
+    title: "Review your dashboard",
+    description:
+      "See trends, category breakdowns, and budget status in one place with real-time updates.",
+  },
+  {
+    id: 5,
+    title: "Adjust as life changes",
+    description:
+      "Move limits between categories, update recurring costs, and keep the plan aligned with reality.",
+  },
+  {
+    id: 6,
+    title: "Act on insights",
+    description:
+      "Use analytics and monthly reviews to make better spending and saving decisions each month.",
+  },
+];
+
+export default HowItWorks;
