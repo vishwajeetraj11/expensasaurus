@@ -39,8 +39,9 @@ type Props = {
     messageId: string,
     itemIndex?: number
   ) => Promise<void>;
-  savingMessageId: string | null;
+  savingDraftKey: string | null;
   requestDateChange: (messageId: string, draft?: ParsedExpense) => void;
+  defaultCurrency: string;
 };
 
 const AssistantView = ({
@@ -66,19 +67,24 @@ const AssistantView = ({
   error,
   audioError,
   handleSaveDraft,
-  savingMessageId,
+  savingDraftKey,
   requestDateChange,
+  defaultCurrency,
 }: Props) => {
   const renderDraftCard = (
     draft: ParsedExpense,
     message: AssistantMessage,
     itemIndex?: number
   ) => {
-    const canSave = canSaveDraft(draft);
+    const canSave = canSaveDraft(draft, defaultCurrency);
     const savedId =
       typeof itemIndex === "number"
         ? message.savedItemIds?.[itemIndex]
         : message.savedId;
+    const draftSaveKey = `${message.id}:${
+      typeof itemIndex === "number" ? itemIndex : "single"
+    }`;
+    const isSaving = savingDraftKey === draftSaveKey;
 
     return (
       <div
@@ -98,7 +104,7 @@ const AssistantView = ({
           {draft.amount !== undefined && (
             <div>
               <span className="font-medium">Amount:</span> {draft.amount}{" "}
-              {draft.currency || ""}
+              {draft.currency || defaultCurrency}
             </div>
           )}
           {draft.date && (
@@ -131,7 +137,7 @@ const AssistantView = ({
         <div className="mt-3 flex flex-wrap items-center gap-3">
           <button
             type="button"
-            disabled={!canSave || savingMessageId === message.id}
+            disabled={!canSave || isSaving}
             onClick={() => handleSaveDraft(draft, message.id, itemIndex)}
             className={clsx(
               "rounded-full px-3.5 py-1.5 text-xs font-semibold transition",
@@ -140,7 +146,7 @@ const AssistantView = ({
                 : "cursor-not-allowed bg-slate-200 text-slate-500 dark:bg-slate-700 dark:text-slate-300"
             )}
           >
-            {savingMessageId === message.id
+            {isSaving
               ? "Saving..."
               : savedId
               ? "Saved"
@@ -247,13 +253,6 @@ const AssistantView = ({
                   </div>
                 );
               })}
-              {isStreaming && (
-                <div className="flex justify-start">
-                  <div className="max-w-[85%] rounded-[18px] bg-white px-3 py-2 text-xs text-slate-500 ring-1 ring-slate-200/70 shadow-sm dark:bg-navy-700/80 dark:text-slate-300 dark:ring-white/10">
-                    AI is typing...
-                  </div>
-                </div>
-              )}
               <div ref={scrollAnchorRef} />
             </div>
 

@@ -42,10 +42,14 @@ export const verifyAuthenticatedUser = async (
       .setJWT(token);
     const account = new Account(client);
     const user = await account.get();
+    const prefs = user?.prefs as Record<string, unknown> | undefined;
+    const preferredCurrency =
+      typeof prefs?.currency === "string" ? prefs.currency : undefined;
 
     return {
       userId: user.$id,
       email: user.email,
+      preferredCurrency,
     };
   } catch (error) {
     return null;

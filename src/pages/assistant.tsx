@@ -42,6 +42,13 @@ const AssistantPage = () => {
     getUserInfo: () => Promise<void>;
   };
   const canAccessAssistant = isAssistantEmailAllowed(userInfo?.email);
+  const assistantCurrency = useMemo(() => {
+    const preferredCurrency = userInfo?.prefs?.currency;
+    if (typeof preferredCurrency === "string" && preferredCurrency.trim()) {
+      return preferredCurrency.trim().toUpperCase();
+    }
+    return "INR";
+  }, [userInfo?.prefs?.currency]);
 
   const queryClient = useQueryClient();
   const [messages, setMessages] = useState<AssistantMessage[]>([initialMessage]);
@@ -53,7 +60,7 @@ const AssistantPage = () => {
   const [isTranscribing, setIsTranscribing] = useState(false);
   const [isSending, setIsSending] = useState(false);
   const [isStreaming, setIsStreaming] = useState(false);
-  const [savingMessageId, setSavingMessageId] = useState<string | null>(null);
+  const [savingDraftKey, setSavingDraftKey] = useState<string | null>(null);
   const [pendingDateChange, setPendingDateChange] = useState<{
     messageId: string;
     draft: ParsedExpense;
@@ -257,7 +264,7 @@ const AssistantPage = () => {
       ? categoryMap.get(draft.category.toLowerCase()) || draft.category
       : "other";
 
-    const currency = draft.currency || "INR";
+    const currency = assistantCurrency;
     const dateValue = draft.date ? new Date(draft.date) : new Date();
     const isoDate = Number.isNaN(dateValue.getTime())
       ? new Date().toISOString()
@@ -294,6 +301,9 @@ const AssistantPage = () => {
     ]);
   };
 
+  const getDraftSaveKey = (messageId: string, itemIndex?: number) =>
+    `${messageId}:${typeof itemIndex === "number" ? itemIndex : "single"}`;
+
   const handleSaveDraft = async (
     draft: ParsedExpense,
     messageId: string,
@@ -304,7 +314,7 @@ const AssistantPage = () => {
       return;
     }
 
-    if (!canSaveDraft(draft)) {
+    if (!canSaveDraft(draft, assistantCurrency)) {
       appendAssistantMessage("Missing required fields. Please complete the draft.");
       return;
     }
@@ -313,7 +323,7 @@ const AssistantPage = () => {
     const type = resolveDraftType(draft);
     const collectionId =
       type === "income" ? ENVS.COLLECTIONS.INCOMES : ENVS.COLLECTIONS.EXPENSES;
-    setSavingMessageId(messageId);
+    setSavingDraftKey(getDraftSaveKey(messageId, itemIndex));
 
     try {
       const permissionsArray = [
@@ -354,7 +364,7 @@ const AssistantPage = () => {
           : "Saving expense failed. Please try again."
       );
     } finally {
-      setSavingMessageId(null);
+      setSavingDraftKey(null);
     }
   };
 
@@ -364,10 +374,10 @@ const AssistantPage = () => {
     imageFile?: File | null;
     imagePreview?: string | null;
   }) => {
-    if (!options.displayText.trim() && !options.imageFile) return;
+    if (!options.displayText.trim() && !options.imageFile) return false;
     if (!canAccessAssistant) {
       setError("Assistant is restricted for this account.");
-      return;
+      return false;
     }
 
     setError(null);
@@ -450,8 +460,8 @@ const AssistantPage = () => {
           updateMessage(assistantId, (message) => ({
             ...message,
             text: event.reply || message.text,
-            parsed: applyDraftDefaults(event.parsed),
-            items: applyDraftDefaultsToItems(event.items),
+            parsed: applyDraftDefaults(event.parsed, assistantCurrency),
+            items: applyDraftDefaultsToItems(event.items, assistantCurrency),
             missing: event.missing,
           }));
         }
@@ -460,8 +470,8 @@ const AssistantPage = () => {
           updateMessage(assistantId, (message) => ({
             ...message,
             text: event.reply || message.text,
-            parsed: applyDraftDefaults(event.parsed),
-            items: applyDraftDefaultsToItems(event.items),
+            parsed: applyDraftDefaults(event.parsed, assistantCurrency),
+            items: applyDraftDefaultsToItems(event.items, assistantCurrency),
             missing: event.missing,
             status: "done",
           }));
@@ -529,6 +539,8 @@ const AssistantPage = () => {
       setIsSending(false);
       setIsStreaming(false);
     }
+
+    return true;
   };
 
   const onSend = async (event: React.FormEvent) => {
@@ -537,28 +549,40 @@ const AssistantPage = () => {
     const userInput = input.trim();
 
     if (pendingDateChange) {
+      const previousPendingDateChange = pendingDateChange;
       const dateUpdateRequest = [
         "Update only the date for the following draft entry.",
         `User input date: ${userInput}`,
-        `Current draft: ${JSON.stringify(pendingDateChange.draft)}`,
+        `Current draft: ${JSON.stringify(previousPendingDateChange.draft)}`,
       ].join("\n");
 
       setPendingDateChange(null);
-      await sendMessage({
+      setInput("");
+      const sent = await sendMessage({
         displayText: userInput,
         requestText: dateUpdateRequest,
       });
-      setInput("");
+      if (!sent) {
+        setInput(userInput);
+        setPendingDateChange(previousPendingDateChange);
+      }
       return;
     }
 
-    await sendMessage({
+    const previousImageFile = imageFile;
+    const previousImagePreview = imagePreview;
+    setInput("");
+    resetAttachment();
+    const sent = await sendMessage({
       displayText: userInput,
       imageFile,
       imagePreview,
     });
-    setInput("");
-    resetAttachment();
+    if (!sent) {
+      setInput(userInput);
+      setImageFile(previousImageFile);
+      setImagePreview(previousImagePreview);
+    }
   };
 
   return (
@@ -589,8 +613,9 @@ const AssistantPage = () => {
         error={error}
         audioError={audioError}
         handleSaveDraft={handleSaveDraft}
-        savingMessageId={savingMessageId}
+        savingDraftKey={savingDraftKey}
         requestDateChange={requestDateChange}
+        defaultCurrency={assistantCurrency}
       />
     </Layout>
   );

@@ -1,4 +1,10 @@
-import { ContextMessage, ParsedExpense, SpeechRecognitionConstructor, SpeechRecognitionWindow } from "./types";
+import {
+  AssistantMessage,
+  ContextMessage,
+  ParsedExpense,
+  SpeechRecognitionConstructor,
+  SpeechRecognitionWindow,
+} from "./types";
 
 export const initialMessage = {
   id: "assistant-welcome",
@@ -21,16 +27,30 @@ export const getTodayIso = () => new Date().toISOString().split("T")[0];
 export const resolveDraftType = (draft?: ParsedExpense) =>
   draft?.type === "income" ? "income" : "expense";
 
-export const canSaveDraft = (draft?: ParsedExpense) => {
+const resolveCurrency = (value?: string | null) => {
+  const normalized = value?.trim().toUpperCase();
+  return normalized || "INR";
+};
+
+export const canSaveDraft = (
+  draft?: ParsedExpense,
+  requiredCurrency = "INR"
+) => {
   if (!draft) return false;
   const amountValue =
     typeof draft.amount === "number" ? draft.amount : Number(draft.amount);
+  const resolvedRequiredCurrency = resolveCurrency(requiredCurrency);
+  const resolvedDraftCurrency = draft.currency
+    ? resolveCurrency(draft.currency)
+    : resolvedRequiredCurrency;
+
   return Boolean(
     draft.title &&
       Number.isFinite(amountValue) &&
       draft.category &&
       (draft.date || getTodayIso()) &&
-      (draft.currency || "INR")
+      resolvedDraftCurrency &&
+      resolvedDraftCurrency === resolvedRequiredCurrency
   );
 };
 
@@ -43,38 +63,61 @@ export const fileToBase64 = (file: File) =>
   });
 
 export const applyDraftDefaults = (
-  draft?: ParsedExpense
+  draft?: ParsedExpense,
+  defaultCurrency = "INR"
 ): ParsedExpense | undefined => {
   if (!draft) return draft;
   const todayIso = getTodayIso();
+  const resolvedCurrency = resolveCurrency(defaultCurrency);
   return {
     ...draft,
     type: draft.type === "income" ? "income" : "expense",
     date: draft.date || todayIso,
-    currency: draft.currency || "INR",
+    currency: draft.currency ? resolveCurrency(draft.currency) : resolvedCurrency,
   };
 };
 
-export const applyDraftDefaultsToItems = (items?: ParsedExpense[]) => {
+export const applyDraftDefaultsToItems = (
+  items?: ParsedExpense[],
+  defaultCurrency = "INR"
+) => {
   if (!items) return items;
-  return items.map((item) => applyDraftDefaults(item) || item);
+  return items.map((item) => applyDraftDefaults(item, defaultCurrency) || item);
 };
 
 export const buildContextMessages = (
-  history: Array<{ id: string; role: "user" | "assistant"; text?: string }>,
+  history: AssistantMessage[],
   initialMessageId: string
 ) => {
   const context = history
-    .filter(
-      (message) =>
-        message.text &&
-        (message.role === "user" || message.role === "assistant") &&
-        message.id !== initialMessageId
-    )
-    .map((message) => ({
-      role: message.role,
-      text: message.text || "",
-    })) as ContextMessage[];
+    .filter((message) => message.id !== initialMessageId)
+    .map((message) => {
+      const hasStructuredDraft = Boolean(
+        (message.parsed && Object.keys(message.parsed).length) ||
+          (message.items && message.items.length)
+      );
+      const parts: string[] = [];
+
+      if (message.text) {
+        parts.push(message.text);
+      }
+
+      if (message.role === "assistant" && hasStructuredDraft) {
+        parts.push(
+          `Structured draft context: ${JSON.stringify({
+            parsed: message.parsed,
+            items: message.items,
+            missing: message.missing,
+          })}`
+        );
+      }
+
+      return {
+        role: message.role,
+        text: parts.join("\n"),
+      };
+    })
+    .filter((message) => Boolean(message.text.trim())) as ContextMessage[];
 
   if (context.length <= MAX_CONTEXT_MESSAGES) return context;
   return context.slice(-MAX_CONTEXT_MESSAGES);

@@ -6,6 +6,7 @@ export const ROUTES = {
   PROFILE: "/profile",
   ASSISTANT: "/assistant",
   EXPENSES: "/expenses",
+  SPLITWISE: "/splitwise",
   EXPENSE_CREATE: "/expenses/create",
   EXPENSE_DETAIL: "/expenses/[id]",
   EXPENSE_EDIT: "/expenses/[id]/edit",
@@ -23,6 +24,7 @@ export const ROUTES = {
 
 export const API_ROUTES = {
   ASSISTANT: "/api/assistant",
+  SPLITWISE: "/api/splitwise",
 } as const;
 
 export const LANDING_SECTIONS = {
@@ -35,6 +37,7 @@ export const AUTHENTICATED_ROUTES: string[] = [
   ROUTES.CALENDAR,
   ROUTES.CATEGORY,
   ROUTES.EXPENSES,
+  ROUTES.SPLITWISE,
   ROUTES.INCOMES,
   ROUTES.BUDGETS,
   ROUTES.INCOME_DETAIL,

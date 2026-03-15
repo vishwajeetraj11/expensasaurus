@@ -2,9 +2,17 @@ import type { NextApiResponse } from "next";
 import {
   EXPENSE_CATEGORY_OPTIONS,
   INCOME_CATEGORY_OPTIONS,
+  normalizeCurrencyCode,
+  resolveAssistantCurrency,
   sanitizeBase64,
 } from "./heuristics";
-import { AssistantResponse, ContextMessage, StreamEvent } from "./types";
+import {
+  AssistantResponse,
+  ContextMessage,
+  ParsedExpense,
+  RuleLockContext,
+  StreamEvent,
+} from "./types";
 
 const parseJsonFromText = (text: string) => {
   const fenced = text.match(/```json([\s\S]*?)```/i);
@@ -103,6 +111,99 @@ const buildResponseSchema = () => ({
   required: ["reply", "missing"],
 });
 
+const applyLockToDraft = (
+  draft: ParsedExpense,
+  lock?: RuleLockContext
+): { draft: ParsedExpense; conflict: boolean } => {
+  if (!lock) return { draft, conflict: false };
+
+  const conflict =
+    (draft.type && draft.type !== lock.type) ||
+    (draft.category && draft.category !== lock.category);
+
+  return {
+    draft: {
+      ...draft,
+      type: lock.type,
+      category: lock.category,
+      tag: lock.category.toLowerCase(),
+    },
+    conflict: Boolean(conflict),
+  };
+};
+
+const applyResponsePoliciesToParsedOutput = (
+  payload: any,
+  defaultCurrency: string,
+  lock?: RuleLockContext
+): { response: AssistantResponse; conflictResolved: boolean } => {
+  const allowedCurrency = resolveAssistantCurrency(defaultCurrency);
+  const parsedWithLock =
+    payload?.parsed && typeof payload.parsed === "object"
+      ? applyLockToDraft(payload.parsed as ParsedExpense, lock)
+      : undefined;
+  const itemsWithLock:
+    | Array<{ draft: ParsedExpense; conflict: boolean }>
+    | undefined = Array.isArray(payload?.items)
+    ? payload.items.map((item: unknown) =>
+        applyLockToDraft((item || {}) as ParsedExpense, lock)
+      )
+    : undefined;
+  const parsed = parsedWithLock
+    ? {
+        ...parsedWithLock.draft,
+        currency: allowedCurrency,
+      }
+    : undefined;
+  const items = itemsWithLock?.map((item: { draft: ParsedExpense }) => ({
+    ...item.draft,
+    currency: allowedCurrency,
+  }));
+  const missingSet = new Set<string>(
+    Array.isArray(payload?.missing)
+      ? payload.missing.filter((field: unknown): field is string => typeof field === "string")
+      : []
+  );
+  missingSet.delete("currency");
+  if (lock) {
+    missingSet.delete("type");
+    missingSet.delete("category");
+  }
+
+  const conflictResolved = Boolean(
+    parsedWithLock?.conflict ||
+      itemsWithLock?.some((value: { conflict: boolean }) => value.conflict)
+  );
+
+  const rawCurrencies = [
+    normalizeCurrencyCode(payload?.parsed?.currency),
+    ...(Array.isArray(payload?.items)
+      ? payload.items
+          .map((item: any) => normalizeCurrencyCode(item?.currency))
+          .filter(Boolean)
+      : []),
+  ].filter(Boolean) as string[];
+  const hasDisallowedCurrency = rawCurrencies.some(
+    (currency) => currency !== allowedCurrency
+  );
+  if (hasDisallowedCurrency) {
+    missingSet.add("currency");
+  }
+
+  return {
+    response: {
+      reply:
+        typeof payload?.reply === "string" && payload.reply.trim()
+          ? payload.reply
+          : "Here is a draft based on that.",
+      parsed,
+      items,
+      missing: Array.from(missingSet),
+    },
+    conflictResolved,
+  };
+};
+
 const extractOpenAIText = (payload: any) => {
   if (typeof payload?.output_text === "string") {
     return payload.output_text;
@@ -118,12 +219,26 @@ const extractOpenAIText = (payload: any) => {
   return texts.join("\n");
 };
 
-const buildSystemPrompt = (todayIso: string) =>
+const buildRuleLockInstructions = (lock?: RuleLockContext) => {
+  if (!lock) return [];
+  return [
+    `Rule lock is active. Keep type fixed to "${lock.type}" and category fixed to "${lock.category}".`,
+    `Do not change the locked type/category even if the message is ambiguous. Matched token: "${lock.matchedToken}" (rule: "${lock.ruleId}", confidence: ${lock.confidence}).`,
+  ];
+};
+
+const buildSystemPrompt = (
+  todayIso: string,
+  defaultCurrency: string,
+  lock?: RuleLockContext
+) =>
   [
     "You are a personal finance parsing assistant for expenses and income.",
     "Decide whether each entry is an expense or income and set type to expense or income.",
     "Always include type for parsed or each item.",
-    "Always include type for parsed or each item.",
+    "Treat conversation as stateful. If the latest user message updates or fills missing fields for an existing draft, merge it into the latest structured draft context instead of starting a new unrelated draft.",
+    "When merging, preserve previously known fields unless the user explicitly changes them.",
+    "Never drop known fields from the prior draft when the user provides a partial follow-up like an amount/date/category/title correction.",
     `For expenses, category must be one of: ${EXPENSE_CATEGORY_OPTIONS.join(", ")}.`,
     `For income, category must be one of: ${INCOME_CATEGORY_OPTIONS.join(", ")}.`,
     "Return JSON that matches the provided schema only.",
@@ -131,7 +246,10 @@ const buildSystemPrompt = (todayIso: string) =>
     "If a required field is missing, include it in missing.",
     "Dates must be formatted as YYYY-MM-DD.",
     `Today is ${todayIso}. If the user does not specify a date, use today and do not add date to missing.`,
-    "If the user does not specify a currency, use INR and do not add currency to missing.",
+    `Currency must always be ${defaultCurrency}.`,
+    `If the user does not specify a currency, use ${defaultCurrency} and do not add currency to missing.`,
+    `If the user explicitly asks for another currency, ask them to provide the amount in ${defaultCurrency}, include "currency" in missing, and do not return parsed/items with other currency codes.`,
+    ...buildRuleLockInstructions(lock),
   ].join("\n");
 
 const buildInputMessages = (payload: {
@@ -199,12 +317,18 @@ export const callOpenAI = async (payload: {
   imageDataUrl?: string | null;
   contextMessages?: ContextMessage[];
   todayIso: string;
+  defaultCurrency: string;
+  lock?: RuleLockContext;
   model: string;
 }): Promise<AssistantResponse | null> => {
   const apiKey = process.env.OPENAI_API_KEY;
   if (!apiKey) return null;
 
-  const systemPrompt = buildSystemPrompt(payload.todayIso);
+  const systemPrompt = buildSystemPrompt(
+    payload.todayIso,
+    payload.defaultCurrency,
+    payload.lock
+  );
 
   const response = await fetch("https://api.openai.com/v1/responses", {
     method: "POST",
@@ -241,12 +365,22 @@ export const callOpenAI = async (payload: {
 
   if (!parsed || typeof parsed !== "object") return null;
 
-  return {
-    reply: parsed.reply || "Here is a draft based on that.",
-    parsed: parsed.parsed,
-    items: parsed.items,
-    missing: parsed.missing || [],
-  };
+  const normalized = applyResponsePoliciesToParsedOutput(
+    parsed,
+    payload.defaultCurrency,
+    payload.lock
+  );
+  if (normalized.conflictResolved) {
+    console.info(
+      `[assistant] rule_ai_conflict_resolved ${JSON.stringify({
+        source: "openai",
+        ruleId: payload.lock?.ruleId,
+        timestamp: new Date().toISOString(),
+      })}`
+    );
+  }
+
+  return normalized.response;
 };
 
 export const streamOpenAI = async (options: {
@@ -255,12 +389,18 @@ export const streamOpenAI = async (options: {
   imageDataUrl?: string | null;
   contextMessages?: ContextMessage[];
   todayIso: string;
+  defaultCurrency: string;
+  lock?: RuleLockContext;
   model: string;
 }): Promise<boolean> => {
   const apiKey = process.env.OPENAI_API_KEY;
   if (!apiKey) return false;
 
-  const systemPrompt = buildSystemPrompt(options.todayIso);
+  const systemPrompt = buildSystemPrompt(
+    options.todayIso,
+    options.defaultCurrency,
+    options.lock
+  );
 
   const response = await fetch("https://api.openai.com/v1/responses", {
     method: "POST",
@@ -297,6 +437,7 @@ export const streamOpenAI = async (options: {
   let textBuffer = "";
   let lastReply = "";
   let lastDraftSignature = "";
+  let conflictLogged = false;
 
   const sendEvent = (event: StreamEvent) => {
     options.res.write(`data: ${JSON.stringify(event)}\n\n`);
@@ -305,16 +446,31 @@ export const streamOpenAI = async (options: {
   const maybeSendDraft = () => {
     const parsed = parseJsonFromText(textBuffer);
     if (!parsed || typeof parsed !== "object") return;
-    const signature = JSON.stringify(parsed);
+    const normalized = applyResponsePoliciesToParsedOutput(
+      parsed,
+      options.defaultCurrency,
+      options.lock
+    );
+    if (normalized.conflictResolved && !conflictLogged) {
+      conflictLogged = true;
+      console.info(
+        `[assistant] rule_ai_conflict_resolved ${JSON.stringify({
+          source: "openai_stream",
+          ruleId: options.lock?.ruleId,
+          timestamp: new Date().toISOString(),
+        })}`
+      );
+    }
+    const signature = JSON.stringify(normalized.response);
     if (signature === lastDraftSignature) return;
 
     lastDraftSignature = signature;
     sendEvent({
       type: "draft",
-      reply: parsed.reply,
-      parsed: parsed.parsed,
-      items: parsed.items,
-      missing: parsed.missing || [],
+      reply: normalized.response.reply,
+      parsed: normalized.response.parsed,
+      items: normalized.response.items,
+      missing: normalized.response.missing || [],
     });
   };
 
@@ -401,7 +557,10 @@ export const callGemini = async (payload: {
   text: string;
   imageDataUrl?: string | null;
   imageType?: string;
+  contextMessages?: ContextMessage[];
   todayIso: string;
+  defaultCurrency: string;
+  lock?: RuleLockContext;
 }): Promise<AssistantResponse | null> => {
   const apiKey = process.env.GOOGLE_GENERATIVE_AI_API_KEY;
   if (!apiKey) return null;
@@ -410,10 +569,18 @@ export const callGemini = async (payload: {
   const endpoint = `https://generativelanguage.googleapis.com/v1beta/models/${encodeURIComponent(
     model
   )}:generateContent`;
+  const contextBlock = payload.contextMessages?.length
+    ? payload.contextMessages
+        .map((message) => `${message.role.toUpperCase()}: ${message.text}`)
+        .join("\n")
+    : "";
 
   const prompt = [
     "You are a personal finance parsing assistant for expenses and income.",
     "Decide whether each entry is an expense or income and set type to expense or income.",
+    "Treat conversation as stateful. If the latest user message updates or fills missing fields for an existing draft, merge it into the latest structured draft context instead of starting a new unrelated draft.",
+    "When merging, preserve previously known fields unless the user explicitly changes them.",
+    "Never drop known fields from the prior draft when the user provides a partial follow-up like an amount/date/category/title correction.",
     `For expenses, category must be one of: ${EXPENSE_CATEGORY_OPTIONS.join(", ")}.`,
     `For income, category must be one of: ${INCOME_CATEGORY_OPTIONS.join(", ")}.`,
     "Return ONLY valid JSON with this shape:",
@@ -421,8 +588,12 @@ export const callGemini = async (payload: {
     "If the user includes multiple entries, return them as an array in items and omit parsed.",
     "If you cannot infer a required field, add it to missing.",
     `Today is ${payload.todayIso}. If the user does not specify a date, use today and do not add date to missing.`,
-    "If the user does not specify a currency, use INR and do not add currency to missing.",
+    `Currency must always be ${payload.defaultCurrency}.`,
+    `If the user does not specify a currency, use ${payload.defaultCurrency} and do not add currency to missing.`,
+    `If the user explicitly asks for another currency, ask them to provide the amount in ${payload.defaultCurrency}, include "currency" in missing, and do not return parsed/items with other currency codes.`,
+    ...buildRuleLockInstructions(payload.lock),
     "If the user provides an image, infer details from it when possible.",
+    contextBlock ? `Conversation context:\n${contextBlock}` : "",
     `User message: ${payload.text || "(no text provided)"}`,
   ].join("\n");
 
@@ -465,12 +636,22 @@ export const callGemini = async (payload: {
     const parsed = combinedText ? parseJsonFromText(combinedText) : null;
     if (!parsed || typeof parsed !== "object") return null;
 
-    return {
-      reply: parsed.reply || "Here is a draft based on that.",
-      parsed: parsed.parsed,
-      items: parsed.items,
-      missing: parsed.missing || [],
-    };
+    const normalized = applyResponsePoliciesToParsedOutput(
+      parsed,
+      payload.defaultCurrency,
+      payload.lock
+    );
+    if (normalized.conflictResolved) {
+      console.info(
+        `[assistant] rule_ai_conflict_resolved ${JSON.stringify({
+          source: "gemini",
+          ruleId: payload.lock?.ruleId,
+          timestamp: new Date().toISOString(),
+        })}`
+      );
+    }
+
+    return normalized.response;
   } catch (err) {
     return null;
   }

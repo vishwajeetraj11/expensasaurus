@@ -27,6 +27,7 @@ const landingLinks: NavItem[] = [
 const appLinksBase: NavItem[] = [
   { href: ROUTES.DASHBOARD, label: "Dashboard" },
   { href: ROUTES.EXPENSES, label: "Expenses" },
+  { href: ROUTES.SPLITWISE, label: "Splitwise" },
   { href: ROUTES.INCOMES, label: "Incomes" },
   { href: ROUTES.CATEGORY, label: "Category" },
   { href: ROUTES.CALENDAR, label: "Calendar" },
@@ -128,7 +129,7 @@ const Navigation = ({ landingPage = false }: Props) => {
                     ? "text-slate-600 hover:bg-blue-50 hover:text-blue-700"
                     : "text-slate-600 hover:bg-slate-100 hover:text-slate-900 dark:text-slate-200 dark:hover:bg-white/10 dark:hover:text-white",
                   active &&
-                    "bg-blue-600 text-white hover:bg-blue-700 hover:text-white dark:bg-blue-500 dark:text-white"
+                    "!bg-blue-600 !text-white hover:!bg-blue-700 hover:!text-white dark:!bg-blue-500 dark:!text-white"
                 )}
               >
                 {link.label}
@@ -230,7 +231,7 @@ const Navigation = ({ landingPage = false }: Props) => {
                 className={clsx(
                   "rounded-lg px-3 py-2 text-sm font-medium transition",
                   active
-                    ? "bg-blue-600 text-white"
+                    ? "!bg-blue-600 !text-white hover:!bg-blue-700 hover:!text-white"
                     : "text-slate-700 hover:bg-blue-50 hover:text-blue-700"
                 )}
                 onClick={() => setHamburgerMenuIsOpen(false)}

@@ -40,7 +40,7 @@ const EModal = (props: EModalProps) => {
           leaveFrom="opacity-100"
           leaveTo="opacity-0"
         >
-          <div className="fixed inset-0 bg-black bg-opacity-25" />
+          <div className="fixed inset-0 bg-slate-950/45 backdrop-blur-[2px] dark:bg-slate-950/70" />
         </Transition.Child>
 
         <div className="fixed inset-0 overflow-y-auto">
@@ -54,15 +54,15 @@ const EModal = (props: EModalProps) => {
               leaveFrom="opacity-100 scale-100"
               leaveTo="opacity-0 scale-95"
             >
-              <Dialog.Panel className="w-full max-w-md transform overflow-hidden rounded-2xl bg-white p-6 text-left align-middle shadow-xl transition-all">
+              <Dialog.Panel className="w-full max-w-md transform overflow-hidden rounded-2xl border border-slate-200 bg-white p-6 text-left align-middle shadow-2xl transition-all dark:border-white/10 dark:bg-slate-900">
                 <Dialog.Title
                   as="h3"
-                  className="text-lg font-medium leading-6 text-gray-900"
+                  className="text-lg font-semibold leading-6 tracking-tight text-slate-900 dark:text-slate-100"
                 >
                   {title}
                 </Dialog.Title>
                 <div className="mt-2">
-                  <p className="text-sm text-gray-700 font-normal">
+                  <p className="text-sm font-normal leading-6 text-slate-600 dark:text-slate-300">
                     {description}
                   </p>
                 </div>
@@ -70,7 +70,7 @@ const EModal = (props: EModalProps) => {
                 <div className="flex justify-end gap-4 mt-4">
                   <button
                     type="button"
-                    className="inline-flex justify-center rounded-md border border-transparent bg-blue-100 px-4 py-2 text-sm font-medium text-blue-900 hover:bg-blue-200 focus:outline-none"
+                    className="inline-flex justify-center rounded-lg border border-slate-300 bg-white px-4 py-2 text-sm font-medium text-slate-700 transition hover:bg-slate-50 focus:outline-none focus:ring-2 focus:ring-blue-500/30 dark:border-white/15 dark:bg-slate-800 dark:text-slate-200 dark:hover:bg-slate-700"
                     onClick={onClose}
                   >
                     {secondaryCtaText || "Cancel"}
@@ -78,7 +78,10 @@ const EModal = (props: EModalProps) => {
                   <button
                     type="button"
                     className={clsx(
-                      "inline-flex justify-center rounded-md border border-transparent bg-red-100 px-4 py-2 text-sm font-medium text-red-900 hover:bg-red-200 focus:outline-none"
+                      "inline-flex justify-center rounded-lg border px-4 py-2 text-sm font-semibold transition focus:outline-none focus:ring-2 focus:ring-rose-500/30",
+                      isActionDelete
+                        ? "border-rose-200 bg-rose-50 text-rose-700 hover:bg-rose-100 dark:border-rose-500/35 dark:bg-rose-500/15 dark:text-rose-200 dark:hover:bg-rose-500/25"
+                        : "border-blue-200 bg-blue-50 text-blue-700 hover:bg-blue-100 dark:border-blue-500/35 dark:bg-blue-500/15 dark:text-blue-200 dark:hover:bg-blue-500/25"
                     )}
                     onClick={onAction}
                   >

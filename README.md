@@ -16,6 +16,8 @@ NEXT_PUBLIC_EXPENSES_COLLECTION_ID=<expenses collection ID>
 NEXT_PUBLIC_INCOMES_COLLECTION_ID=<incomes collection ID>
 NEXT_PUBLIC_BUDGETS_COLLECTION_ID=<budgets collection ID>
 NEXT_PUBLIC_BUCKET_ID=<bucket storage ID>
+SPLITWISE_API_KEY=<personal Splitwise API key for read-only sync>
+SPLITWISE_ALLOWED_EMAIL=<optional email allowed to use Splitwise sync; defaults to the owner email in code>
 ```
 - Make relevant indexes.
 ```
@@ -73,6 +75,5 @@ export type Budget = {
 <img width="1260" alt="Screenshot 2023-06-11 at 6 15 01 PM" src="https://github.com/vishwajeetraj11/expensasaurus/assets/47270995/913b4395-619a-407b-86c8-4756c0423aa7">
 <img width="1260" alt="Screenshot 2023-06-11 at 6 14 53 PM" src="https://github.com/vishwajeetraj11/expensasaurus/assets/47270995/3f5484ac-e4af-44bf-bb2b-e9d1335d5dd3">
 <img width="1260" alt="Screenshot 2023-06-11 at 5 30 18 PM" src="https://github.com/vishwajeetraj11/expensasaurus/assets/47270995/9489020e-2e22-4e93-9b5f-98af05b1a774">
-
 
 
