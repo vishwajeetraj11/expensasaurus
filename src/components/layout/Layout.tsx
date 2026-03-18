@@ -1,4 +1,5 @@
 import clsx from "clsx";
+import DemoBootstrapGate from "expensasaurus/components/demo/DemoBootstrapGate";
 import { useAuthStore } from "expensasaurus/shared/stores/useAuthStore";
 import React from "react";
 import { shallow } from "zustand/shallow";
@@ -24,7 +25,7 @@ const Layout = (props: Props) => {
     >
       <Navigation />
       <DarkMode />
-      {children}
+      <DemoBootstrapGate>{children}</DemoBootstrapGate>
       <CurrencyModal />
     </div>
   ) : null;
