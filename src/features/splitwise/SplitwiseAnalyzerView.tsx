@@ -5,6 +5,10 @@ import ErrorMessage from "expensasaurus/components/ui/ErrorMessage";
 import FormInputLabel from "expensasaurus/components/ui/FormInputLabel";
 import TextArea from "expensasaurus/components/ui/TextArea";
 import TextInput from "expensasaurus/components/ui/TextInput";
+import {
+  getDemoSplitwisePayload,
+  isDemoModeEnabled,
+} from "expensasaurus/shared/demo";
 import { clsx } from "expensasaurus/shared/utils/common";
 import {
   formatCompactCurrency,
@@ -190,6 +194,7 @@ const SplitwiseAnalyzerView = () => {
     rawJson?: string;
   }>({});
   const [isFetchingApi, setIsFetchingApi] = useState(false);
+  const [demoModeEnabled, setDemoModeEnabled] = useState(false);
   const [isPending, startTransition] = useTransition();
   const resultsRef = useRef<HTMLElement | null>(null);
   const isBusy = isPending || isFetchingApi;
@@ -208,6 +213,10 @@ const SplitwiseAnalyzerView = () => {
       resultsRef.current?.scrollIntoView({ behavior: "smooth", block: "start" });
     });
   }, [analysis]);
+
+  useEffect(() => {
+    setDemoModeEnabled(isDemoModeEnabled());
+  }, []);
 
   const runAnalysis = (options?: {
     nextViewerUserId?: string;
@@ -302,6 +311,22 @@ const SplitwiseAnalyzerView = () => {
     }
   };
 
+  const handleLoadDemoPayload = () => {
+    const response = getDemoSplitwisePayload();
+    const nextRawJson = JSON.stringify(response.payload, null, 2);
+
+    setApiError(null);
+    setParseError(null);
+    setFieldErrors({});
+    setApiSync(response);
+    setViewerUserId(response.user.id);
+    setRawJson(nextRawJson);
+    runAnalysis({
+      nextRawJson,
+      nextViewerUserId: response.user.id,
+    });
+  };
+
   return (
     <div className="mx-auto flex w-full max-w-[1320px] flex-col gap-6 px-4 pb-12 pt-6 sm:px-6 lg:px-8">
       <section className="relative overflow-hidden rounded-[32px] border border-slate-200/70 bg-white/80 p-5 shadow-[0_30px_80px_-60px_rgba(15,23,42,0.55)] backdrop-blur dark:border-white/10 dark:bg-slate-950/70 sm:p-8">
@@ -356,11 +381,11 @@ const SplitwiseAnalyzerView = () => {
 
               <div className="mt-5 rounded-2xl border border-blue-200/70 bg-blue-50/70 p-4 dark:border-blue-500/20 dark:bg-blue-500/10">
                 <p className="text-xs font-semibold uppercase tracking-[0.16em] text-blue-700 dark:text-blue-200">
-                  Splitwise API
+                  Splitwise input
                 </p>
                 <p className="mt-2 text-sm leading-6 text-blue-900/80 dark:text-blue-100/90">
-                  Pull your current Splitwise user and expenses through the server, then
-                  auto-fill the analyzer with the fetched payload.
+                  Pull your current Splitwise user and expenses through the server, or
+                  load a local demo payload that is ready for interviews.
                 </p>
                 <div className="mt-4 flex flex-wrap gap-3">
                   <Button
@@ -371,9 +396,21 @@ const SplitwiseAnalyzerView = () => {
                   >
                     {isFetchingApi ? "Fetching from API..." : "Fetch from Splitwise API"}
                   </Button>
+                  {demoModeEnabled && (
+                    <Button
+                      type="button"
+                      variant="secondary"
+                      disabled={isBusy}
+                      onClick={handleLoadDemoPayload}
+                      className="dark:border-blue-400/20 dark:text-blue-100"
+                    >
+                      Load demo payload
+                    </Button>
+                  )}
                 </div>
                 <p className="mt-3 text-xs text-blue-800/70 dark:text-blue-100/70">
-                  Requires <code>SPLITWISE_API_KEY</code> on the server.
+                  The API option requires <code>SPLITWISE_API_KEY</code> on the server.
+                  The demo payload stays local to this page.
                 </p>
               </div>
 
@@ -442,17 +479,22 @@ const SplitwiseAnalyzerView = () => {
               <div className="flex flex-col gap-3 lg:flex-row lg:items-center lg:justify-between">
                 <div>
                   <p className="text-sm font-semibold text-blue-800 dark:text-blue-100">
-                    Live Splitwise payload loaded
+                    {apiSync.source === "demo_payload"
+                      ? "Demo Splitwise payload loaded"
+                      : "Live Splitwise payload loaded"}
                   </p>
                   <p className="mt-1 text-sm text-blue-900/80 dark:text-blue-100/80">
-                    Pulled {apiSync.expensesCount} expense
+                    {apiSync.source === "demo_payload" ? "Loaded" : "Pulled"}{" "}
+                    {apiSync.expensesCount} expense
                     {apiSync.expensesCount === 1 ? "" : "s"} for{" "}
                     {apiSync.user.displayName} (user ID {apiSync.user.id}) on{" "}
                     {format(parseISO(apiSync.fetchedAt), "dd MMM yyyy, hh:mm a")}.
                   </p>
                 </div>
                 <div className="rounded-2xl border border-blue-200/80 bg-white/70 px-4 py-2 text-xs font-medium text-blue-700 dark:border-blue-400/20 dark:bg-slate-950/30 dark:text-blue-100">
-                  API source: Splitwise
+                  {apiSync.source === "demo_payload"
+                    ? "Source: local demo payload"
+                    : "API source: Splitwise"}
                 </div>
               </div>
             </section>

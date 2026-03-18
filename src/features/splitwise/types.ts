@@ -106,7 +106,7 @@ export type SplitwiseCurrentUser = {
 };
 
 export type SplitwiseApiSyncResponse = {
-  source: "splitwise_api";
+  source: "splitwise_api" | "demo_payload";
   fetchedAt: string;
   expensesCount: number;
   user: SplitwiseCurrentUser;
