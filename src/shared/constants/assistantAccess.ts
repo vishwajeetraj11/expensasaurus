@@ -1,11 +1,18 @@
-const ASSISTANT_ALLOWED_EMAILS = ["vishwajeetraj11@gmail.com"] as const;
+export const ASSISTANT_ADMIN_EMAILS = ["vishwajeetraj11@gmail.com"] as const;
+export const ASSISTANT_ALLOWED_EMAILS = ASSISTANT_ADMIN_EMAILS;
+export const ASSISTANT_NOT_AVAILABLE_MESSAGE =
+  "Assistant is not allowed to everyone yet.";
 
-const normalizeEmail = (email?: string | null) =>
+export const normalizeAssistantEmail = (email?: string | null) =>
   (email || "").trim().toLowerCase();
 
-export const isAssistantEmailAllowed = (email?: string | null) =>
-  ASSISTANT_ALLOWED_EMAILS.includes(
-    normalizeEmail(email) as (typeof ASSISTANT_ALLOWED_EMAILS)[number]
-  );
+export const isAssistantAdminEmail = (email?: string | null) => {
+  const normalizedEmail = normalizeAssistantEmail(email);
 
-export { ASSISTANT_ALLOWED_EMAILS };
+  return ASSISTANT_ADMIN_EMAILS.some(
+    (allowedEmail) => normalizeAssistantEmail(allowedEmail) === normalizedEmail
+  );
+};
+
+export const isAssistantEmailAllowed = (email?: string | null) =>
+  isAssistantAdminEmail(email);

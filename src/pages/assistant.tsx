@@ -5,12 +5,20 @@ import { Models, Role } from "appwrite";
 import { useQueryClient } from "react-query";
 import { categories, incomeCategories } from "expensasaurus/shared/constants/categories";
 import { ENVS } from "expensasaurus/shared/constants/constants";
-import { API_ROUTES, ROUTES } from "expensasaurus/shared/constants/routes";
-import { isAssistantEmailAllowed } from "expensasaurus/shared/constants/assistantAccess";
+import { API_ROUTES } from "expensasaurus/shared/constants/routes";
+import { ASSISTANT_NOT_AVAILABLE_MESSAGE } from "expensasaurus/shared/constants/assistantAccess";
 import { ID, Permission, account, database } from "expensasaurus/shared/services/appwrite";
+import {
+  AssistantAccessStatus,
+  fetchAssistantAccessStatus,
+} from "expensasaurus/shared/services/assistantAccess";
 import { useAuthStore } from "expensasaurus/shared/stores/useAuthStore";
-import { useRouter } from "next/router";
 import AssistantView from "expensasaurus/features/assistant/AssistantView";
+import {
+  DEMO_ASSISTANT_PROMPTS,
+  isDemoModeEnabled,
+  isDemoUser,
+} from "expensasaurus/shared/demo";
 import {
   applyDraftDefaults,
   applyDraftDefaultsToItems,
@@ -18,20 +26,16 @@ import {
   canSaveDraft,
   createId,
   fileToBase64,
-  getSpeechRecognition,
   initialMessage,
   resolveDraftType,
 } from "expensasaurus/features/assistant/helpers";
 import {
   AssistantMessage,
   ParsedExpense,
-  SpeechRecognitionEventLike,
-  SpeechRecognitionInstance,
   StreamEvent,
 } from "expensasaurus/features/assistant/types";
 
 const AssistantPage = () => {
-  const router = useRouter();
   const { user, userInfo, getUserInfo } = useAuthStore((state) => ({
     user: state.user,
     userInfo: state.userInfo,
@@ -41,7 +45,6 @@ const AssistantPage = () => {
     userInfo: Models.User<Models.Preferences> | null;
     getUserInfo: () => Promise<void>;
   };
-  const canAccessAssistant = isAssistantEmailAllowed(userInfo?.email);
   const assistantCurrency = useMemo(() => {
     const preferredCurrency = userInfo?.prefs?.currency;
     if (typeof preferredCurrency === "string" && preferredCurrency.trim()) {
@@ -49,15 +52,19 @@ const AssistantPage = () => {
     }
     return "INR";
   }, [userInfo?.prefs?.currency]);
+  const suggestedPrompts = useMemo(
+    () =>
+      isDemoModeEnabled() && isDemoUser(userInfo)
+        ? [...DEMO_ASSISTANT_PROMPTS]
+        : [],
+    [userInfo]
+  );
 
   const queryClient = useQueryClient();
   const [messages, setMessages] = useState<AssistantMessage[]>([initialMessage]);
   const [input, setInput] = useState("");
   const [imageFile, setImageFile] = useState<File | null>(null);
   const [imagePreview, setImagePreview] = useState<string | null>(null);
-  const [audioDuration, setAudioDuration] = useState<number>(0);
-  const [isRecording, setIsRecording] = useState(false);
-  const [isTranscribing, setIsTranscribing] = useState(false);
   const [isSending, setIsSending] = useState(false);
   const [isStreaming, setIsStreaming] = useState(false);
   const [savingDraftKey, setSavingDraftKey] = useState<string | null>(null);
@@ -66,19 +73,11 @@ const AssistantPage = () => {
     draft: ParsedExpense;
   } | null>(null);
   const [error, setError] = useState<string | null>(null);
-  const [audioError, setAudioError] = useState<string | null>(null);
-  const [speechSupported, setSpeechSupported] = useState(false);
+  const [assistantAccess, setAssistantAccess] =
+    useState<AssistantAccessStatus | null>(null);
+  const [isAccessLoading, setIsAccessLoading] = useState(true);
 
   const scrollAnchorRef = useRef<HTMLDivElement>(null);
-  const speechRecognitionRef = useRef<SpeechRecognitionInstance | null>(null);
-  const transcriptBaseRef = useRef("");
-  const timerRef = useRef<number | null>(null);
-  const recordingSecondsRef = useRef(0);
-
-  const waveformHeights = useMemo(
-    () => Array.from({ length: 26 }, () => 8 + Math.floor(Math.random() * 18)),
-    []
-  );
 
   const expenseCategoryKeyMap = useMemo(() => {
     const map = new Map<string, string>();
@@ -103,31 +102,58 @@ const AssistantPage = () => {
   }, [messages, isSending]);
 
   useEffect(() => {
-    setSpeechSupported(!!getSpeechRecognition());
-  }, []);
-
-  useEffect(() => {
     if (user && !userInfo) {
       getUserInfo();
     }
   }, [user, userInfo, getUserInfo]);
 
   useEffect(() => {
-    if (userInfo && !canAccessAssistant) {
-      router.replace(ROUTES.DASHBOARD);
-    }
-  }, [userInfo, canAccessAssistant, router]);
+    let isCancelled = false;
 
-  useEffect(() => {
-    return () => {
-      if (timerRef.current) window.clearInterval(timerRef.current);
+    if (!user) {
+      setAssistantAccess(null);
+      setIsAccessLoading(false);
+      return;
+    }
+
+    const loadAssistantAccess = async () => {
+      setIsAccessLoading(true);
       try {
-        speechRecognitionRef.current?.stop();
-      } catch (err) {
-        // ignore invalid stop when recognition is inactive
+        const nextStatus = await fetchAssistantAccessStatus();
+        if (!isCancelled) {
+          setAssistantAccess(nextStatus);
+        }
+      } catch (accessError) {
+        if (!isCancelled) {
+          setAssistantAccess({
+            enabledForEveryone: false,
+            canUseAssistant: false,
+            isAdmin: false,
+            updatedAt: null,
+            updatedBy: null,
+            message:
+              accessError instanceof Error
+                ? accessError.message
+                : ASSISTANT_NOT_AVAILABLE_MESSAGE,
+          });
+        }
+      } finally {
+        if (!isCancelled) {
+          setIsAccessLoading(false);
+        }
       }
     };
-  }, []);
+
+    loadAssistantAccess();
+
+    return () => {
+      isCancelled = true;
+    };
+  }, [user]);
+
+  const canAccessAssistant = assistantAccess?.canUseAssistant ?? false;
+  const assistantBlockedMessage =
+    assistantAccess?.message || ASSISTANT_NOT_AVAILABLE_MESSAGE;
 
   const resetAttachment = () => {
     setImageFile(null);
@@ -139,101 +165,6 @@ const AssistantPage = () => {
     if (!file) return;
     setImageFile(file);
     setImagePreview(URL.createObjectURL(file));
-  };
-
-  const startTranscription = () => {
-    const SpeechRecognition = getSpeechRecognition();
-    if (!SpeechRecognition) {
-      setAudioError("Speech recognition is not supported in this browser.");
-      return;
-    }
-
-    const recognition = new SpeechRecognition();
-    recognition.continuous = true;
-    recognition.interimResults = true;
-    recognition.lang = navigator.language || "en-US";
-
-    transcriptBaseRef.current = input.trim();
-    setIsTranscribing(true);
-
-    recognition.onresult = (event: SpeechRecognitionEventLike) => {
-      let finalTranscript = "";
-      let interimTranscript = "";
-
-      for (let i = event.resultIndex; i < event.results.length; i += 1) {
-        const result = event.results[i];
-        const chunk = result?.[0]?.transcript || "";
-        if (result.isFinal) {
-          finalTranscript += chunk;
-        } else {
-          interimTranscript += chunk;
-        }
-      }
-
-      const combined = [transcriptBaseRef.current, finalTranscript, interimTranscript]
-        .filter(Boolean)
-        .join(" ")
-        .replace(/\s+/g, " ")
-        .trim();
-
-      setInput(combined);
-    };
-
-    recognition.onerror = () => {
-      setAudioError("Could not capture speech. Check microphone permissions.");
-      setIsTranscribing(false);
-    };
-
-    recognition.onend = () => {
-      setIsTranscribing(false);
-    };
-
-    speechRecognitionRef.current = recognition;
-    try {
-      recognition.start();
-    } catch (err) {
-      setAudioError("Could not start speech recognition.");
-      setIsTranscribing(false);
-    }
-  };
-
-  const stopTranscription = () => {
-    try {
-      speechRecognitionRef.current?.stop();
-    } catch (err) {
-      // ignore invalid stop
-    } finally {
-      setIsTranscribing(false);
-    }
-  };
-
-  const startRecording = () => {
-    if (isRecording) return;
-    setAudioError(null);
-
-    if (!speechSupported) {
-      setAudioError("Voice input is not supported in this browser.");
-      return;
-    }
-
-    setIsRecording(true);
-    startTranscription();
-    recordingSecondsRef.current = 0;
-    setAudioDuration(0);
-
-    if (timerRef.current) window.clearInterval(timerRef.current);
-    timerRef.current = window.setInterval(() => {
-      recordingSecondsRef.current += 1;
-      setAudioDuration(recordingSecondsRef.current);
-    }, 1000);
-  };
-
-  const stopRecording = () => {
-    if (!isRecording) return;
-    setIsRecording(false);
-    stopTranscription();
-    if (timerRef.current) window.clearInterval(timerRef.current);
-    timerRef.current = null;
   };
 
   const updateMessage = (
@@ -375,13 +306,16 @@ const AssistantPage = () => {
     imagePreview?: string | null;
   }) => {
     if (!options.displayText.trim() && !options.imageFile) return false;
+    if (isAccessLoading) {
+      setError("Checking assistant availability...");
+      return false;
+    }
     if (!canAccessAssistant) {
-      setError("Assistant is restricted for this account.");
+      setError(assistantBlockedMessage);
       return false;
     }
 
     setError(null);
-    setAudioError(null);
 
     const userMessage: AssistantMessage = {
       id: createId(),
@@ -590,6 +524,32 @@ const AssistantPage = () => {
       <Head>
         <title>Expensasaurus - Assistant</title>
       </Head>
+      {isAccessLoading ? (
+        <div className="mx-auto w-full max-w-[920px] px-4 pb-8 pt-6 sm:pb-16">
+          <div className="rounded-[32px] border border-slate-200/70 bg-white/90 p-8 text-center shadow-[0_25px_70px_-45px_rgba(15,23,42,0.55)] dark:border-white/10 dark:bg-navy-900/70">
+            <h1 className="text-3xl font-semibold tracking-tight text-slate-900 dark:text-white">
+              Assistant
+            </h1>
+            <p className="mt-3 text-sm text-slate-600 dark:text-slate-300">
+              Checking assistant availability...
+            </p>
+          </div>
+        </div>
+      ) : !canAccessAssistant ? (
+        <div className="mx-auto w-full max-w-[920px] px-4 pb-8 pt-6 sm:pb-16">
+          <div className="rounded-[32px] border border-slate-200/70 bg-white/90 p-8 shadow-[0_25px_70px_-45px_rgba(15,23,42,0.55)] dark:border-white/10 dark:bg-navy-900/70">
+            <div className="inline-flex items-center rounded-full border border-amber-200 bg-amber-50 px-3 py-1 text-xs font-semibold uppercase tracking-[0.16em] text-amber-700 dark:border-amber-500/20 dark:bg-amber-500/10 dark:text-amber-200">
+              Assistant rollout
+            </div>
+            <h1 className="mt-4 text-3xl font-semibold tracking-tight text-slate-900 dark:text-white">
+              Assistant
+            </h1>
+            <p className="mt-3 max-w-2xl text-sm leading-6 text-slate-600 dark:text-slate-300">
+              {assistantBlockedMessage}
+            </p>
+          </div>
+        </div>
+      ) : (
       <AssistantView
         messages={messages}
         isStreaming={isStreaming}
@@ -602,21 +562,15 @@ const AssistantPage = () => {
         imageFile={imageFile}
         onPickImage={onPickImage}
         resetAttachment={resetAttachment}
-        isRecording={isRecording}
-        speechSupported={speechSupported}
-        startRecording={startRecording}
-        stopRecording={stopRecording}
-        waveformHeights={waveformHeights}
-        audioDuration={audioDuration}
-        isTranscribing={isTranscribing}
         isSending={isSending}
         error={error}
-        audioError={audioError}
         handleSaveDraft={handleSaveDraft}
         savingDraftKey={savingDraftKey}
         requestDateChange={requestDateChange}
         defaultCurrency={assistantCurrency}
+        suggestedPrompts={suggestedPrompts}
       />
+      )}
     </Layout>
   );
 };

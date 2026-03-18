@@ -1,11 +1,40 @@
 import { Account, Client } from "appwrite";
 import type { NextApiRequest } from "next";
+import {
+  ASSISTANT_ADMIN_EMAILS,
+  isAssistantAdminEmail,
+} from "expensasaurus/shared/constants/assistantAccess";
 import { AuthenticatedUser } from "./types";
+import { readAssistantAccessSettings } from "./settings";
 
-export const ASSISTANT_ALLOWED_EMAIL = "vishwajeetraj11@gmail.com";
+export const ASSISTANT_ALLOWED_EMAIL = ASSISTANT_ADMIN_EMAILS[0];
+export const DEMO_ALLOWED_EMAIL =
+  process.env.NEXT_PUBLIC_DEMO_EMAIL || "demo@admin.io";
+export const DEMO_MODE_ENABLED = process.env.NEXT_PUBLIC_DEMO_MODE === "true";
 
 export const normalizeEmail = (email?: string | null) =>
   (email || "").trim().toLowerCase();
+
+export const isAssistantServerEmailAllowed = (email?: string | null) => {
+  const normalized = normalizeEmail(email);
+
+  if (normalized === normalizeEmail(ASSISTANT_ALLOWED_EMAIL)) {
+    return true;
+  }
+
+  return DEMO_MODE_ENABLED && normalized === normalizeEmail(DEMO_ALLOWED_EMAIL);
+};
+
+export const getAssistantAccessState = async (email?: string | null) => {
+  const settings = await readAssistantAccessSettings();
+  const isAdmin = isAssistantAdminEmail(email);
+
+  return {
+    ...settings,
+    isAdmin,
+    canUseAssistant: isAdmin || settings.enabledForEveryone,
+  };
+};
 
 export const getClientIp = (req: NextApiRequest) => {
   const forwarded = req.headers["x-forwarded-for"];

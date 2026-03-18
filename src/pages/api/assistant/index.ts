@@ -1,9 +1,9 @@
 import type { NextApiRequest, NextApiResponse } from "next";
+import { ASSISTANT_NOT_AVAILABLE_MESSAGE } from "expensasaurus/shared/constants/assistantAccess";
 import {
-  ASSISTANT_ALLOWED_EMAIL,
+  getAssistantAccessState,
   getBearerToken,
   getClientIp,
-  normalizeEmail,
   verifyAuthenticatedUser,
 } from "expensasaurus/server/assistant/auth";
 import {
@@ -161,10 +161,9 @@ export default async function handler(
     return res.status(401).json({ reply: "Unauthorized." });
   }
 
-  if (normalizeEmail(authenticatedUser.email) !== ASSISTANT_ALLOWED_EMAIL) {
-    return res
-      .status(403)
-      .json({ reply: "Assistant is restricted for this account." });
+  const assistantAccess = await getAssistantAccessState(authenticatedUser.email);
+  if (!assistantAccess.canUseAssistant) {
+    return res.status(403).json({ reply: ASSISTANT_NOT_AVAILABLE_MESSAGE });
   }
 
   const userRate = applyRateLimit(

@@ -1,14 +1,12 @@
 import {
-  MicrophoneIcon,
   PaperClipIcon,
   SparklesIcon,
-  XIcon,
 } from "@heroicons/react/solid";
 import Link from "next/link";
 import React from "react";
 import { clsx } from "expensasaurus/shared/utils/common";
 import { AssistantMessage, ParsedExpense } from "./types";
-import { canSaveDraft, formatTime, resolveDraftType } from "./helpers";
+import { canSaveDraft, resolveDraftType } from "./helpers";
 
 type Props = {
   messages: AssistantMessage[];
@@ -24,16 +22,8 @@ type Props = {
   imageFile: File | null;
   onPickImage: (event: React.ChangeEvent<HTMLInputElement>) => void;
   resetAttachment: () => void;
-  isRecording: boolean;
-  speechSupported: boolean;
-  startRecording: () => void;
-  stopRecording: () => void;
-  waveformHeights: number[];
-  audioDuration: number;
-  isTranscribing: boolean;
   isSending: boolean;
   error: string | null;
-  audioError: string | null;
   handleSaveDraft: (
     draft: ParsedExpense,
     messageId: string,
@@ -42,6 +32,7 @@ type Props = {
   savingDraftKey: string | null;
   requestDateChange: (messageId: string, draft?: ParsedExpense) => void;
   defaultCurrency: string;
+  suggestedPrompts?: string[];
 };
 
 const AssistantView = ({
@@ -56,20 +47,13 @@ const AssistantView = ({
   imageFile,
   onPickImage,
   resetAttachment,
-  isRecording,
-  speechSupported,
-  startRecording,
-  stopRecording,
-  waveformHeights,
-  audioDuration,
-  isTranscribing,
   isSending,
   error,
-  audioError,
   handleSaveDraft,
   savingDraftKey,
   requestDateChange,
   defaultCurrency,
+  suggestedPrompts = [],
 }: Props) => {
   const renderDraftCard = (
     draft: ParsedExpense,
@@ -233,11 +217,14 @@ const AssistantView = ({
                         </p>
                       )}
                       {message.imageUrl && (
-                        <img
-                          src={message.imageUrl}
-                          alt="Attachment preview"
-                          className="mt-3 max-h-48 rounded-2xl border border-white/10 bg-white/70 p-2 shadow-sm object-contain"
-                        />
+                        <>
+                          {/* eslint-disable-next-line @next/next/no-img-element */}
+                          <img
+                            src={message.imageUrl}
+                            alt="Attachment preview"
+                            className="mt-3 max-h-48 rounded-2xl border border-white/10 bg-white/70 p-2 shadow-sm object-contain"
+                          />
+                        </>
                       )}
                       {message.items && message.items.length > 0 && (
                         <div className="mt-3 space-y-3">
@@ -275,6 +262,20 @@ const AssistantView = ({
                       >
                         Cancel
                       </button>
+                    </div>
+                  )}
+                  {suggestedPrompts.length > 0 && (
+                    <div className="flex flex-wrap gap-2">
+                      {suggestedPrompts.map((prompt) => (
+                        <button
+                          key={prompt}
+                          type="button"
+                          onClick={() => setInput(prompt)}
+                          className="rounded-full border border-blue-200/80 bg-blue-50/80 px-3 py-1.5 text-left text-xs font-medium text-blue-700 transition hover:border-blue-300 hover:bg-blue-100 hover:text-blue-900 dark:border-blue-400/25 dark:bg-blue-500/10 dark:text-blue-100 dark:hover:border-blue-300/50 dark:hover:bg-blue-500/20"
+                        >
+                          {prompt}
+                        </button>
+                      ))}
                     </div>
                   )}
                   <textarea
@@ -315,37 +316,16 @@ const AssistantView = ({
                           Remove
                         </button>
                       )}
-                      {!isRecording && (
-                        <button
-                          type="button"
-                          onClick={startRecording}
-                          disabled={!speechSupported}
-                          className={clsx(
-                            "inline-flex appearance-none items-center gap-2 rounded-full border px-3.5 py-1.5 text-xs font-semibold shadow-sm transition-colors duration-150",
-                            speechSupported
-                              ? "border-blue-200/80 bg-blue-50/85 text-blue-700 shadow-[0_12px_26px_-22px_rgba(37,99,235,0.75)] hover:border-blue-300 hover:bg-blue-100 hover:text-blue-800 dark:border-blue-400/35 dark:bg-blue-500/22 dark:text-blue-100 dark:shadow-[0_10px_25px_-22px_rgba(37,99,235,0.85)] dark:hover:border-blue-300/70 dark:hover:bg-blue-500/32 dark:hover:text-white"
-                              : "cursor-not-allowed border-slate-200 bg-slate-100 text-slate-400 opacity-100 dark:border-white/10 dark:bg-slate-800/80 dark:text-slate-400 dark:opacity-100"
-                          )}
-                        >
-                          <MicrophoneIcon className="h-4 w-4" />
-                          {speechSupported ? "Record" : "Voice unavailable"}
-                        </button>
-                      )}
                       <span className="inline-flex items-center rounded-full border border-slate-200/80 px-2 py-1 text-[10px] font-medium uppercase tracking-wide text-slate-500 dark:border-white/10 dark:text-slate-400">
                         Cmd/Ctrl + Enter
                       </span>
                     </div>
                     <button
                       type="submit"
-                      disabled={
-                        isSending ||
-                        isStreaming ||
-                        isRecording ||
-                        (!input.trim() && !imageFile)
-                      }
+                      disabled={isSending || isStreaming || (!input.trim() && !imageFile)}
                       className={clsx(
                         "inline-flex items-center justify-center rounded-xl px-5 py-2 text-sm font-medium text-white transition",
-                        isSending || isStreaming || isRecording || (!input.trim() && !imageFile)
+                        isSending || isStreaming || (!input.trim() && !imageFile)
                           ? "cursor-not-allowed bg-slate-300 dark:bg-slate-600"
                           : "bg-gradient-to-r from-blue-600 via-blue-500 to-blue-500 shadow-[0_12px_30px_-18px_rgba(29,78,216,0.8)] hover:from-blue-500 hover:via-blue-500 hover:to-blue-400 dark:from-blue-500 dark:via-blue-500 dark:to-blue-400 dark:text-white dark:hover:from-blue-400 dark:hover:via-blue-400 dark:hover:to-blue-300"
                       )}
@@ -353,38 +333,7 @@ const AssistantView = ({
                       Send
                     </button>
                   </div>
-                  {isRecording && (
-                    <div className="flex items-center justify-between rounded-2xl border border-slate-200/70 bg-white/90 px-4 py-2 text-xs text-slate-600 shadow-none dark:border-white/10 dark:bg-navy-900/70 dark:text-slate-300">
-                      <div className="flex items-center gap-2">
-                        <div className="flex h-6 items-center gap-[3px]">
-                          {waveformHeights.map((height, index) => (
-                            <span
-                              key={index}
-                              className="w-[2px] rounded-full bg-slate-900/80 animate-pulse dark:bg-white/60"
-                              style={{ height, animationDelay: `${index * 0.06}s` }}
-                            />
-                          ))}
-                        </div>
-                        <span className="ml-2 text-xs text-slate-500 dark:text-slate-300">
-                          {formatTime(audioDuration)}
-                        </span>
-                        {isTranscribing && (
-                          <span className="ml-2 text-xs text-brand-500">
-                            Listening...
-                          </span>
-                        )}
-                      </div>
-                      <button
-                        type="button"
-                        onClick={stopRecording}
-                        className="inline-flex h-8 w-8 items-center justify-center rounded-full bg-rose-500 text-white shadow-sm hover:bg-rose-600"
-                      >
-                        <XIcon className="h-4 w-4" />
-                      </button>
-                    </div>
-                  )}
                   {error && <p className="text-xs text-rose-500">{error}</p>}
-                  {audioError && <p className="text-xs text-rose-500">{audioError}</p>}
                 </div>
               </div>
             </form>

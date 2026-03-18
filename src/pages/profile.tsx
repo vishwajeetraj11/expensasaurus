@@ -1,4 +1,5 @@
 import Layout from "expensasaurus/components/layout/Layout";
+import AssistantAccessForm from "expensasaurus/components/profile/assistantAccessForm";
 import CurrencyForm from "expensasaurus/components/profile/currencyForm";
 import PasswordForm from "expensasaurus/components/profile/passwordForm";
 import { useAuthStore } from "expensasaurus/shared/stores/useAuthStore";
@@ -86,6 +87,8 @@ const Profile = () => {
                 </div>
               </div>
             </div>
+
+            <AssistantAccessForm />
           </div>
         )}
       </div>
