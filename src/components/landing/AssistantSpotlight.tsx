@@ -2,9 +2,9 @@ import Link from "next/link";
 import { LANDING_SECTIONS, ROUTES } from "expensasaurus/shared/constants/routes";
 
 const prompts = [
-  "Voice input: Grocery 32 dollars today",
-  "Voice input: Salary credited 2400 this month",
-  "Voice input: Auto fare 14 dollars transport",
+  "Spent 32 dollars on groceries today",
+  "Salary credited 2400 this month",
+  "Auto fare 14 dollars under transport",
 ];
 
 const AssistantSpotlight = () => {
@@ -19,11 +19,11 @@ const AssistantSpotlight = () => {
             Assistant
           </p>
           <h2 className="mt-4 text-3xl font-bold leading-tight text-blue-950 md:text-5xl">
-            Log expenses and income from audio input
+            Log expenses and income in plain language
           </h2>
           <p className="mt-4 max-w-[38rem] text-base leading-relaxed text-blue-900/80 md:text-lg">
-            Speak your transaction details. Assistant helps convert that audio
-            input into structured entries so you can review and log faster.
+            Type your transaction details naturally. Assistant turns them into
+            structured entries so you can review and log faster.
           </p>
 
           <div className="mt-8 flex flex-col gap-3 sm:flex-row">
@@ -63,7 +63,7 @@ const AssistantSpotlight = () => {
               Built for expenses and income logging
             </p>
             <p className="mt-1 text-blue-900/75">
-              Use voice input for faster capture, then confirm the details
+              Use natural language or receipt images, then confirm the details
               before saving.
             </p>
           </div>

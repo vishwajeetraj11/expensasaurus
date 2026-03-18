@@ -13,11 +13,13 @@ const DarkMode = (props: ButtonProps) => {
     if (!isBrowser) return false;
     return (
       localStorage.getItem("dark") === "true" ||
+      document.documentElement.classList.contains("dark") ||
       document.body.classList.contains("dark")
     );
   });
 
   useEffect(() => {
+    document.documentElement.classList.toggle("dark", darkmode);
     document.body.classList.toggle("dark", darkmode);
     localStorage.setItem("dark", String(darkmode));
   }, [darkmode]);

@@ -39,10 +39,10 @@ const Signup = () => {
       </Head>
 
       <div className="mx-auto w-full max-w-[460px]">
-        <h1 className="text-3xl font-bold text-slate-900 md:text-4xl">
+        <h1 className="text-3xl font-bold text-slate-900 dark:text-white md:text-4xl">
           Create your account
         </h1>
-        <p className="mt-3 text-sm leading-relaxed text-slate-600 md:text-base">
+        <p className="mt-3 text-sm leading-relaxed text-slate-600 dark:text-slate-300 md:text-base">
           Start budgeting with a cleaner workflow and unlock Assistant-powered
           transaction entry as you grow.
         </p>
@@ -50,28 +50,28 @@ const Signup = () => {
         <button
           type="button"
           onClick={continueWithGithub}
-          className="mt-7 flex h-12 w-full items-center justify-center gap-2 rounded-xl border border-slate-200 bg-white text-sm font-semibold text-slate-700 shadow-sm transition hover:border-slate-300 hover:text-slate-900"
+          className="mt-7 flex h-12 w-full items-center justify-center gap-2 rounded-xl border border-slate-200 bg-white text-sm font-semibold text-slate-700 shadow-sm transition hover:border-slate-300 hover:text-slate-900 dark:border-white/10 dark:bg-white/5 dark:text-slate-200 dark:hover:border-white/20 dark:hover:text-white"
         >
           <BsGithub className="text-base" />
           Continue with GitHub
         </button>
 
         <div className="my-6 flex items-center gap-3">
-          <div className="h-px w-full bg-slate-200" />
-          <p className="text-xs font-semibold uppercase tracking-[0.12em] text-slate-400">
+          <div className="h-px w-full bg-slate-200 dark:bg-white/10" />
+          <p className="text-xs font-semibold uppercase tracking-[0.12em] text-slate-400 dark:text-slate-500">
             or
           </p>
-          <div className="h-px w-full bg-slate-200" />
+          <div className="h-px w-full bg-slate-200 dark:bg-white/10" />
         </div>
 
         <LoginForm />
 
-        <p className="mt-5 text-sm text-slate-600">
+        <p className="mt-5 text-sm text-slate-600 dark:text-slate-300">
           Already have an account?{" "}
           <Link
             href={ROUTES.LOGIN}
             onClick={() => setAuthFormState(isSignup ? "SIGN_IN" : "SIGN_UP")}
-            className="font-semibold text-cyan-700 transition hover:text-cyan-800"
+            className="font-semibold text-blue-700 transition hover:text-blue-800 dark:text-blue-300 dark:hover:text-blue-200"
           >
             Sign in
           </Link>

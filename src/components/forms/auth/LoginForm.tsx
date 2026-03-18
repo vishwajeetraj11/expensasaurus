@@ -163,7 +163,7 @@ function LoginForm() {
             <div className="mb-1">
               <label
                 htmlFor="select-currency"
-                className="mb-2 ml-1.5 block text-sm font-medium text-slate-700"
+                className="mb-2 ml-1.5 block text-sm font-medium text-slate-700 dark:text-slate-200"
               >
                 Select Currency*
               </label>
@@ -174,7 +174,7 @@ function LoginForm() {
               >
                 {({ meta, input }) => (
                   <>
-                    <div className="rounded-xl border border-slate-200 bg-white p-1 shadow-sm">
+                    <div className="rounded-xl border border-slate-200 bg-white p-1 shadow-sm dark:border-white/10 dark:bg-white/5">
                       <SearchSelect
                         placeholder="Select currency"
                         value={input.value}
@@ -218,7 +218,7 @@ function LoginForm() {
             type="submit"
             disabled={submitting}
             loading={submitting}
-            className="mt-4 w-full rounded-xl bg-slate-900 py-3 text-sm font-semibold text-white transition hover:bg-slate-800"
+            className="mt-4 w-full rounded-xl bg-slate-900 py-3 text-sm font-semibold text-white transition hover:bg-slate-800 dark:bg-blue-500 dark:text-slate-950 dark:hover:bg-blue-400"
           >
             {isSignup ? "Create account" : "Sign in"}
           </Button>

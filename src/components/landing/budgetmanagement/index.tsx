@@ -66,7 +66,7 @@ export const BudgetManagement = () => {
           </h2>
           <p className="mt-4 text-base text-blue-900/80 md:text-lg">
             Set budget limits, track spending clearly, and pair this workflow
-            with Assistant audio input for faster expense and income logging.
+            with Assistant for faster expense and income logging.
           </p>
         </div>
 

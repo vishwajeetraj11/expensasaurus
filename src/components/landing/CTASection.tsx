@@ -13,7 +13,7 @@ const CTASection = () => {
         </h3>
         <p className="mx-auto mt-4 max-w-[42rem] text-base text-blue-100 md:text-lg">
           Create your account, connect your daily spend tracking, and use
-          Assistant audio input to reduce manual entry.
+          Assistant to turn natural language into faster transaction entry.
         </p>
 
         <div className="mt-8 flex flex-col justify-center gap-3 sm:flex-row">
