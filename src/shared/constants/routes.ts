@@ -2,6 +2,7 @@ export const ROUTES = {
   HOME: "/",
   LOGIN: "/login",
   SIGNUP: "/signup",
+  SEED: "/seed",
   DASHBOARD: "/dashboard",
   PROFILE: "/profile",
   ASSISTANT: "/assistant",
@@ -22,8 +23,13 @@ export const ROUTES = {
   CALENDAR: "/calender",
 } as const;
 
+export const FEATURE_FLAGS = {
+  SPLITWISE: process.env.NEXT_PUBLIC_ENABLE_SPLITWISE === "true",
+} as const;
+
 export const API_ROUTES = {
   ASSISTANT: "/api/assistant",
+  ASSISTANT_ACCESS: "/api/assistant/access",
   SPLITWISE: "/api/splitwise",
 } as const;
 
@@ -37,7 +43,7 @@ export const AUTHENTICATED_ROUTES: string[] = [
   ROUTES.CALENDAR,
   ROUTES.CATEGORY,
   ROUTES.EXPENSES,
-  ROUTES.SPLITWISE,
+  ...(FEATURE_FLAGS.SPLITWISE ? [ROUTES.SPLITWISE] : []),
   ROUTES.INCOMES,
   ROUTES.BUDGETS,
   ROUTES.INCOME_DETAIL,
@@ -52,12 +58,14 @@ export const AUTHENTICATED_ROUTES: string[] = [
   ROUTES.DASHBOARD,
   ROUTES.PROFILE,
   ROUTES.ASSISTANT,
+  ROUTES.SEED,
 ];
 
 export const PUBLIC_ROUTES: string[] = [
   ROUTES.HOME,
   ROUTES.SIGNUP,
   ROUTES.LOGIN,
+  ROUTES.SEED,
 ];
 
 export const routeBuilders = {

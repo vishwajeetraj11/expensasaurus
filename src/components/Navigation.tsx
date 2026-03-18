@@ -1,7 +1,10 @@
 import * as Popover from "@radix-ui/react-popover";
 import { useAuthStore } from "expensasaurus/shared/stores/useAuthStore";
-import { isAssistantEmailAllowed } from "expensasaurus/shared/constants/assistantAccess";
-import { LANDING_SECTIONS, ROUTES } from "expensasaurus/shared/constants/routes";
+import {
+  FEATURE_FLAGS,
+  LANDING_SECTIONS,
+  ROUTES,
+} from "expensasaurus/shared/constants/routes";
 import { clsx } from "expensasaurus/shared/utils/common";
 import Link from "next/link";
 import { useRouter } from "next/router";
@@ -26,8 +29,11 @@ const landingLinks: NavItem[] = [
 
 const appLinksBase: NavItem[] = [
   { href: ROUTES.DASHBOARD, label: "Dashboard" },
+  { href: ROUTES.ASSISTANT, label: "Assistant" },
   { href: ROUTES.EXPENSES, label: "Expenses" },
-  { href: ROUTES.SPLITWISE, label: "Splitwise" },
+  ...(FEATURE_FLAGS.SPLITWISE
+    ? [{ href: ROUTES.SPLITWISE, label: "Splitwise" as const }]
+    : []),
   { href: ROUTES.INCOMES, label: "Incomes" },
   { href: ROUTES.CATEGORY, label: "Category" },
   { href: ROUTES.CALENDAR, label: "Calendar" },
@@ -75,17 +81,7 @@ const Navigation = ({ landingPage = false }: Props) => {
     }
   }, [user, userInfo, getUserInfo]);
 
-  const canAccessAssistant = isAssistantEmailAllowed(userInfo?.email);
-
-  const appLinks = useMemo(() => {
-    const links = [...appLinksBase];
-    if (canAccessAssistant) {
-      links.splice(1, 0, { href: ROUTES.ASSISTANT, label: "Assistant" });
-    }
-    return links;
-  }, [canAccessAssistant]);
-
-  const links = landingPage ? landingLinks : appLinks;
+  const links = landingPage ? landingLinks : appLinksBase;
 
   return (
     <header
