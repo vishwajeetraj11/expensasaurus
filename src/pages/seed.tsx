@@ -129,11 +129,11 @@ const SeedPage = () => {
               Demo control
             </p>
             <h1 className="mt-4 text-3xl font-semibold text-slate-900 dark:text-white">
-              Local showcase workspace
+              Showcase workspace
             </h1>
             <p className="mt-3 max-w-2xl text-sm leading-6 text-slate-600 dark:text-slate-300">
-              This page is only for local interview demos. We can create the fixed
-              demo account, sign in as that user, and rebuild the seeded data so the
+              This page is for demo environments. We can create the fixed demo
+              account, sign in as that user, and rebuild the seeded data so the
               dashboard always looks current.
             </p>
           </section>
@@ -144,8 +144,8 @@ const SeedPage = () => {
                 Demo mode is off
               </h2>
               <p className="mt-2 text-sm leading-6 text-amber-800/90 dark:text-amber-100/80">
-                Enable <code>NEXT_PUBLIC_DEMO_MODE=true</code> on localhost to use the
-                demo bootstrap flow.
+                Enable <code>NEXT_PUBLIC_DEMO_MODE=true</code> in this environment
+                to use the demo bootstrap flow.
               </p>
             </section>
           ) : (

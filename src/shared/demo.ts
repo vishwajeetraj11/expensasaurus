@@ -69,7 +69,6 @@ type EnsureDemoAccountResult = {
   created: boolean;
 };
 
-const LOCAL_HOSTS = new Set(["localhost", "127.0.0.1"]);
 const DEMO_MODE_FLAG = process.env.NEXT_PUBLIC_DEMO_MODE === "true";
 let activeDemoSeedPromise: Promise<ResetDemoDataResult> | null = null;
 let activeDemoSeedKey: string | null = null;
@@ -100,21 +99,9 @@ const toNumber = (value: number, precision = 2) =>
 const roundToHundred = (value: number) =>
   Math.max(0, Math.round(value / 100) * 100);
 
-const getCurrentBrowserHost = () => {
-  if (typeof window === "undefined") return null;
-  return window.location.hostname;
-};
+export const isDemoModeEnabled = () => DEMO_MODE_FLAG;
 
-export const isLocalOnlyHost = (host?: string | null) => {
-  if (!host) return false;
-  return LOCAL_HOSTS.has(host.split(":")[0].trim().toLowerCase());
-};
-
-export const isDemoModeEnabled = (host = getCurrentBrowserHost()) =>
-  DEMO_MODE_FLAG && isLocalOnlyHost(host);
-
-export const isDemoModeEnabledForHost = (host?: string | null) =>
-  DEMO_MODE_FLAG && isLocalOnlyHost(host);
+export const isDemoModeEnabledForHost = (_host?: string | null) => DEMO_MODE_FLAG;
 
 export const isDemoUserEmail = (email?: string | null) =>
   normalizeEmail(email) === normalizeEmail(DEMO_DEFAULTS.email);

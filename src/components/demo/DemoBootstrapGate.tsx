@@ -128,7 +128,7 @@ const DemoBootstrapGate = ({ children }: Props) => {
         Demo mode
       </h2>
       <p className="mt-3 max-w-lg text-sm leading-6 text-slate-600 dark:text-slate-300">
-        {statusText} We only do this for the local demo account so your showcase
+        {statusText} We only do this for the demo account so your showcase
         always opens with fresh, current-month data.
       </p>
     </div>
