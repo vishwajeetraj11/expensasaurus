@@ -50,7 +50,7 @@ const dashboard = () => {
       </Head>
       <main className="max-w-[1200px] w-full mx-auto pt-10 px-4">
         <div className="flex justify-between mb-10">
-          <Title className="font-thin text-left">
+          <Title className="font-normal text-left">
             Monthly Performance Dashboard
           </Title>
           <div className="">

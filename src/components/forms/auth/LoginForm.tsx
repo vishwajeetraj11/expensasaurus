@@ -122,15 +122,15 @@ function LoginForm() {
       onSubmit={onSubmit}
       validate={validate}
       render={({ handleSubmit, submitting }) => (
-        <form onSubmit={handleSubmit} className="space-y-2">
+        <form onSubmit={handleSubmit} className="space-y-5">
           {isSignup && (
             <Field name="name">
               {({ meta, input }) => (
                 <InputField
                   variant="auth"
-                  extra="mb-1"
-                  label="Name*"
-                  placeholder="John Doe"
+                  extra="mb-0"
+                  label="Full name*"
+                  placeholder="Jane Doe"
                   id="name"
                   type="text"
                   autoComplete="name"
@@ -146,9 +146,9 @@ function LoginForm() {
             {({ meta, input }) => (
               <InputField
                 variant="auth"
-                extra="mb-1"
-                label="Email*"
-                placeholder="user@expensasaurus.com"
+                extra="mb-0"
+                label="Email address*"
+                placeholder="name@company.com"
                 id="email"
                 type="email"
                 autoComplete="email"
@@ -160,13 +160,19 @@ function LoginForm() {
           </Field>
 
           {isSignup && currencies && (
-            <div className="mb-1">
+            <div className="space-y-2">
               <label
                 htmlFor="select-currency"
-                className="mb-2 ml-1.5 block text-sm font-medium text-slate-700 dark:text-slate-200"
+                className="block text-[0.95rem] font-medium leading-6 text-slate-700 dark:text-slate-200"
               >
-                Select Currency*
+                Currency*
               </label>
+              <p
+                id="currency-help"
+                className="text-[0.95rem] leading-7 text-slate-500 dark:text-slate-400"
+              >
+                Used to format balances, budgets, and future expense entries.
+              </p>
               <Field
                 name="currency"
                 type="text"
@@ -180,6 +186,7 @@ function LoginForm() {
                         value={input.value}
                         onChange={input.onChange}
                         id="select-currency"
+                        aria-describedby="currency-help"
                       >
                         {currencies.currencies.map((currency) => (
                           <SearchSelectItem value={currency.code} key={currency.code}>
@@ -201,9 +208,9 @@ function LoginForm() {
             {({ meta, input }) => (
               <InputField
                 variant="auth"
-                extra="mb-1"
+                extra="mb-0"
                 label="Password*"
-                placeholder="Minimum 8 characters"
+                placeholder="At least 8 characters"
                 id="password"
                 type="password"
                 autoComplete={isSignup ? "new-password" : "current-password"}
@@ -218,7 +225,7 @@ function LoginForm() {
             type="submit"
             disabled={submitting}
             loading={submitting}
-            className="mt-4 w-full rounded-xl bg-slate-900 py-3 text-sm font-semibold text-white transition hover:bg-slate-800 dark:bg-blue-500 dark:text-slate-950 dark:hover:bg-blue-400"
+            className="mt-2 w-full rounded-xl bg-slate-900 py-3 text-[0.95rem] font-semibold text-white shadow-sm transition hover:bg-slate-800 disabled:opacity-80 dark:bg-blue-500 dark:text-slate-950 dark:hover:bg-blue-400"
           >
             {isSignup ? "Create account" : "Sign in"}
           </Button>

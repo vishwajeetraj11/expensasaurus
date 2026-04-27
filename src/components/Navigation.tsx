@@ -8,7 +8,7 @@ import {
 import { clsx } from "expensasaurus/shared/utils/common";
 import Link from "next/link";
 import { useRouter } from "next/router";
-import { useEffect, useMemo, useState } from "react";
+import { useEffect, useState } from "react";
 import { shallow } from "zustand/shallow";
 import { Logo } from "./icons/svg";
 
@@ -120,7 +120,7 @@ const Navigation = ({ landingPage = false }: Props) => {
                 key={link.href}
                 href={link.href}
                 className={clsx(
-                  "rounded-lg px-3 py-2 text-sm font-medium transition",
+                  "landing-interactive rounded-lg px-3 py-2.5 text-sm font-medium",
                   landingPage
                     ? "text-slate-600 hover:bg-blue-50 hover:text-blue-700"
                     : "text-slate-600 hover:bg-slate-100 hover:text-slate-900 dark:text-slate-200 dark:hover:bg-white/10 dark:hover:text-white",
@@ -139,13 +139,13 @@ const Navigation = ({ landingPage = false }: Props) => {
             <>
               <Link
                 href={ROUTES.LOGIN}
-                className="rounded-lg px-4 py-2 text-sm font-medium text-blue-700 transition hover:bg-blue-50 hover:text-blue-800"
+                className="landing-interactive rounded-lg px-4 py-2.5 text-sm font-medium text-blue-700 hover:bg-blue-50 hover:text-blue-800"
               >
                 Log in
               </Link>
               <Link
                 href={ROUTES.SIGNUP}
-                className="rounded-xl bg-blue-600 px-4 py-2 text-sm font-semibold text-white transition hover:bg-blue-700"
+                className="landing-interactive rounded-xl bg-blue-600 px-4 py-2.5 text-sm font-semibold text-white hover:bg-blue-700"
               >
                 Start free
               </Link>
@@ -157,7 +157,7 @@ const Navigation = ({ landingPage = false }: Props) => {
               <Popover.Trigger asChild>
                 <button
                   type="button"
-                  className="flex h-9 w-9 items-center justify-center rounded-full bg-blue-600 text-xs font-semibold text-white dark:bg-blue-500"
+                  className="landing-interactive flex h-11 w-11 items-center justify-center rounded-full bg-blue-600 text-xs font-semibold text-white dark:bg-blue-500"
                   aria-label="Open profile menu"
                 >
                   {userInfo.name?.[0] || "U"}
@@ -172,20 +172,20 @@ const Navigation = ({ landingPage = false }: Props) => {
                   <div className="flex flex-col gap-1">
                     <Link
                       href={ROUTES.DASHBOARD}
-                      className="rounded-lg px-3 py-2 text-sm text-slate-700 transition hover:bg-slate-100 hover:text-slate-900 dark:text-slate-200 dark:hover:bg-white/10 dark:hover:text-white"
+                      className="landing-interactive rounded-lg px-3 py-2.5 text-sm text-slate-700 hover:bg-slate-100 hover:text-slate-900 dark:text-slate-200 dark:hover:bg-white/10 dark:hover:text-white"
                     >
                       Dashboard
                     </Link>
                     <Link
                       href={ROUTES.PROFILE}
-                      className="rounded-lg px-3 py-2 text-sm text-slate-700 transition hover:bg-slate-100 hover:text-slate-900 dark:text-slate-200 dark:hover:bg-white/10 dark:hover:text-white"
+                      className="landing-interactive rounded-lg px-3 py-2.5 text-sm text-slate-700 hover:bg-slate-100 hover:text-slate-900 dark:text-slate-200 dark:hover:bg-white/10 dark:hover:text-white"
                     >
                       Profile
                     </Link>
                     <button
                       type="button"
                       onClick={() => logout(router)}
-                      className="rounded-lg px-3 py-2 text-left text-sm text-rose-600 transition hover:bg-rose-50 dark:text-rose-300 dark:hover:bg-rose-500/10"
+                      className="landing-interactive rounded-lg px-3 py-2.5 text-left text-sm text-rose-600 hover:bg-rose-50 dark:text-rose-300 dark:hover:bg-rose-500/10"
                     >
                       Logout
                     </button>
@@ -199,7 +199,7 @@ const Navigation = ({ landingPage = false }: Props) => {
 
         <button
           type="button"
-          className="ml-auto inline-flex h-9 w-9 items-center justify-center rounded-lg border border-slate-200 text-slate-700 md:hidden"
+          className="landing-interactive ml-auto inline-flex h-11 w-11 items-center justify-center rounded-lg border border-slate-200 text-slate-700 md:hidden"
           onClick={() => setHamburgerMenuIsOpen((open) => !open)}
         >
           <span className="sr-only">Toggle menu</span>
@@ -225,7 +225,7 @@ const Navigation = ({ landingPage = false }: Props) => {
                 key={link.href}
                 href={link.href}
                 className={clsx(
-                  "rounded-lg px-3 py-2 text-sm font-medium transition",
+                  "landing-interactive rounded-lg px-3 py-3 text-sm font-medium",
                   active
                     ? "!bg-blue-600 !text-white hover:!bg-blue-700 hover:!text-white"
                     : "text-slate-700 hover:bg-blue-50 hover:text-blue-700"
@@ -241,13 +241,13 @@ const Navigation = ({ landingPage = false }: Props) => {
             <div className="mt-3 grid grid-cols-2 gap-2">
               <Link
                 href={ROUTES.LOGIN}
-                className="rounded-lg border border-blue-200 px-3 py-2 text-center text-sm font-medium text-blue-700"
+                className="landing-interactive rounded-lg border border-blue-200 px-3 py-3 text-center text-sm font-medium text-blue-700"
               >
                 Log in
               </Link>
               <Link
                 href={ROUTES.SIGNUP}
-                className="rounded-lg bg-blue-600 px-3 py-2 text-center text-sm font-semibold text-white"
+                className="landing-interactive rounded-lg bg-blue-600 px-3 py-3 text-center text-sm font-semibold text-white"
               >
                 Start free
               </Link>
@@ -258,14 +258,14 @@ const Navigation = ({ landingPage = false }: Props) => {
             <div className="mt-3 grid grid-cols-1 gap-2">
               <Link
                 href={ROUTES.PROFILE}
-                className="rounded-lg border border-slate-200 px-3 py-2 text-sm font-medium text-slate-700"
+                className="landing-interactive rounded-lg border border-slate-200 px-3 py-3 text-sm font-medium text-slate-700"
               >
                 Profile
               </Link>
               <button
                 type="button"
                 onClick={() => logout(router)}
-                className="rounded-lg border border-rose-200 px-3 py-2 text-left text-sm font-medium text-rose-600"
+                className="landing-interactive rounded-lg border border-rose-200 px-3 py-3 text-left text-sm font-medium text-rose-600"
               >
                 Logout
               </button>

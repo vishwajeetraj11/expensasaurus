@@ -51,8 +51,7 @@ const DemoBootstrapGate = ({ children }: Props) => {
     }
 
     if (!userInfo) {
-      setStatusText("Loading account...");
-      setIsPreparingDemo(true);
+      setIsPreparingDemo(false);
       void getUserInfo();
       return () => {
         isCancelled = true;

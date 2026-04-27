@@ -10,10 +10,9 @@ import { BsGithub } from "react-icons/bs";
 import { shallow } from "zustand/shallow";
 
 const Signup = () => {
-  const { setAuthFormState, authFormState } = useAuthStore(
+  const { setAuthFormState } = useAuthStore(
     (state) => ({
       setAuthFormState: state.setAuthFormState,
-      authFormState: state.authFormState,
     }),
     shallow
   );
@@ -21,8 +20,6 @@ const Signup = () => {
   useEffect(() => {
     setAuthFormState("SIGN_UP");
   }, [setAuthFormState]);
-
-  const isSignup = authFormState === "SIGN_UP";
 
   const continueWithGithub = () => {
     account.createOAuth2Session(
@@ -35,30 +32,35 @@ const Signup = () => {
   return (
     <AuthLayout>
       <Head>
-        <title>Expensasaurus - Create a New Account</title>
+        <title>Expensasaurus - Sign up</title>
       </Head>
 
-      <div className="mx-auto w-full max-w-[460px]">
-        <h1 className="text-3xl font-bold text-slate-900 dark:text-white md:text-4xl">
-          Create your account
-        </h1>
-        <p className="mt-3 text-sm leading-relaxed text-slate-600 dark:text-slate-300 md:text-base">
-          Start budgeting with a cleaner workflow and unlock Assistant-powered
-          transaction entry as you grow.
-        </p>
+      <div className="mx-auto w-full max-w-[460px] space-y-6">
+        <div className="space-y-3">
+          <p className="text-[0.72rem] font-semibold uppercase tracking-[0.14em] text-blue-700 dark:text-blue-300">
+            Create account
+          </p>
+          <h1 className="max-w-[12ch] text-3xl font-semibold leading-[1.1] tracking-[-0.03em] text-slate-900 dark:text-white sm:text-4xl">
+            Create your account
+          </h1>
+          <p className="max-w-[56ch] text-base leading-7 text-slate-600 dark:text-slate-300">
+            Set up your budget workspace, choose a currency, and keep expense
+            entry simple from day one.
+          </p>
+        </div>
 
         <button
           type="button"
           onClick={continueWithGithub}
-          className="mt-7 flex h-12 w-full items-center justify-center gap-2 rounded-xl border border-slate-200 bg-white text-sm font-semibold text-slate-700 shadow-sm transition hover:border-slate-300 hover:text-slate-900 dark:border-white/10 dark:bg-white/5 dark:text-slate-200 dark:hover:border-white/20 dark:hover:text-white"
+          className="flex h-12 w-full items-center justify-center gap-2 rounded-xl border border-slate-200 bg-white text-sm font-semibold text-slate-700 shadow-sm transition hover:border-slate-300 hover:text-slate-900 dark:border-white/10 dark:bg-white/5 dark:text-slate-200 dark:hover:border-white/20 dark:hover:text-white"
         >
           <BsGithub className="text-base" />
           Continue with GitHub
         </button>
 
-        <div className="my-6 flex items-center gap-3">
+        <div className="flex items-center gap-3">
           <div className="h-px w-full bg-slate-200 dark:bg-white/10" />
-          <p className="text-xs font-semibold uppercase tracking-[0.12em] text-slate-400 dark:text-slate-500">
+          <p className="text-xs font-semibold uppercase tracking-[0.16em] text-slate-400 dark:text-slate-500">
             or
           </p>
           <div className="h-px w-full bg-slate-200 dark:bg-white/10" />
@@ -66,11 +68,11 @@ const Signup = () => {
 
         <LoginForm />
 
-        <p className="mt-5 text-sm text-slate-600 dark:text-slate-300">
+        <p className="text-sm leading-6 text-slate-600 dark:text-slate-300">
           Already have an account?{" "}
           <Link
             href={ROUTES.LOGIN}
-            onClick={() => setAuthFormState(isSignup ? "SIGN_IN" : "SIGN_UP")}
+            onClick={() => setAuthFormState("SIGN_IN")}
             className="font-semibold text-blue-700 transition hover:text-blue-800 dark:text-blue-300 dark:hover:text-blue-200"
           >
             Sign in

@@ -11,14 +11,13 @@ import { useAuthStore } from "expensasaurus/shared/stores/useAuthStore";
 import { useGlobalStore } from "expensasaurus/shared/stores/useGlobalStore";
 import { Transaction } from "expensasaurus/shared/types/transaction";
 import { formatCurrency } from "expensasaurus/shared/utils/currency";
-import { useEffect, useState } from "react";
+import { useMemo, useState } from "react";
 
 import { shallow } from "zustand/shallow";
 
 const LineChartTabs = () => {
   const { activeMonth } = useGlobalStore();
   const [selectedPeriod, setSelectedPeriod] = useState("Max");
-  const [data, setData] = useState<{ date: string; amount: number }[] | []>([]);
 
   const { user, userInfo } = useAuthStore(
     (state) => ({ user: state.user, userInfo: state.userInfo }),
@@ -35,33 +34,24 @@ const LineChartTabs = () => {
     }
   );
 
-  useEffect(() => {
-    if (
-      thisMonthExpenses &&
-      thisMonthExpenses?.documents.length &&
-      !data.length
-    ) {
-      const mappedData = thisMonthExpenses?.documents.map(
-        (item: Transaction) => {
-          const date = new Date(item.date);
-          const dateResult =
-            date.getDate() +
-            "." +
-            (date.getMonth() + 1) +
-            "." +
-            date.getFullYear();
-          return {
-            date: dateResult,
-            amount: item.amount,
-            category: item.category,
-          };
-        }
-      );
-      if (mappedData) {
-        setData(mappedData);
-      }
-    }
-  }, [data, thisMonthExpenses?.documents]);
+  const data = useMemo(
+    () =>
+      thisMonthExpenses?.documents.map((item: Transaction) => {
+        const date = new Date(item.date);
+        const dateResult =
+          date.getDate() +
+          "." +
+          (date.getMonth() + 1) +
+          "." +
+          date.getFullYear();
+        return {
+          date: dateResult,
+          amount: item.amount,
+          category: item.category,
+        };
+      }) || [],
+    [thisMonthExpenses?.documents]
+  );
 
   const getDate = (dateString: string) => {
     if (!dateString) return new Date();

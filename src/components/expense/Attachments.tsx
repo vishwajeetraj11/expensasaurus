@@ -4,6 +4,7 @@ import { Models } from 'appwrite';
 import { ENVS } from 'expensasaurus/shared/constants/constants';
 import { storage } from 'expensasaurus/shared/services/appwrite';
 import { useAuthStore } from 'expensasaurus/shared/stores/useAuthStore';
+import Image from 'next/image';
 import { Fragment } from 'react';
 import { MdClose } from 'react-icons/md';
 import { useQueries } from 'react-query';
@@ -59,9 +60,15 @@ export const Attachment = (props: AttachmentProps) => {
         {onDelete && <button type='button' disabled={disabled} onClick={onDelete} className="group absolute right-[-10px] top-[-10px] z-[1] flex h-[30px] w-[30px] cursor-pointer items-center justify-center rounded-full border border-slate-200 bg-white p-2 transition-all duration-200 hover:border-rose-400 hover:bg-rose-500 dark:border-white/15 dark:bg-slate-900 dark:hover:border-rose-500/60 dark:hover:bg-rose-500">
             <MdClose className="h-[12px] text-slate-600 group-hover:text-white dark:text-slate-300" />
         </button>}
-        {data?.href
-            ? <img src={data?.href} className='h-[100px] w-[100px] rounded-md object-cover opacity-90' alt='File' />
-            : null}
+        {data?.href ? (
+            <Image
+                src={data.href}
+                alt="Attachment preview"
+                width={100}
+                height={100}
+                className='h-[100px] w-[100px] rounded-md object-cover opacity-90'
+            />
+        ) : null}
         <Button onClick={onDownload} className='absolute left-[50%] top-[50%] -translate-x-[50%] -translate-y-[50%] rounded-full bg-white p-2 dark:bg-slate-800/90' variant='light' size='xs'><DownloadIcon className='h-[20px]' /></Button>
     </div>
 
