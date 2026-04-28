@@ -1,10 +1,11 @@
 import Layout from "expensasaurus/components/layout/Layout";
 import AssistantAccessForm from "expensasaurus/components/profile/assistantAccessForm";
-import CurrencyForm from "expensasaurus/components/profile/currencyForm";
 import PasswordForm from "expensasaurus/components/profile/passwordForm";
+import { isDemoUser } from "expensasaurus/shared/demo";
 import { useAuthStore } from "expensasaurus/shared/stores/useAuthStore";
 import { defaultOptions } from "expensasaurus/shared/utils/lottie";
 import Lottie from "expensasaurus/components/ui/Lottie";
+import Head from "next/head";
 import { shallow } from "zustand/shallow";
 import loadingProfile from "../lottie/loadingProfile.json";
 
@@ -16,6 +17,9 @@ const Profile = () => {
 
   return (
     <Layout>
+      <Head>
+        <title>Expensasaurus - Profile</title>
+      </Head>
       <div className="mx-auto w-full max-w-[1200px] px-4 pt-16">
         {!userInfo ? (
           <Lottie
@@ -67,12 +71,12 @@ const Profile = () => {
                   Currency preferences
                 </h2>
                 <p className="mt-1 text-sm text-slate-600 dark:text-slate-300">
-                  Choose the default currency used in your dashboard and reports.
-                  You can still override currency on individual records.
+                  Your default currency is set to{" "}
+                  <span className="font-semibold text-slate-800 dark:text-slate-100">
+                    {userInfo.prefs?.currency || "INR"}
+                  </span>
+                  . Contact support to change it.
                 </p>
-                <div className="mt-4">
-                  <CurrencyForm changeUI />
-                </div>
               </div>
 
               <div className="rounded-2xl border border-slate-200/70 bg-white/90 p-6 shadow-sm dark:border-white/10 dark:bg-white/5">
@@ -83,7 +87,13 @@ const Profile = () => {
                   Update your password regularly to keep your account secure.
                 </p>
                 <div className="mt-4">
-                  <PasswordForm />
+                  {isDemoUser(userInfo) ? (
+                    <p className="text-sm text-slate-500 dark:text-slate-400">
+                      Password changes are disabled in demo mode.
+                    </p>
+                  ) : (
+                    <PasswordForm />
+                  )}
                 </div>
               </div>
             </div>
